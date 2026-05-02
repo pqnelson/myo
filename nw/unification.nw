@@ -1,0 +1,326 @@
+% -*- mode: poly-noweb; noweb-code-mode: sml-mode; -*-
+%%
+%% unification.nw
+%% 
+%% Made by Alex Nelson <pqnelson@gmail.com>
+%% Login   <alex@lisp>
+%% 
+%% Started on  2026-04-25T15:53:23-0700
+%% Last update 2026-04-25T15:53:23-0700
+%% 
+
+\section{Unification}
+
+
+\begin{node}
+Unification, for first-order logic, given two ``expressions'' $e_{1}$
+and $e_{2}$ (a pair of terms or a pair of formulas) tries to find a
+``substitution'' $\sigma$ which can be applied to obtain
+\emph{syntactically} identical expressions
+$\sigma(e_{1})=\sigma(e_{2})$ (where $\sigma(-)$ essentially
+corresponds to a ``parallel'' version of [[Formula.subst]] or [[Term.subst]]). The [[Formula.eq]] and [[Term.eq]]
+predicates test if two formulas (resp., terms) are syntactically
+identical. If two expressions are unifiable, then it returns such a
+substitution. 
+
+We will need only ``first-order unification'', i.e., we work with only
+``first-order variables'' and not ``higher-order
+variables''. Higher-order logic allows us to quantify over predicates
+and functions using higher-order variables, but unification for
+higher-order variables is rather complicated. First-order unification
+merely allows replacing variables with terms, which is far more tame
+by comparison.
+
+We will only need to unify terms and literals (predicates or their
+negation). 
+\end{node}
+
+<<Unif.sig>>=
+signature Unif = sig
+  structure Env :
+            sig
+              type t;
+              val undefined : unit -> t;
+              val apply : t -> Term.t -> Term.t;
+              val defined : t -> Term.t -> bool;
+              val insert : t -> Term.t -> Term.t -> t;
+            end;
+  val y : Env.t -> (Term.t * Term.t) list -> Env.t;
+  val y_literals : Env.t -> Formula.t * Formula.t -> Env.t;
+  val y_complements : Env.t -> Formula.t * Formula.t -> Env.t;
+end;
+@
+
+<<Unif.sml>>=
+structure Unif :> Unif = struct
+<<Finite map for unification>>
+
+<<Poor man's hashmap>>
+
+<<Unify two terms>>
+
+<<Unify two literals>>
+end;
+@
+
+\begin{node}
+Unification tracks the substitution constructed using a finite partial
+map. We recursively build the map from equations given for unification.
+We will write $t\sim t'$ for the ``equation'' submitted for
+unification involving the two terms $t$ and $t'$. This will produce a
+finite partial map, and we will denote a specific entry in it as
+$x\mapsto t$ to indicate $x$ would be substituted for the term $t$.
+\end{node}
+
+\begin{definition}
+Suppose $M$ is a finite partial map from terms to terms.
+\begin{enumerate}
+\item Let $x\mapsto t$ be an entry in the map $M$. We write $x\to y$ if there exists a $y\in FV(t)$.
+\item A \define{Cycle} in $M$ is a nonempty finite sequence leading
+  back to the starting point $x_{0}\to x_{1}\to\dots\to x_{n}\to x_{0}$.
+\item If there are no cycles in $M$, we say it is \define{Cycle-free}. Otherwise,
+  we call $M$ \define{Cyclic}.
+\end{enumerate}
+\end{definition}
+
+\begin{example}[{Duffy~\cite[p.143]{duffy1991principles}}]
+Consider unifying $P[x,f(x)]$ with $P[g(y),y]$ where $P[-,-]$ is a
+predicate of two terms, $f(-)$ and $g(-)$ are functions.
+
+The first step will be to break this up into two equations
+\begin{equation}
+x\sim g(y)
+\end{equation}
+and
+\begin{equation}
+f(x)\sim y.
+\end{equation}
+We can solve the first equation with the replacement $x\mapsto g(y)$.
+
+The second equation can be ``rewritten'' as
+\begin{equation}
+y\sim f(x),
+\end{equation}
+by symmetry. However, if we try adjoining the replacement $y\mapsto f(x)$
+to our current partial map, then we end up with a cycle $x\to y\to x$.
+
+We want to avoid this. Why? Because if we consider the formula,
+\begin{equation}\label{eq:unification:example-of-why-we-want-to-avoid-cycles}
+(\forall x\exists y\ldotp P[x,y])\implies(\exists y\forall x\ldotp P[x,y]),
+\end{equation}
+the negation of this formula has conjunctive normal form
+\begin{equation}
+\forall x,y\ldotp P[x,f(x)]\land\neg P[g(y),y].
+\end{equation}
+A resolution proof can be found for this, if we allowed cycles during
+unification. But Equation~\eqref{eq:unification:example-of-why-we-want-to-avoid-cycles}
+is not a theorem in classical logic. Had we allowed cycles, soundness
+would be compromised. 
+\end{example}
+
+\begin{node}
+The finite map used for tracking variable assignment could be
+anything. For simplicity, at the moment, we use association lists.
+
+A ``Poor Man's Table'' is just an association list.
+If we implement a more optimized hash table, like a Red-Black tree or
+a 2-3 tree, then we can jettison this implementation and use something
+superior. The contract:
+\begin{enumerate}
+\item [[undefined]] is an empty table
+\item [[apply table key]] gets the value associated with the [[key]]
+  in the [[table]]
+\item [[insert table key value]] inserts the association of [[value]]
+  with [[key]] into the [[table]], raising a [[Fail]] exception if
+  this would produce a cycle in the substitution;
+\item [[defined table key]] tests if the [[table]] contains the
+  [[key]] at all
+\end{enumerate}
+These are the table operations.
+
+Right now, this is a huge bottleneck for performance. The low-hanging
+fruit would be to make this replacement.
+\end{node}
+
+\begin{invariant}[Partial maps remain cycle free]\label{invariant:unification:cycle-free}
+Every [public] function in the [[Unif]] structure requires any
+[[Env.t]] partial map given as an argument to be cycle free, and
+ensures the [[Env.t]] partial map produced (if any) to be cycle-free.
+\end{invariant}
+
+<<Finite map for unification>>=
+structure Env :>
+            sig
+              type t;
+              val undefined : unit -> t;
+              val apply : t -> Term.t -> Term.t;
+              val defined : t -> Term.t -> bool;
+              val insert : t -> Term.t -> Term.t -> t;
+            end =
+struct
+type t = (Term.t * Term.t) list;
+
+fun undefined () = [];
+
+fun apply [] _ = raise Fail "apply"
+  | apply ((y,tm)::ys) x = if Term.eq x y
+                           then tm
+                           else apply ys x;
+
+fun defined [] _ = false
+  | defined ((y,_)::env) x = (Term.eq x y) orelse
+                             defined env x;
+local
+<<Test if a new equations is trivial for unification>>
+in
+fun insert env (x as (Term.Var _)) y = 
+      if is_cyclic env x y then env 
+      else (x,y)::env
+  | insert _ _ _ = raise Fail "Env.insert: trying to insert function as key"
+end;
+end;
+@ %def Env.t Env.undefined Env.apply Env.insert Env.defined
+
+\begin{node}
+We also have the really interesting part of solving the unification
+problem: testing if $x=t$ is a trivial equation or not. This would
+happen for literally trivial equations $x=x$ which shed no light on anything,
+but also for $x=y$ when we already have $y=t'$.
+
+However, there is the possibility that we might produce a cycle. This
+is handled by raising an error.
+
+Specifically: checking there are no cycles when we try to associate
+variable $x$ with term $t$ depends on what $t$ is. When
+\begin{enumerate}
+\item $t$ is a variable $t=y$: This boils down to two subcases.
+  \begin{enumerate}
+  \item $x=y$ 
+  \item $x\neq y$, but $y$ is bound to something in the
+    environment $y=t_{y}$. Then we just check recursively that associating $x$ to
+    $t_{y}$ will be cycle-free.
+  \end{enumerate}
+\item $t$ is a function $f(\vec{t})$: There is no variable $y\in
+  FV(t)$ such that $y\to^{*}x$ (i.e., there is no sequence of zero or more
+  steps leading from $y$ to $x$)
+\end{enumerate}
+We can check the first condition elsewhere (namely, in the [[unify]]
+function). The second condition will be tested in [[is_cyclic]],
+which will return \textbf{false} if the condition is satisfied.
+\end{node}
+
+\begin{node}
+If we extend [[env]] with a new entry $x\sim t$, then we should
+consider the following situations:
+\begin{enumerate}
+\item $t$ is a variable $t=y$.
+  \begin{enumerate}
+  \item If $y=x$ are the same variable, then this is a trivial
+    extension, and we should return \textbf{true} to indicate \emph{do
+    no extend the environment}.
+  \item If $y\neq x$ is a different variable, then we should check if
+    $y\sim t'$ is in the environment and if so whether we can add
+    $x\sim t'$ to the environment.
+
+    If there is no entry $y\sim t'$ in the environment, then return
+    \textbf{false} to indicate \emph{we can extend the environment
+    while maintaining the cycle-free invariant}.
+
+    If there is an entry $y\sim t'$ in the environment, then we just
+    recursively test if $x\sim t'$ violates the cycle-free invariant
+    of the environment.
+  \end{enumerate}
+\item If $t$ is a function $f(t_{1},\dots,t_{n})$, then we want to test 
+  that none of the possible extensions $x\sim t_{1}$, \dots, $x\sim t_{n}$
+  would lead to a cyclic environment. If there is a possible extension
+  $x\sim t_{k}$, then return \textbf{true}. Otherwise,
+  return \textbf{false} to indicate \emph{we can extend the
+  environment while maintaining the cycle-free invariant}.
+\end{enumerate}
+\end{node}
+
+<<Test if a new equations is trivial for unification>>=
+(* REQUIRES: `x` is not defined in the `env` *)
+fun is_cyclic env x tm =
+ (case tm of
+   (y as (Term.Var _)) => Term.eq x y orelse (* trivial case *)
+                          Term.have_same_sort x y andalso
+                          defined env y andalso
+                          is_cyclic env x (apply env y)
+ | (Term.Fun(f,s,args)) => List.exists (is_cyclic env x) args andalso
+                           raise Fail "cyclic");
+@ 
+
+\begin{node}
+Unification tries to ``solve'' a bunch of equations. We have the
+following situations:
+\begin{enumerate}
+\item $f(t_{1},\dots,t_{m})=g(t'_{1},\dots,t'_{n})$ requires $f$ and
+  $g$ to be the same function symbol with the same sort, and $m=n$,
+  then we just need to solve the equations $t_{1}=t'_{1}$, \dots, $t_{n}=t'_{n}$.
+\item $x=t$ first requires checking if we have already ``solved'' for
+  $x$, and if so try to match it against $t$.
+
+  Otherwise, if $x=t$ is a trivial equation, then we just move along
+  to try solving the remaining equations.
+
+  If $x=t$ is not a trivial equation, then we extend the current
+  environment (``solutions'') with this entry, and then try solving
+  the remaining equations.
+\item $t=x$ is just the same situation.
+\end{enumerate}
+There cannot be any other possible situation.
+\end{node}
+
+<<Unify two terms>>=
+(* Unif.y : Env.t -> (Term.t * Term.t) list -> Env.t
+
+REQUIRES: `env` is cycle-free
+REQUIRES: the set `env @ eqns` has exactly the same set of
+          unifiers as the original problem. *)
+fun y env ([] : (Term.t * Term.t) list) = env
+  | y env ((Term.Fun(f,s1,args1),Term.Fun(g,s2,args2))::eqns) = 
+      if f = g andalso s1 = s2 andalso length args1 = length args2
+      then y env ((ListPair.zip(args1, args2)) @ eqns)
+      else raise Fail "impossible unification"
+  | y env (((x as (Term.Var _)), t)::eqns) =
+      if not(Term.have_same_sort x t)
+      then raise Fail "impossible unification: variable has different sort than term"
+      else if Env.defined env x (* x already in env *)
+      then y env ((Env.apply env x, t)::eqns)
+      else y (Env.insert env x t) eqns
+  | y env ((t, x as (Term.Var _))::eqns) = y env ((x,t)::eqns);
+@ %def Unif.y
+
+\begin{node}
+Unifying two literals $P[t_{1},\dots,t_{m}]$ with $Q[u_{1},\dots,u_{n}]$
+requires checking $P=Q$ (they have the same identifier/name) and $m=n$ (they have the same number of arguments), then invoking
+[[unify]] to solve the system $t_{1}=u_{1}$, \dots, $t_{n}=u_{n}$.
+If $P\neq Q$ are distinct identifiers, or $m\neq n$, then a failure is raised.
+If $Q$ is the negation of $P$, then a failure is raised (there is no
+way to unify a predicate with its negation).
+\end{node}
+
+<<Unify two literals>>=
+(* Unif.y_literals : Env.t -> Term.t * Term.t -> Env.t *)
+fun y_literals env (lhs,rhs) =
+  if Formula.is_not lhs andalso Formula.is_not rhs
+  then y_literals env (Formula.dest_not lhs, Formula.dest_not rhs)
+  else if Formula.is_falsum lhs andalso Formula.is_falsum rhs
+  then env
+  else if Formula.is_pred lhs andalso Formula.is_pred rhs
+  then let val (p1,args1) = Formula.dest_pred lhs;
+           val (p2,args2) = Formula.dest_pred rhs;
+       in if p1 = p2 andalso length args1 = length args2
+          then y env (ListPair.zip(args1, args2))
+          else raise Fail "Unif.y_literals: impossible unification"
+       end
+  else raise Fail "Unif.y_literals: Cannot unify literals";
+
+fun negate A = if Formula.is_not A
+               then Formula.dest_not A
+               else Formula.mk_not A;
+
+fun y_complements env (A,B) =
+  y_literals env (A, negate B);
+@ %def Unif.y_complements Unif.y_literals

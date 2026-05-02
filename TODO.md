@@ -1,0 +1,2 @@
+- [ ] Finish implementing tactics
+- [ ] Implement definitional principles

@@ -1,0 +1,691 @@
+% -*- mode: poly-noweb; noweb-code-mode: sml-mode; -*-
+%%
+%% classical.nw
+%% 
+%% Made by Alex Nelson <pqnelson@gmail.com>
+%% Login   <alex@lisp>
+%% 
+%% Started on  2026-04-21T12:45:57-0700
+%% Last update 2026-04-21T12:45:57-0700
+%% 
+
+\section{Classical tableaux}
+
+\begin{node}
+We want to investigate if certain $FS_{0}$ formulas are theorems, had
+we used Classical logic instead of Intuitionistic logic. After all,
+every Intuitionistically valid formula is also valid Classically (but
+not all Classically valid formulas are Intuitionistically acceptable).
+Tableaux is one way to investigate this question.
+\end{node}
+
+<<Classical.sig>>=
+signature Classical = sig
+  val nnf : Formula.t -> Formula.t;
+  val askolemize : Formula.t -> Formula.t;
+  val tab : Formula.t -> int -> int;
+end;
+@
+
+<<Classical.sml>>=
+structure Classical :> Classical = struct
+<<Transform formula to negation normal form>>
+
+<<Simplify formulas using classical tautologies>>
+
+<<Skolemization>>
+
+<<Tableaux refuter>>
+end;
+@
+
+\begin{node}
+Signed formulas $T\phi$ and $F\phi$ encode whether we have to prove
+$\phi$ is true or false, respectively. Tableaux constructs a tree from
+signed formulas. For example $T(A\land B)$ can extend the current
+branch of the Tableaux with two new signed formulas $TA$ and $TB$. But
+$F(A\land B)$ creates two new branches in the tableaux, one starts
+with $FA$ and the other starts with $FB$.
+
+Continuing in this manner, we continue writing a branch until a
+contradiction has been found. More precisely, we have $TA$ and $FA$
+occur within the same branch. In this situation, the branch ``closes''
+and we write $\times$ to indicate this. What this means is that we
+can stop working on this branch, and we can go to the next branch. If
+there are no more branches to work on, then the Tableaux refutes the formula.
+\end{node}
+
+
+\begin{definition}
+A \define{Literal} is a formula such that it is either an atomic formula
+(a predicate, or equality between terms [if working in first-order logic
+  with equality])
+or the negation of an atomic formula.
+\end{definition}
+
+\begin{definition}
+A formula $\Phi$ is said to be in \define{Negation Normal Form} if
+\begin{enumerate}
+\item $\Phi$ is a literal, or
+\item $\Phi=A\land B$ where $A$ and $B$ are in negation normal form,
+  or
+\item $\Phi=A\lor B$ where $A$ and $B$ are in negation normal form, or
+\item $\Phi=\forall x\ldotp A$ or $\Phi=\exists x\ldotp A$, where $A$ is again in negation normal form.
+\end{enumerate}
+In Classical logic, we can always transform \emph{any} formula to be
+in negation normal form.
+\end{definition}
+
+\begin{node}
+The basic gambit for classical tableaux is:
+\begin{enumerate}
+\item Given a formula $\phi$, transform it to negation normal form $\psi$;
+\item Skolemize $\psi$ to obtain $\chi$;
+\item Perform the tableaux method on $\chi$.
+\end{enumerate}
+\end{node}
+
+\begin{node}%163
+We transform a formula into negation normal form by replacing
+$A\implies B$ by $(\neg A)\lor B$ and so on. We begin by transforming
+the basic connectives and quantifiers by applying the transformation
+to the immediate subformulas, using the rules:
+\begin{enumerate}
+\item $NNF(A\land B)=NNF(A)\land NNF(B)$
+\item $NNF(A\lor B)=NNF(A)\lor NNF(B)$
+\item $NNF(A\implies B)=NNF(\neg A)\lor NNF(B)$
+\item $NNF(A\iff B)=(NNF(A)\land NNF(B))\lor(NNF(\neg A)\land NNF(\neg B))$
+\item $NNF(\exists x\ldotp A)=\exists x\ldotp NNF(A)$
+\item $NNF(\forall x\ldotp A)=\forall x\ldotp NNF(A)$
+\end{enumerate}
+\end{node}
+
+<<Transform formula to negation normal form>>=
+(* nnf : Formula.t -> Formula.t *)
+fun nnf fm =
+  if Formula.is_and fm
+  then let val (A,B) = Formula.dest_and fm
+       in Formula.mk_and(nnf A, nnf B) end
+  else if Formula.is_or fm
+  then let val (A,B) = Formula.dest_or fm
+       in Formula.mk_or(nnf A, nnf B) end
+  else if Formula.is_imp fm
+  then let val (A,B) = Formula.dest_imp fm
+       in Formula.mk_or(nnf (Formula.mk_not A),
+                        nnf B) end
+  else if Formula.is_iff fm
+  then let val (A,B) = Formula.dest_iff fm
+       in Formula.mk_or(Formula.mk_and(nnf A, nnf B),
+                        Formula.mk_and(nnf(Formula.mk_not(A)), nnf(Formula.mk_not(B)))) end
+  else if Formula.is_forall fm
+  then let val(x,A) = Formula.dest_forall fm
+       in Formula.mk_forall(x, nnf A) end
+  else if Formula.is_exists fm
+  then let val(x,A) = Formula.dest_exists fm
+       in Formula.mk_exists(x, nnf A) end
+  <<Negation normal form for negated formulas>>
+
+@
+
+\begin{node}
+The rules for transforming a negated formula into negation normal form
+are:
+\begin{enumerate}
+\item $NNF(\neg\neg A)=NNF(A)$
+\item $NNF(\neg(A\land B))=NNF(\neg A)\lor NNF(\neg B)$
+\item $NNF(\neg(A\lor B))=NNF(\neg A)\land NNF(\neg B)$
+\item $NNF(\neg(A\implies B))=NNF(A)\land NNF(\neg B)$
+\item $NNF(\neg(A\iff B))=(NNF(A)\land NNF(\neg B))\lor(NNF(\neg A)\land NNF(B))$
+\item $NNF(\neg\exists x\ldotp A)=\forall x\ldotp NNF(\neg A)$
+\item $NNF(\neg\forall x\ldotp A)=\exists x\ldotp NNF(\neg A)$
+\end{enumerate}
+\end{node}
+
+<<Negation normal form for negated formulas>>=
+else if Formula.is_not fm
+then let val fm' = Formula.dest_not fm
+     in if Formula.is_not fm'
+        then let val A = Formula.dest_not fm'
+             in nnf A end
+        else if Formula.is_and fm'
+        then let val (A,B) = Formula.dest_and fm'
+             in Formula.mk_or(nnf(Formula.mk_not(A)),
+                              nnf(Formula.mk_not(B))) end
+        else if Formula.is_or fm'
+        then let val (A,B) = Formula.dest_or fm'
+             in Formula.mk_and(nnf(Formula.mk_not(A)),
+                              nnf(Formula.mk_not(B))) end
+        else if Formula.is_imp fm'
+        then let val (A,B) = Formula.dest_imp fm'
+             in Formula.mk_and(nnf A,
+                               nnf(Formula.mk_not(B))) end
+        else if Formula.is_iff fm'
+        then let val (A,B) = Formula.dest_iff fm'
+             in Formula.mk_or(Formula.mk_and(nnf A,
+                                             nnf(Formula.mk_not(B))),
+                              Formula.mk_and(nnf(Formula.mk_not(A)),
+                                             nnf B))
+             end
+        else if Formula.is_exists fm'
+        then let val (x,A) = Formula.dest_exists fm'
+             in Formula.mk_forall(x, nnf(Formula.mk_not(A))) end
+        else if Formula.is_forall fm'
+        then let val (x,A) = Formula.dest_forall fm'
+             in Formula.mk_exists(x, nnf(Formula.mk_not(A))) end
+        else fm
+     end
+else fm;
+@
+
+\begin{node}
+Skolemization eliminates existentially quantified variables by making
+them functions of universally quantified formulas. The idea is that
+the following are equivalent:
+\begin{enumerate}
+\item $\forall x\ldotp\exists y\ldotp P[x,y]$
+\item $\forall x\ldotp P[x, f(x)]$ where $f$ is a ``skolemization function''.
+\end{enumerate}
+This is typically understood as requiring the axiom of choice (since
+$f$ is choosing ``some'' constant, in some unprescribed way).
+\end{node}
+
+\begin{node}
+We need to name Skolem functions to be something new and fresh. We
+gather the name of all the functions currently used.
+\end{node}
+
+<<Gather all the functions used>>=
+(* funcs : Term.t -> (string * Sort.t * int) list *)
+fun funcs (Term.Var _) = []
+  | funcs (Term.Fun(f,s,args)) =
+      List.foldr (fn (arg, acc) =>
+                   (funcs arg)@acc)
+                 [(f,s,length args)]
+                 args;
+
+(* functions : Formula.t -> (string * Sort.t * int) list *)
+fun functions fm =
+  Formula.atom_union
+    (fn p => let val (_,args) = Formula.dest_pred p
+             in List.foldr (fn (arg, acc) => (funcs arg)@acc)
+                           []
+                           args
+             end)
+    fm;
+@
+
+\begin{node}
+We will want to take the variant of an identifier to make sure it is
+not currently used for a function. We ignore the arity of the function
+name, we just need a ``fresh'' function name.
+\end{node}
+
+<<Variant of an identifier>>=
+(* variant : string -> Sort.t -> (string * Sort.t * int) list -> string *)
+local
+  fun iter n name sort funcs =
+    if List.exists (fn (x,s,_) =>
+                       s = sort andalso
+                       (name ^ (Int.toString n)) = x)
+                   funcs
+    then iter (n + 1) name sort funcs
+    else (name ^ (Int.toString n), sort);
+in
+fun variant name sort funcs : string * Sort.t =
+  if List.exists (fn (x,s,_) => s = sort andalso name = x)
+                 funcs
+  then iter 0 name sort funcs
+  else (name, sort);
+end;
+@
+
+\begin{node}
+Skolemization acts on closed formulas in negation normal form.
+So negation has been pulled down to the literals. The basic steps in the procedure is:
+\begin{enumerate}
+\item Given $\exists x\ldotp A[x]$, collect the distinct free
+  variables in a list $(x_{1},\dots,x_{n})$ (which, since we assumed
+  the given formula is closed, means the free variables are
+  universally quantified and this is being recursively called on a
+  subformula), then introduce the Skolem
+  function $f(x_{1},\dots,x_{n})$ and return $A[f(x_{1},\dots,x_{n})]$
+\item Given $A\land B$, simply return the conjunction of the
+  [[skolem]] function applied to $A$ and $B$
+\item Given $A\lor B$, simply return the disjunction of the
+  [[skolem]] function applied to $A$ and $B$
+\item Given $\forall x\ldotp A[x]$, recursively apply [[skolem]] to
+  $A$ to obtain $A'[x]$, then return $\forall x\ldotp A'[x]$.
+\end{enumerate}
+\end{node}
+
+<<Skolemize a formula>>=
+<<Gather all the functions used>>
+
+<<Variant of an identifier>>
+
+local
+  fun iter [] acc = acc
+    | iter (x::xs) acc = if List.exists (Term.eq x) xs
+                         then iter xs acc
+                         else iter xs (x::acc);
+in
+fun dedupe vars = iter vars []
+end;
+
+(* skolem : Formula.t ->  (string * Sort.t * int) list ->
+     Formula.t * (string * Sort.t * int) list
+
+REQUIRES: given formula is in NNF
+ENSURES: resulting formula is Skolemized, and produces the
+         list of Skolem functions/constants. *)
+fun skolem (fm : Formula.t) (fns : (string * Sort.t * int) list)
+  : Formula.t * ((string * Sort.t * int) list) =
+  if Formula.is_exists fm
+  then let val((var as (Term.Var(y,s))), A) = Formula.dest_exists fm;
+           val xs = dedupe(Formula.fv fm);
+           val (const as (f,s')) = variant (if List.null xs
+                                 then ("c_"^y)
+                                 else ("f_"^y))
+                                s
+                                fns;
+           val fx = Term.Fun(f,s,xs);
+       in skolem (Formula.subst var fx A) ((f,s',length xs)::fns) end
+  else if Formula.is_forall fm
+  then let val (x, A) = Formula.dest_forall fm;
+           val (A', fns') = skolem A fns;
+       in (Formula.mk_forall(x, A'), fns') end
+  else if Formula.is_and fm
+  then let val (A,B) = Formula.dest_and fm
+       in skolem2 Formula.mk_and (A,B) fns end
+  else if Formula.is_or fm
+  then let val (A,B) = Formula.dest_or fm
+       in skolem2 Formula.mk_or (A,B) fns end
+  else (fm,fns)
+and skolem2 conn (A,B) fns =
+    let val (A',fns') = skolem A fns;
+        val (B',fns'') = skolem B fns';
+    in (conn(A', B'), fns'') end;
+@
+
+\begin{node}
+We also want to simplify formulas using various identities. The basic
+structure of simplification amounts to performing these
+transformations once using the [[simplify1]] function, and propagate
+them down subformulas using the [[simplify]] function.
+\end{node}
+
+<<Simplify formulas using classical tautologies>>=
+local
+  fun simplify1 fm =
+    <<Simplify the body of a quantified formula>>
+    <<Simplify double negation>>
+    <<Simplify conjunction>>
+    <<Simplify disjunction>>
+    <<Simplify implication>>
+    <<Simplify logical equivalence>>
+    else fm;
+in
+fun simplify fm =
+  if Formula.is_not fm
+  then let val A = Formula.dest_not fm
+       in simplify1(Formula.mk_not(simplify A)) end
+  else if Formula.is_and fm
+  then let val (A,B) = Formula.dest_and fm
+       in simplify1(Formula.mk_and(simplify A,simplify B)) end
+  else if Formula.is_or fm
+  then let val (A,B) = Formula.dest_or fm
+       in simplify1(Formula.mk_or(simplify A,simplify B)) end
+  else if Formula.is_imp fm
+  then let val (A,B) = Formula.dest_imp fm
+       in simplify1(Formula.mk_imp(simplify A,simplify B)) end
+  else if Formula.is_iff fm
+  then let val (A,B) = Formula.dest_iff fm
+       in simplify1(Formula.mk_iff(simplify A,simplify B)) end
+  else if Formula.is_exists fm
+  then let val (x,A) = Formula.dest_exists fm
+       in simplify1(Formula.mk_exists(x, simplify A)) end
+  else if Formula.is_forall fm
+  then let val (x,A) = Formula.dest_forall fm
+       in simplify1(Formula.mk_forall(x, simplify A)) end
+  else fm (* falsum or predicates are already simplified *)
+end;
+@ 
+
+\begin{node}
+We simplify $\forall x\ldotp A[x]$ by simplifying $A[x]$ to $A'[x]$
+(whatever that might be), then returning $\forall x\ldotp A'[x]$.
+Similar simplification applies to existentially quantified formulas.
+\end{node}
+
+<<Simplify the body of a quantified formula>>=
+if Formula.is_forall fm
+then let val (x,A) = Formula.dest_forall fm
+     in if List.exists (Term.eq x) (Formula.fv A)
+        then fm
+        else A
+     end
+else if Formula.is_exists fm
+then let val (x,A) = Formula.dest_exists fm
+     in if List.exists (Term.eq x) (Formula.fv A)
+        then fm
+        else A
+     end
+@
+
+\begin{node}
+We simplify $\neg\neg A$ to be just $A$.
+\end{node}
+
+<<Simplify double negation>>=
+else if Formula.is_not fm
+then let val A = Formula.dest_not fm
+     in if Formula.is_not A
+        then Formula.dest_not A
+        else fm
+     end
+@
+
+\begin{node}
+We simplify $\bot\land B$ and $A\land\bot$ to $\bot$. In the cases
+where neither conjunct is falsum: 
+$\top\land B$ (i.e., $A=\top$) simplifies to $B$, and $A\land\top$
+(i.e., $B=\top$) simplifies to $A$.
+\end{node}
+
+<<Simplify conjunction>>=
+else if Formula.is_and fm
+then let val (A,B) = Formula.dest_and fm
+     in if Formula.is_falsum A orelse Formula.is_falsum B
+        then Formula.mk_falsum ()
+        else if Formula.is_verum A
+        then B
+        else if Formula.is_verum B
+        then A
+        else fm
+     end
+@
+
+\begin{node}
+We simplify $\bot\lor A$ and $A\lor\bot$ to $A$, and $\top\lor A$
+and $A\lor\top$ to $\top$. Otherwise we don't touch the formula.
+\end{node}
+
+<<Simplify disjunction>>=
+else if Formula.is_or fm
+then let val (A,B) = Formula.dest_or fm
+     in if Formula.is_falsum A orelse Formula.is_verum B
+        then B
+        else if Formula.is_falsum B orelse Formula.is_verum A
+        then A
+        else fm
+     end
+@
+
+\begin{node}
+We simplify $\bot\implies A$ and $A\implies\top$ both to just $\top$.
+We similarly simplify $\top\implies B$ to just $B$. Otherwise we leave
+the formula alone.
+\end{node}
+
+<<Simplify implication>>=
+else if Formula.is_imp fm
+then let val (A,B) = Formula.dest_imp fm
+     in if Formula.is_falsum A orelse Formula.is_verum B
+        then Formula.mk_verum ()
+        else if Formula.is_verum A
+        then B
+        else fm
+     end
+@ 
+
+\begin{node}
+We simplify $A\iff B$ according to the following rules:
+\begin{enumerate}
+\item $\top\iff B$ becomes $B$
+\item $A\iff\top$ becomes $A$
+\item $\bot\iff B$ becomes $\neg B$
+\item $A\iff\bot$ becomes $\neg A$
+\end{enumerate}
+Otherwise, we just leave the formula alone.
+\end{node}
+
+<<Simplify logical equivalence>>=
+else if Formula.is_iff fm
+then let val (A,B) = Formula.dest_iff fm
+     in if Formula.is_verum A
+        then B
+        else if Formula.is_verum B
+        then A
+        else if Formula.is_falsum A
+        then Formula.mk_not B
+        else if Formula.is_falsum B
+        then Formula.mk_not A
+        else fm
+     end
+@ 
+
+\begin{node}
+Skolemization then applies the algorithm to replace existentially
+quantified variables with skolem constants, to the negation normal
+form of the given formula (after simplifying the formula).
+\end{node}
+
+<<Skolemization>>=
+<<Skolemize a formula>>
+
+(* askolemize : Formula.t -> Formula.t
+
+REQUIRES: The given formula is a closed formula.
+ENSURES: The resulting formula is in Negation Normal Form with
+         all existential quantifiers replaced by Skolem
+         functions/constants. *)
+fun askolemize fm =
+  let val (result, _) = skolem (nnf(simplify(fm))) (functions fm)
+  in result end;
+@
+
+\section{Tableaux}
+
+\begin{node}
+Most tableaux methods follows \leanTAP's algorithm~\cite{beckert1995leantap}.
+The basic tableaux method works as follows:
+\begin{enumerate}
+\item for $A\land B$, separately assume $A$ and $B$; this amounts to
+  working through $A$, then working through $B$, then working through
+  the remaining unexplored subformulas.
+\item for $A\lor B$, we ``branch'' --- that is to say, we perform two
+  separate refutations, one for $A$, and another for $B$;
+\item for $\forall x\ldotp A[x]$, introduce a fresh variable $y$ and
+  assume $A[y]$, but we keep the original $\forall x\ldotp A[x]$
+  in case multiple instances are needed.
+\item for a literal $L$, try to refute it based on the literals
+  already encountered (which is the only way to close the branch);
+  otherwise, we add $L$ to the ``database'' of
+  literals, and look at the next unexpanded formula.
+\end{enumerate}
+There is no ordering to the subformulas being explored. Smullyan noted
+that it's probably more optimal to explore the conjunctions first,
+then the disjunctions. This would probably be low hanging fruit.
+\end{node}
+
+<<Tableau method>>=
+fun tryfind f [] = raise Fail "tryfind"
+  | tryfind f (x::xs) = (f x
+                         handle _ => tryfind f xs);
+
+(* tableau : (Formula.t list * Formula.t list * int) ->
+                (Unif.Env.t * int -> 'a) ->
+                Unif.Env.t * int -> 'a *)
+fun tableau (fms, lits, n) (cont : Unif.Env.t * int -> 'a) (env, k) =
+  if n < 0 then raise Fail "no proof at this level"
+  else
+    (case fms of
+      [] => raise Fail "tableau: no proof"
+    | (phi::unexp) =>
+        if Formula.is_and phi
+        then let val (A,B) = Formula.dest_and phi
+             in tableau (A::B::unexp,lits,n) cont (env, k) end
+        else if Formula.is_or phi
+        then let val (A,B) = Formula.dest_or phi
+             in tableau (A::unexp,lits,n)
+                        (tableau (B::unexp,lits,n) cont)
+                        (env, k)
+             end
+        else if Formula.is_forall phi
+        then let val(x,A) = Formula.dest_forall phi;
+                 val y = Term.Var("_"^(Int.toString k), Term.sort(x));
+                 val A' = Formula.subst x y A;
+             in tableau (A'::unexp@[Formula.mk_forall(x,A)],lits,n-1) cont (env, k+1) end
+        else
+         (tryfind (fn l => cont(Unif.y_complements env (phi,l),k))
+                  lits
+         handle _ => tableau(unexp,phi::lits,n) cont (env,k)));
+@ 
+
+\begin{node}
+The basic idea is to proving a formula $\phi$ classically with method
+of tableaux amounts to refuting $\neg\phi$ with tableaux. We need to
+universally quantify free variables, then negate the result, then
+Skolemize the result, before applying the tableaux method.
+\end{node}
+
+<<Tableaux refutation>>=
+fun deepen f n maxiter =
+  (print("Searching with depth limit "^
+         (Int.toString n)^"\n");
+   f n)
+  handle (Fail _) => if n < maxiter then deepen f (n + 1) maxiter
+                     else raise Fail "maximum iterations encountered";
+
+local
+  fun id x = x;
+in
+fun tabrefute fms maxiter =
+  deepen (fn n =>
+             (tableau (fms,[],n)
+                      id
+                      (Unif.Env.undefined (),0);
+              n))
+         0
+         maxiter
+end;
+@ 
+
+\begin{node}
+We can combine everything to give the user [[Classical.tab]], which
+attempts to prove the validity of the given formula by refuting its
+negation. The integer parameter supplied limits the number of
+iterations performed, to guarantee it will terminate.
+
+One possibly optimization is to transform the Skolemized formula into
+Disjunctive normal form, then applying the tableaux method to each
+disjunct.
+\end{node}
+
+<<Tableaux refuter>>=
+<<Tableau method>>
+
+<<Tableaux refutation>>
+
+(* generalize : Formula.t -> Formula.t *)
+fun generalize fm =
+  List.foldr Formula.mk_forall fm (dedupe (Formula.fv fm));
+
+fun tab fm maxiter =
+  let val fm' = askolemize(Formula.mk_not(generalize fm))
+  in if Formula.is_falsum fm' then 0
+     else tabrefute [fm'] maxiter
+  end;
+@ %def Classical.tab
+
+\begin{node}
+As a couple of unit tests, we should check that the simpler problems
+found in Pelletier's problem set ``work''.
+\end{node}
+
+<<Unit tests for [[Classical]]>>=
+local
+  val A = Formula.mk_pred("A", []);
+  val B = Formula.mk_pred("B", []);
+  infixr ==> <=>;
+  fun (p ==> q) = Formula.mk_imp(p, q);
+  fun (p <=> q) = Formula.mk_iff(p, q);
+  infixr &;
+  fun (p & q) = Formula.mk_and(p, q);
+
+  fun ~ p = Formula.mk_not(p);
+
+  fun exists(x, p) = Formula.mk_exists(x, p);
+  fun all(x, p) = Formula.mk_forall(x, p);
+in
+val p1 = Classical.tab ((A ==> B) <=> ((~ B) ==> (~ A))) 1;
+val p2 = Classical.tab ((~(~ A)) <=> A) 1;
+val p3 = Classical.tab ((~(A ==> B)) ==> (A ==> B)) 1;
+val p4 = Classical.tab (((~ A) ==> B) <=> ((~ B) ==> A)) 1;
+val p5 = Classical.tab (Formula.mk_or(A, ~ A)) 1;
+
+(* Expected: 2 iterations *)
+val p18 = let val x = Term.Var("x",Sort.IND);
+    val y = Term.Var("y",Sort.IND);
+    fun P t = Formula.mk_pred("P", [t]);
+in Classical.tab (exists(y, all(x, (P y) ==> (P x)))) 3 end;
+
+(* expected: 2 iteration *)
+val p19 =
+  let val x = Term.Var("x",Sort.IND);
+      val y = Term.Var("y",Sort.IND);
+      val z = Term.Var("z",Sort.IND);
+      fun P t = Formula.mk_pred("P", [t]);
+      fun Q t = Formula.mk_pred("Q", [t]);
+  in Classical.tab (exists(x,
+                           all(y,
+                               all(z, ((P y) ==> (Q z)) ==> (P x) ==> (Q x)))))
+                   3
+  end;
+
+end;
+@
+
+\begin{node}
+I am curious whether the claim ``$\forall x\ldotp x=0\lor\exists
+y,z\ldotp x=(y,z)$'' is provable in $FS_{0}$. The relevant axioms
+conjoined together as the premises for the claim:
+\begin{multline*}
+(\forall x_{1},x_{2}\ldotp 0\neq(x_{1},x_{2}))\land
+(\forall x_{3},x_{4}\ldotp P_{1}(x_{3},x_{4})=x_{3})\land
+(\forall x_{4},x_{6}\ldotp P_{2}(x_{5},x_{6})=x_{6})\land\\
+(0\in U)\land(\forall x_{7},x_{8}\ldotp x_{7}\in U\land x_{8}\in U\implies (x_{7},x_{8})\in U)\land\\
+(\forall X\ldotp 0\in X\land\forall x_{9},x_{10}\ldotp(x_{9}\in X\land x_{10}\in X\implies(x_{9},x_{10})\in X)\implies\forall x_{11}\ldotp x_{11}\in X)\\
+(\forall t_{1},t_{2}\ldotp t_{1}=t_{2}\implies t_{2}=t_{1})\land(\forall t_{3},t_{4},t_{5}\ldotp t_{3}=t_{4}\land t_{4}=t_{5}\implies t_{3}=t_{5})\\
+(\forall t_{6},t_{7},f\ldotp t_{6}=t_{7}\implies ft_{6}=ft_{7})\implies\\
+  \implies(\forall x_{12}\ldotp 0=x_{12}\lor\exists x_{13},x_{14}\ldotp x_{12}=(x_{13},x_{14}))
+\end{multline*}
+The Skolemized version of this formula is
+\begin{align*}
+(\forall x_{1},x_{2}\ldotp 0\neq(x_{1},x_{2}))\land\\
+(\forall x_{3},x_{4}\ldotp P_{1}(x_{3},x_{4})=x_{3})\land\\
+(\forall x_{4},x_{6}\ldotp P_{2}(x_{5},x_{6})=x_{6})\land\\
+(0\in U)\land\\
+  (\forall x_{7},x_{8}\ldotp x_{7}\notin U\lor x_{8}\notin U\lor(x_{7},x_{8})\in U)\land\\
+(0\notin X\lor\bigl(f_{x}(X)\in X\land f_{y}(X)\in X\land(f_{x}(X),f_{y}(X))\notin X\bigr)\lor(\forall x\ldotp x\in X))\land\\
+  (\forall t_{1},t_{2}\ldotp t_{1}\neq t_{2}\lor t_{2}=t_{1})\land\\
+  (\forall t_{3},t_{4},t_{5}\ldotp t_{3}\neq t_{4}\lor t_{4}\neq t_{5}\lor t_{3}=t_{5})\land\\
+(\forall t_{6},t_{7},f\ldotp t_{6}\neq t_{7}\lor ft_{6}=ft_{7})\land\\
+  \land(0\neq c_{x_{12}}\land\forall x_{13},x_{14}\ldotp c_{x_{12}}\neq(x_{13},x_{14}))
+\end{align*}
+
+
+
+%% And(
+%%   And(Forall(Var(x1, IND), Forall(Var(x2, IND), Not(Pred(=[Fun(cons, IND, [Var(x1, IND), Var(x2, IND)]), Fun(0, IND, [])])))),
+%%   And(Forall(Var(x3, IND), Forall(Var(x4, IND), Pred(=[Fun(apply, IND, [Fun(P1, FUN, []), Fun(cons, IND, [Var(x3, IND), Var(x4, IND)])]), Var(x3, IND)]))),
+%%   And(Forall(Var(x5, IND), Forall(Var(x6, IND), Pred(=[Fun(apply, IND, [Fun(P2, FUN, []), Fun(cons, IND, [Var(x5, IND), Var(x6, IND)])]), Var(x6, IND)]))),
+%%   And(Pred(in[Fun(0, IND, []), Fun(U, CLASS, [])]),
+%%   And(Forall(Var(x7, IND), Forall(Var(x8, IND), Or(Or(Not(Pred(in[Var(x7, IND), Fun(U, CLASS, [])])), Not(Pred(in[Var(x8, IND), Fun(U, CLASS, [])]))), Pred(in[Fun(cons, IND, [Var(x7, IND), Var(x8, IND)]), Fun(U, CLASS, [])])))),
+%%   And(Forall(Var(X, CLASS), Or(Or(Not(Pred(in[Fun(0, IND, []), Var(X, CLASS)])), And(And(Pred(in[Fun(f_x, IND, [Var(X, CLASS)]), Var(X, CLASS)]), Pred(in[Fun(f_y, IND, [Var(X, CLASS)]), Var(X, CLASS)])), Not(Pred(in[Fun(cons, IND, [Fun(f_x, IND, [Var(X, CLASS)]), Fun(f_y, IND, [Var(X, CLASS)])]), Var(X, CLASS)])))), Forall(Var(x, IND), Pred(in[Var(x, IND), Var(X, CLASS)])))),
+%%   And(Forall(Var(x9, IND), Forall(Var(x10, IND), Or(Not(Pred(=[Var(x9, IND), Var(x10, IND)])), Pred(=[Var(x10, IND), Var(x9, IND)])))),
+%%   And(Forall(Var(x12, IND), Forall(Var(x13, IND), Forall(Var(x11, IND), Or(Or(Not(Pred(=[Var(x11, IND), Var(x12, IND)])), Not(Pred(=[Var(x12, IND), Var(x13, IND)]))), Pred(=[Var(x11, IND), Var(x13, IND)]))))),
+%%       Forall(Var(x15, IND), Forall(Var(f, FUN), Forall(Var(x14, IND), Or(Not(Pred(=[Var(x14, IND), Var(x15, IND)])), Pred(=[Fun(apply, IND, [Var(f, FUN), Var(x14, IND)]), Fun(apply, IND, [Var(f, FUN), Var(x15, IND)])]))))))))))))), 
+%% And(Not(Pred(=[Fun(0, IND, []), Fun(c_x16, IND, [])])),
+%%     Forall(Var(x17, IND), Forall(Var(x18, IND), Not(Pred(=[Fun(c_x16, IND, []), Fun(cons, IND, [Var(x17, IND), Var(x18, IND)])]))))))
+\end{node}

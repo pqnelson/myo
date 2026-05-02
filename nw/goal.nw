@@ -1,0 +1,334 @@
+% -*- mode: poly-noweb; noweb-code-mode: sml-mode; -*-
+%%
+%% goal.nw
+%% 
+%% Made by Alex Nelson <pqnelson@gmail.com>
+%% Login   <alex@lisp>
+%% 
+%% Started on  2026-04-09T15:40:57-0700
+%% Last update 2026-04-09T15:40:57-0700
+%% 
+
+\section{Tactics and goals}
+
+\begin{node}
+The idea behind LCF-style provers is that we can use
+inference rules as the ``smart constructors'' for abstract theorem
+objects. This is great, it ensures ``correctness by construction''.
+But Robin Milner~\cite{milner1984use} realized we can also program ``tactics'' to prove theorems for us.
+
+Remember, for natural deduction proofs, it is more ``natural'' to read
+the proof from the bottom up. It is also more ``natural'' to
+\emph{construct} natural deduction proofs this way.
+
+We abstract the notion of a ``proof obligation'' or ``proof goal'' as
+a \define{Goal}. This is the ``bottom'' of the natural deduction
+proof. 
+
+We then describe the idea of applying inference rules ``backwards''
+(i.e., from the bottom of the proof upwards) as \define{Tactics}. When
+an inference rule has multiple premises, this amounts to requiring the
+user prove several subgoals. We will keep a stack (in the computer
+science sense of the term) of subgoals.
+
+Goals will also be given the ``justification'' function, which
+essentially says ``If you give me theorems for the subgoals, I will
+return to you a theorem establishing the proof obligation at this point.''
+We should view this as ``going back down'' the natural deduction proof
+using inference rules (or some derived inference rules).
+\end{node}
+
+<<Goal.sig>>=
+signature Goal = sig
+  exception Unsolved of string;
+  exception Mismatch of string;
+  
+  type t = { goals : ((string * Formula.t) list * Formula.t) list,
+             justify : Thm.t list -> Thm.t };
+
+  val subgoals : t -> ((string * Formula.t) list * Formula.t) list;
+
+  val justify : t -> Thm.t list -> Thm.t;
+  
+  val to_string : t -> string;
+
+  val setup : Formula.t -> t;
+
+  val extract_thm : t -> Thm.t;
+end;
+@
+
+<<Goal.sml>>=
+structure Goal : Goal = struct
+exception Unsolved of string;
+exception Mismatch of string;
+
+type t = { goals : ((string * Formula.t) list * Formula.t) list,
+           justify : Thm.t list -> Thm.t };
+
+fun subgoals ({goals, ...}) = goals;
+
+fun justify ({justify=jfn, ...}) = jfn;
+
+local
+  fun single (asl, fm) =
+    (String.concatWith
+       ", "
+       (map (fn (label, p) =>
+                if "" = label then Formula.serialize p
+                else "\""^label^"\": "^(Formula.serialize p))
+            asl)) ^
+    (if (List.null asl) then "|- "
+     else " |- ") ^ 
+    (Formula.serialize fm);
+  fun iter n acc [] = acc
+    | iter n acc ((asl, fm)::gls) =
+        iter (n + 1)
+             (acc ^
+              "Subgoal "^
+              (Int.toString n)^
+              ": " ^
+              (single (asl, fm)) ^"\n")
+             gls;
+in
+fun to_string ({goals, justify}) =
+ (case goals of
+   [] => "No more goals"
+ | [g] => (single g)
+ | (gls) => (iter 1 "" gls))
+end;
+
+(* setup : Formula.t -> Goal.t *)
+fun setup fm =
+  let
+    fun check [thm] =
+      if Formula.eq fm (Thm.concl thm)
+      then thm
+      else raise Mismatch "Goal.setup: wrong theorem"
+  in
+    {goals = [([], fm)],
+     justify = check}
+  end;
+
+(* extract_thm : Goal.t -> Thm.t *)
+fun extract_thm ({goals, justify} : t) = 
+  if List.null goals
+  then justify []
+  else raise Unsolved "Goal.extract_thm: unsolved goals";
+end;
+@ 
+
+\begin{node}
+A tactic is literally an inference rule ``upside down''. For example,
+conjunction-introduction is the rule
+\begin{equation}
+\vcenter{\infer[\land\mbox{-intro}]{\Gamma\vdash A\land B}{\Gamma\vdash A, & \Gamma\vdash B}}
+\end{equation}
+Then the tactic is written with a double inference line
+\begin{equation}
+\vcenter{\infer=[\land\mbox{-intro-tac}]{\Gamma\vdash A, \qquad \Gamma\vdash B}{\Gamma\vdash A\land B}}
+\end{equation}
+It begins with a goal trying to prove $A\land B$ under hypotheses
+$\Gamma$, and breaks it down into two subgoals: try to prove $A$ under
+those hypotheses, and try to prove $B$ under those hypotheses.
+\end{node}
+
+<<Tactic.sig>>=
+signature Tactic = sig
+  type t = Goal.t -> Goal.t;
+
+  val prove : Formula.t -> t list -> Thm.t;
+  
+  <<Specification for tactics>>
+end;
+@ 
+
+<<Tactic.sml>>=
+structure Tactic : Tactic = struct
+type t = Goal.t -> Goal.t;
+
+<<Proving a theorem from tactics>>
+      
+<<Implementation of tactics>>
+
+end;
+@
+
+\begin{node}
+We can then prove a formula using a ``proof'' [[pf]], which is just a
+list of tactics. The only subtlety here is that tactics are literally
+the inference rules backwards, so we need to apply the tactics in
+reverse order.
+\end{node}
+
+<<Proving a theorem from tactics>>=
+local
+  fun tactic_proof (g : Goal.t) pf =
+    Goal.extract_thm(foldr (fn (tac, g') => tac g')
+                           g
+                           pf);
+in
+fun prove (fm : Formula.t) pf =
+  tactic_proof (Goal.setup fm) pf
+end;
+@ %def Tactic.proof
+
+\begin{node}
+When we the current goal requires proving $\Gamma\vdash A\land B$,
+we can transform it into two subgoals: $\Gamma\vdash A$ and
+$\Gamma\vdash B$.
+
+We also need to modify the justification during this step. We are
+stipulating the user will be able to produce these theorems
+$\Gamma\vdash A$ and $\Gamma\vdash B$. Once obtained, we pop them from
+the stack of theorems, then just use the
+[[Thm.and_intro]] inference rule to obtain $\Gamma\vdash A\land B$,
+and push it back onto the stack of theorems. Then we use the
+accumulated justification to prove the original claim.
+\end{node}
+
+<<Specification for tactics>>=
+  val and_intro : t;
+@ 
+
+<<Implementation of tactics>>=
+(* and_intro : Goal.t -> Goal.t *)
+fun and_intro {goals = ((asl, and_p_q)::gls), justify} =
+  let
+    val (p,q) = Formula.dest_and and_p_q;
+    fun jfn' (thp::thq::ths) = justify ((Thm.and_intro thp thq)::ths);
+  in
+    {goals = (asl,p)::(asl,q)::gls,
+     justify = jfn'}
+  end;
+@ %def Tactic.and_intro
+
+\begin{node}
+The $\land$-elimination inference rules, recall, look like:
+\begin{equation}
+\vcenter{\infer[\land\mbox{-elim-l}]{\Gamma\vdash A}{\Gamma\vdash A\land B}}
+\end{equation}
+\begin{equation}
+\vcenter{\infer[\land\mbox{-elim-r}]{\Gamma\vdash B}{\Gamma\vdash A\land B}}
+\end{equation}
+The corresponding tactics would look like:
+\begin{equation}
+\vcenter{\infer=[\land\mbox{-elim-l-tac}(B)]{\Gamma\vdash A\land B}{\Gamma\vdash A}}
+\end{equation}
+\begin{equation}
+\vcenter{\infer=[\land\mbox{-elim-r-tac}(A)]{\Gamma\vdash A\land B}{\Gamma\vdash B}}
+\end{equation}
+These would change the current goal from proving just $\Gamma\vdash A$
+to some conjunction $\Gamma\vdash A\land B$, the user just needs to
+specify what formula $B$ should be included in the conjunction.
+
+Here we can start to collect dividends on placing all our tactics in
+the [[Tactic]] structure, because we don't have to add a [[_tac]] (or
+[[_tactic]]) suffix to these function names. We can mirror the names
+used in the kernel for the inference rules.
+\end{node}
+
+<<Specification for tactics>>=
+  val and_elim_l : Formula.t -> t;
+  val and_elim_r : Formula.t -> t;
+@ 
+
+<<Implementation of tactics>>=
+(* and_elim_l : Formula.t -> Goal.t -> Goal.t *)
+fun and_elim_l B {goals = ((asl, A)::gls), justify} =
+  let
+    val AB = Formula.mk_and(A, B);
+    fun jfn' (thAB::ths) = justify ((Thm.and_elim_l thAB)::ths);
+  in
+    {goals = (asl,AB)::gls,
+     justify = jfn'}
+  end;
+(* and_elim_r : Formula.t -> Goal.t -> Goal.t *)
+fun and_elim_r A {goals = ((asl, B)::gls), justify} =
+  let
+    val AB = Formula.mk_and(A, B);
+    fun jfn' (thAB::ths) = justify ((Thm.and_elim_r thAB)::ths);
+  in
+    {goals = (asl,AB)::gls,
+     justify = jfn'}
+  end;
+@ %def Tactic.and_elim_l Tactic.and_elim_r
+
+\begin{node}
+We had some rules for $\Longrightarrow$-introduction ([[disch]]) and
+elimination ([[modus_ponens]]). For the tactic associated with
+[[disch]], we see it should look like
+\begin{equation}
+\vcenter{\infer=[\texttt{disch}(A)]{A,\Gamma\vdash B}{\Gamma\setminus\{A\}\vdash A\implies B}}
+\end{equation}
+We are adding $A$ as an assumption (where $A$ is determined from the
+current goal $A\implies B$), so we need a label for it.
+\end{node}
+
+<<Specification for tactics>>=
+  val disch : string -> t;
+@ 
+
+<<Implementation of tactics>>=
+fun disch (label : string) {goals = (asl, A_imp_B)::gls,
+                            justify = jfn} =
+  let
+    val (A,B) = Formula.dest_imp(A_imp_B);
+    fun jfn' (th::thms) = jfn ((Thm.disch A th)::thms);
+  in
+    {goals = (((label, A)::asl, B)::gls),
+     justify = jfn'}
+  end;
+@ %def Tactic.disch
+
+\begin{node}
+The [[modus_ponens]] inference rule,
+\begin{equation}
+\vcenter{\infer[\texttt{modus\_ponens}]{\Gamma_{1}\cup\Gamma_{2}\vdash B}{\Gamma_{1}\vdash A\implies B,&\Gamma_{2}\vdash A}}
+\end{equation}
+has a corresponding tactic
+\begin{equation}
+\vcenter{\infer=[\texttt{modus\_ponens}(A)]{\Gamma\vdash A\implies B,\qquad\Gamma\vdash A}{\Gamma\vdash B}}
+\end{equation}
+This changes the goal from trying to prove $\Gamma\vdash B$ to two
+subgoals $\Gamma\vdash A\implies B$ and $\Gamma\vdash A$.
+\end{node}
+
+<<Specification for tactics>>=
+  val modus_ponens : Formula.t -> t;
+@ 
+
+<<Implementation of tactics>>=
+fun modus_ponens A {goals = (asl, B)::gls, justify=jfn} =
+  let
+    val A_imp_B = Formula.mk_imp(A, B);
+    fun jfn' (th_A_imp_B::th_A::thms) =
+      jfn ((Thm.modus_ponens th_A_imp_B th_A)::thms);
+  in
+    {goals = (asl, A_imp_B)::(asl, A)::gls,
+     justify = jfn'}
+  end;
+@ %def Tactic.modus_ponens
+
+
+\begin{node}
+Disjunction elimination is a bit tricky as an inference rule,
+\begin{equation}
+\vcenter{\infer[\lor\mbox{-elim}]{\Gamma_{1}\cup\Gamma_{2}\vdash(A\lor B)\implies C}{\Gamma_{1}\vdash A\implies C,&\Gamma_{2}\vdash B\implies C}}
+\end{equation}
+But as a tactic, we can transform it to:
+\begin{equation}
+\vcenter{\infer=[\lor\mbox{-elim}?]{\Gamma_{1}\vdash A\implies C,\quad\Gamma_{2}\vdash B\implies C}{\Gamma_{1}\cup\Gamma_{2}\vdash(A\lor B)\implies C}}
+\end{equation}
+In practice, we often use the modified inference rule
+\begin{equation}
+\vcenter{\infer[\lor\mbox{-elim}]{\Gamma\vdash C}{\Gamma\vdash A\lor B,&A,\Gamma\vdash C,&B,\Gamma\vdash C}}
+\end{equation}
+This just uses [[Thm.undisch]] on the premises of the usual
+$\lor$-elimination, and adds a premise for the disjunction. Then using
+\textit{modus ponens} and the usual $\lor$-elimination, we obtain our
+new version of $\lor$-elimination.
+
+Why do this? Well, it matches how Mathematicians use
+$\lor$-elimination in practice (as a [[per cases]] argument).
+\end{node}

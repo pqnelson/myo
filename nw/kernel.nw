@@ -1,0 +1,1076 @@
+% -*- mode: poly-noweb; noweb-code-mode: sml-mode; -*-
+%%
+%% kernel.nw
+%% 
+%% Made by Alex Nelson <pqnelson@gmail.com>
+%% Login   <alex@lisp>
+%% 
+%% Started on  2026-04-02T16:30:01-0700
+%% Last update 2026-04-02T16:30:01-0700
+%% 
+
+\section{Kernel}
+
+\begin{node}
+Alright, I will use a natural deduction proof calculus for
+three-sorted Intuitionistic First-Order Logic. In an earlier
+experiment for single-sorted Intuitionistic First-Order Logic, I used
+a Hilbert proof calculus with a natural deduction judgement (I
+``hardcoded'' the Deduction theorem into it). But this also required
+some tedious work to eliminate (and introduce) logical connectives,
+which could be streamlined with natural deduction.
+\end{node}
+
+<<Thm.sig>>=
+signature Thm = sig
+  exception Fail of string;
+  type t;
+  val hyps : t -> Formula.t list;
+  val concl : t -> Formula.t;
+  val mk_axiom : Formula.t -> t; (* danger! *)
+
+  <<Specification for inference rules>>
+
+  <<Specification for $FS_{0}$ axioms>>
+  (* Database of axioms
+  structure State : sig
+              type t;
+              val add_axiom : t -> string -> Formula.t -> t;
+            end;x
+   *)
+end
+@
+
+\begin{node}
+We start off with an infixed operator approximating the turnstile.
+\end{node}
+
+<<Thm.sml>>=
+structure Thm :> Thm = struct
+exception Fail of string;
+
+infix |-;
+datatype t = |- of (Formula.t list) * Formula.t;
+
+fun hyps (Gamma |- _) = Gamma;
+
+fun concl (_ |- phi) = phi;
+
+fun mk_axiom phi = ([] |- phi); 
+
+<<Inference rules>>
+
+<<Axioms for $FS_{0}$>>
+end;
+@ %def Thm.t Thm.hyps Thm.concl Thm.mk_axiom
+
+\begin{node}
+We need some helper functions for taking the union of hypotheses
+$\Gamma_{1}\cup\Gamma_{2}$ (implemented as ``[[Gamma1 @@ Gamma2]]'')
+and removing hypotheses $\Gamma\setminus\{\phi\}$ (implemented as``[[remove phi Gamma]]'').
+I think a slightly more optimized version would sort the hypotheses,
+to remove duplicate entries faster. But this would add
+an additional $\mathcal{O}(n\log n)$ runtime to each invocation.
+\end{node}
+
+<<Inference rules>>=
+infix @@
+fun [] @@ ys = ys
+  | xs @@ [] = xs
+  | xs @@ ys = xs @ ys;
+
+fun remove phi Gamma =
+  List.filter (not o (Formula.eq phi)) Gamma;
+@ %def @@ remove
+
+\begin{node}
+We have the inference rules related to assumptions:
+\begin{equation}
+\vcenter{\infer[\texttt{assume}(\phi,\Gamma)]{\phi,\Gamma\vdash\phi}{}}
+\end{equation}
+\begin{equation}
+\vcenter{\infer[\texttt{disch}(\phi)]{\Gamma\setminus\{\phi\}\vdash\phi\implies\psi}{\Gamma\vdash\psi,&\phi\in\Gamma}}
+\end{equation}
+\begin{equation}
+\vcenter{\infer[\texttt{undisch}]{\phi,\Gamma\vdash\psi}{\Gamma\vdash\phi\implies\psi}}
+\end{equation}
+\begin{equation}
+\vcenter{\infer[\texttt{modus\_ponens}]{\Gamma_{1}\cup\Gamma_{2}\vdash\psi}{\Gamma_{1}\vdash\phi\implies\psi,&\Gamma_{2}\vdash\phi}}
+\end{equation}
+The other inference rules for connectives are straightforward
+``introduction'' and ``elimination'' rules.
+\end{node}
+
+<<Specification for inference rules>>=
+  val assume : Formula.t -> Formula.t list -> t;
+  val disch : Formula.t -> t -> t;
+  val undisch : t -> t;
+  val modus_ponens : t -> t -> t;
+@ 
+<<Inference rules>>=
+fun assume phi Gamma = (phi::Gamma) |- phi;
+
+fun disch phi (Gamma |- psi) = (remove phi Gamma) |- Formula.mk_imp(phi,psi);
+
+fun undisch (Gamma |- A) =
+  if not(Formula.is_imp A)
+  then raise Fail "Thm.undisch: conclusion must be an implication"
+  else let val (phi,psi) = Formula.dest_imp A
+       in (phi::Gamma) |- psi end;
+
+fun modus_ponens (Gamma1 |- imp) (Gamma2 |- phi) =
+  if not(Formula.is_imp imp)
+  then raise Fail "modus_ponens: major premise expected implication"
+  else let
+    val (A, B) = Formula.dest_imp imp
+  in
+    if not(Formula.eq A phi)
+    then raise Fail "modus_ponens: premise does not match argument"
+    else (Gamma1 @@ Gamma2) |- B
+  end;
+@ %def Thm.assume Thm.disch Thm.undisch Thm.modus_ponens
+
+\begin{node}
+The rules for conjunction
+\begin{equation}
+\vcenter{\infer[\land\mbox{-intro}]{\Gamma_{1}\cup\Gamma_{2}\vdash\phi\land\psi}{\Gamma_{1}\vdash\phi,&\Gamma_{2}\vdash\psi}}
+\end{equation}
+\begin{equation}
+\vcenter{\infer[\land\mbox{-elim-l}]{\Gamma\vdash\phi}{\Gamma\vdash\phi\land\psi}}
+\end{equation}
+\begin{equation}
+\vcenter{\infer[\land\mbox{-elim-r}]{\Gamma\vdash\psi}{\Gamma\vdash\phi\land\psi}}
+\end{equation}
+\end{node}
+
+<<Specification for inference rules>>=
+  val and_intro : t -> t -> t;
+  val and_elim_l : t -> t;
+  val and_elim_r : t -> t;
+@ 
+
+<<Inference rules>>=
+fun and_intro (Gamma1 |- phi) (Gamma2 |- psi) =
+  (Gamma1 @@ Gamma2) |- Formula.mk_and(phi, psi);
+
+fun and_elim_l (Gamma |- phi) =
+  if not(Formula.is_and phi)
+  then raise Fail "and_elim_l: expects conjunction"
+  else
+    let val (A,B) = Formula.dest_and phi
+    in Gamma |- A end;
+
+fun and_elim_r (Gamma |- phi) =
+  if not(Formula.is_and phi)
+  then raise Fail "and_elim_r: expects conjunction"
+  else
+    let val (A,B) = Formula.dest_and phi
+    in Gamma |- B end;
+@ %def Formula.and_intro Formula.and_elim_l Formula.and_elim_r
+
+\begin{node}
+Disjunction introduction is straightforward:
+\begin{equation}
+\vcenter{\infer[\lor\mbox{-intro-l}(\phi)]{\Gamma\vdash\phi\lor\psi}{\Gamma\vdash\psi}}
+\end{equation}
+\begin{equation}
+\vcenter{\infer[\lor\mbox{-intro-r}(\psi)]{\Gamma\vdash\phi\lor\psi}{\Gamma\vdash\phi}}
+\end{equation}
+Disjunction elimination requires some explanation. If we have proven
+$\Gamma\vdash A\lor B$ and we want to prove $\Gamma\vdash C$, then we
+just need to establish $\Gamma\vdash A\implies C$ and $\Gamma\vdash B\implies C$.
+In Mizar, these correspond to the two \texttt{suppose} blocks. The
+rule is 
+\begin{equation}
+\vcenter{\infer[\lor\mbox{-elim}]{\Gamma_{1}\cup\Gamma_{2}\vdash(A\lor B)\implies C}{\Gamma_{1}\vdash A\implies C,&\Gamma_{2}\vdash B\implies C}}
+\end{equation}
+If any of the premises mismatch each other (e.g., we have
+$\Gamma_{2}\vdash A'\implies C$ for some $A\neq A'$), then an
+exception is raised.
+\end{node}
+
+<<Specification for inference rules>>=
+  val or_intro_l : Formula.t -> t -> t;
+  val or_intro_r : Formula.t -> t -> t;
+  val or_elim : t -> t -> t;
+@ 
+
+<<Inference rules>>=
+fun or_intro_l A (Gamma |- B) = (Gamma |- Formula.mk_or(A, B))
+
+fun or_intro_r B (Gamma |- A) = (Gamma |- Formula.mk_or(A, B))
+
+fun or_elim (Gamma1 |- A_imp_C) (Gamma2 |- B_imp_C) =
+  if not(Formula.is_imp A_imp_C)
+  then raise Fail "or_elim: first theorem must be an implication"
+  else if not(Formula.is_imp B_imp_C)
+  then raise Fail "or_elim: second theorem must be an implication"
+  else
+    let
+      val (A,C1) = Formula.dest_imp A_imp_C;
+      val (B,C2) = Formula.dest_imp B_imp_C;
+      val A_or_B_imp_C = Formula.mk_imp(Formula.mk_or(A, B), C1);
+    in
+      if not(Formula.eq C1 C2)
+      then raise Fail "or_elim: conclusions of theorems disagree"
+      else (Gamma1 @@ Gamma2) |- A_or_B_imp_C
+    end;
+@ %def Thm.or_elim Thm.or_intro_l Thm.or_intro_r
+
+\begin{node}
+Negation-related rules
+\begin{equation}
+\vcenter{\infer[\neg\mbox{-intro}]{\Gamma\vdash\neg\phi}{\Gamma\vdash\phi\implies\bot}}
+\end{equation}
+\begin{equation}
+\vcenter{\infer[\neg\mbox{-elim}]{\Gamma\vdash\phi\implies\bot}{\Gamma\vdash\neg\phi}}
+\end{equation}
+\end{node}
+
+<<Specification for inference rules>>=
+  val not_intro : t -> t;
+  val not_elim : t -> t;
+@
+
+<<Inference rules>>=
+fun not_intro (Gamma |- phi_imp_false) =
+  if not(Formula.is_imp phi_imp_false)
+  then raise Fail "not_intro: theorem is not an implication"
+  else let
+    val (phi, F) = Formula.dest_imp phi_imp_false;
+  in
+    if not(Formula.is_falsum F)
+    then raise Fail "not_intro: theorem is not 'implies falsum'"
+    else Gamma |- Formula.mk_not(phi)
+  end;
+
+fun not_elim (Gamma |- not_phi) =
+  if not(Formula.is_not not_phi)
+  then raise Fail "not_elim: theorem is not a negation"
+  else let
+    val (phi) = Formula.dest_not not_phi;
+  in
+    Gamma |- Formula.mk_imp(phi, Formula.mk_falsum())
+  end;
+@ %def Thm.not_intro Thm.not_elim
+
+\begin{node}
+The Intuitionistic rule for eliminating contradictions
+\begin{equation}
+\vcenter{\infer[\mbox{contr}(\phi)]{\Gamma\vdash\phi}{\Gamma\vdash\bot}}
+\end{equation}
+\end{node}
+
+<<Specification for inference rules>>=
+  val contr : Formula.t -> t -> t;
+@
+
+<<Inference rules>>=
+fun contr phi (Gamma |- falsum) =
+  if not(Formula.is_falsum falsum)
+  then raise Fail "contr: theorem is not falsum"
+  else Gamma |- phi;
+@ %def Thm.contr
+
+\begin{node}
+Biconditionals $A\iff B$ may be viewed as an abbreviation for
+$(A\implies B)\land(B\implies A)$. The introduction and elimination
+rules correspond to the derived rules for the abbreviation.
+\begin{equation}
+\vcenter{\infer[\Leftrightarrow\mbox{-intro}]{\Gamma_{1}\cup\Gamma_{2}\vdash\phi\iff\psi}{\Gamma_{1}\vdash\phi\implies\psi,&\Gamma_{2}\vdash\psi\implies\phi}}
+\end{equation}
+\begin{equation}
+\vcenter{\infer[\Leftrightarrow\mbox{-elim-l}]{\Gamma\vdash\phi\implies\psi}{\Gamma\vdash\phi\iff\psi}}
+\end{equation}
+\begin{equation}
+\vcenter{\infer[\Leftrightarrow\mbox{-elim-r}]{\Gamma\vdash\psi\implies\phi}{\Gamma\vdash\phi\iff\psi}}
+\end{equation}
+\end{node}
+
+<<Specification for inference rules>>=
+  val iff_intro : t -> t -> t;
+  val iff_elim_l : t -> t;
+  val iff_elim_r : t -> t;
+@
+<<Inference rules>>=
+fun iff_intro (Gamma1 |- A_imp_B) (Gamma2 |- B_imp_A) =
+  if not(Formula.is_imp A_imp_B)
+  then raise Fail "iff_intro: first theorem is not an implication"
+  else if not(Formula.is_imp B_imp_A)
+  then raise Fail "iff_intro: second theorem is not an implication"
+  else let
+    val (A1,B1) = Formula.dest_imp(A_imp_B);
+    val (B2,A2) = Formula.dest_imp(B_imp_A);
+  in
+    if not(Formula.eq A1 A2)
+    then raise Fail("iff_intro: premise of first theorem ("^
+                    (Formula.serialize A1)^
+                    ") is not conclusion of second theorem ("^
+                    (Formula.serialize A2)^
+                    ")")
+    else if not(Formula.eq B1 B2)
+    then raise Fail("iff_intro: premise of second theorem ("^
+                    (Formula.serialize B2)
+                    ^") is not conclusion of first theorem ("^
+                    (Formula.serialize B1)
+                    ^")")
+    else (Gamma1 @@ Gamma2) |- Formula.mk_iff(A1,B2)
+  end;
+
+fun iff_elim_l (Gamma |- A_iff_B) =
+  if not(Formula.is_iff A_iff_B)
+  then raise Fail "iff_elim_l: theorem is not an iff"
+  else
+    let val (A,B) = Formula.dest_iff A_iff_B
+    in Gamma |- Formula.mk_imp(A,B) end;
+
+fun iff_elim_r (Gamma |- A_iff_B) =
+  if not(Formula.is_iff A_iff_B)
+  then raise Fail "iff_elim_r: theorem is not an iff"
+  else
+    let val (A,B) = Formula.dest_iff A_iff_B
+    in Gamma |- Formula.mk_imp(B,A) end;
+@ %def Thm.iff_intro Thm.iff_elim_l Thm.iff_elim_r
+
+\begin{node}[Quantifier inference rules]
+We have the inference rule for generalization
+\begin{equation*}
+\vcenter{\infer[\forall\mbox{-intro}(x)]{\Gamma\vdash\forall x\ldotp\phi}{\Gamma\vdash\phi,&x\notin FV(\Gamma)}}
+\end{equation*}
+\end{node}
+
+<<Specification for inference rules>>=
+  val forall_intro : Term.t -> t -> t;
+@
+
+<<Inference rules>>=
+fun forall_intro (x : Term.t) (Gamma |- phi) =
+  if not(Term.is_var x)
+  then raise Fail "forall_intro: x is not a variable"
+  else let fun free_in fm = List.exists (Term.eq x) (Formula.fv fm);
+       in if List.exists free_in Gamma
+          then raise Fail "forall_intro: x is free in hypotheses"
+          else Gamma |- (Formula.mk_forall(x, phi))
+       end;
+@ %def Thm.forall_intro
+
+\begin{node}
+Universal quantifier elimination is quite simple provided $t$ is free
+for $x$ in $\phi[-]$ (i.e., no free variable will become bound in $\phi[t]$):
+\begin{equation}
+\vcenter{\infer[\forall\mbox{-elim}]{\Gamma\vdash\phi[t]}{\Gamma\vdash\forall x\ldotp\phi[x]}}
+\end{equation}
+\end{node}
+
+<<Specification for inference rules>>=
+  val forall_elim : Term.t -> t -> t;
+@
+
+<<Inference rules>>=
+fun forall_elim (t : Term.t) (Gamma |- forall_phi) =
+  if not(Formula.is_forall forall_phi)
+  then raise Fail "forall_elim: theorem is not universally quantified"
+  else let val (x,phi) = Formula.dest_forall forall_phi
+       in if not(Formula.free_for t x phi)
+          then raise Fail "forall_elim: term is not free for conclusion"
+          else Gamma |- (Formula.subst x t phi)
+       end;
+@ %def Thm.forall_elim
+
+\begin{node}\label{node:kernel.nw:existential-introduction}
+Existential introduction has the same proviso as universal quantifier
+elimination:
+\begin{equation}
+\vcenter{\infer[\exists\mbox{-intro}]{\Gamma\vdash\exists x\ldotp\phi[x]}{\Gamma\vdash\phi[t]}}
+\end{equation}
+Well, there is some subtlety with existential introduction. For
+example, $\phi[t]:=(\forall x\ldotp t=x)$ where $x\notin FV(t)$. Then
+$t$ is free for $x$ in $\phi[-]$, but $\exists x\ldotp\phi[x]$ should
+be flagged as problematic.
+
+But this situation should never occur because $\phi[x]:=\forall x\ldotp(x=x)$
+has $\phi[t]=\forall x\ldotp(x=x)$ which is syntactically different
+from $(\forall x\ldotp t=x)$. So an error would be raised, catching
+this situation. We add some useful explanatory text in this situation.
+
+A more helpful thing to do would be to rename the bound variable, so
+as to avoid this collision.
+\end{node}
+
+<<Specification for inference rules>>=
+  val exists_intro : Term.t -> Term.t -> Formula.t -> t -> t;
+@
+
+<<Inference rules>>=
+fun exists_intro (x : Term.t) (t : Term.t) (phi : Formula.t) (Gamma |- phi_t) =
+  if not(Term.is_var(x))
+  then raise Fail "exists_intro: x is not a variable"
+  else if not(Term.have_same_sort x t)
+  then raise Fail "exists_intro: x and t of different sorts"
+  else if not(Formula.eq (Formula.subst x t phi) phi_t)
+  then (if List.exists (Term.eq x) (Formula.bv phi)
+        then raise Fail (
+            concat["exists_intro: conclusion mismatch supplied formula ",
+                   "(probably x is a bound variable with 't' in its scope)"])
+        else raise Fail("exists_intro: conclusion "^
+                        (Formula.serialize phi_t)^
+                        " mismatch supplied formula "^
+                        (Formula.serialize (Formula.subst x t phi))))
+  else if not(Formula.free_for t x phi)
+  then raise Fail "exists_intro: term is not free for var in formula"
+  else Gamma |- (Formula.mk_exists(x, phi))
+@ %def Thm.exists_intro
+
+\begin{node}
+Existential elimination takes the form
+\begin{equation*}
+\vcenter{\infer[\exists\mbox{-elim}(x)]{\Gamma\vdash(\exists x\ldotp\phi)\implies\psi}{\Gamma\vdash\phi\implies\psi,&x\notin FV(\psi),&x\notin FV(\Gamma)}}
+\end{equation*}
+\end{node}
+
+<<Specification for inference rules>>=
+  val exists_elim : Term.t -> t -> t;
+@
+<<Inference rules>>=
+fun exists_elim (x : Term.t) (Gamma |- A_imp_B) =
+  if not(Term.is_var x)
+  then raise Fail "exists_elim: x is not a variable"
+  else if not(Formula.is_imp A_imp_B)
+  then raise Fail "exists_elim: theorem is not an implication"
+  else let val (A,B) = Formula.dest_imp A_imp_B;
+           fun free_in fm = List.exists (fn y => Term.eq x y) (Formula.fv fm);
+       in if free_in B
+          then raise Fail "exists_elim: x is free in conclusion of theorem"
+          else if List.exists free_in Gamma
+          then raise Fail "exists_elim: x is free in hypotheses"
+          else Gamma |- (Formula.mk_imp(Formula.mk_exists(x, A), B))
+       end;
+@ %def Thm.exists_elim
+
+\section*{Axioms}
+
+\begin{node}
+  The initial axioms (written in ``curried'' form with implication
+  taken to be right associative, so $A\implies B\implies C$ means
+  $A\implies(B\implies C)$) taken directly from
+  Feferman's paper~\cite[\S16]{feferman1989finitary}.
+\end{node}
+
+\begin{node}
+We want to avoid the tediousness of invoking $\forall$-elimination,
+which means we want to provide axiom schemes. If the user
+\emph{really} needs these universally quantified, they can use the
+$\forall$-introduction rule.
+\begin{enumerate}
+  \item $\forall x_{1},x_{2}:\textit{Ind}\ldotp (x_{1},x_{2})\neq0$
+  \item $\forall x_{1},x_{2}:\textit{Ind}\ldotp P_{1}(x_{1},x_{2})=x_{1}$
+  \item $\forall x_{1},x_{2}:\textit{Ind}\ldotp P_{2}(x_{1},x_{2})=x_{2}$
+\end{enumerate}
+Care must be taken because [[proj1]] and [[proj2]] are ``eager''
+constructors, so we need to use [[mk_proj1]] and [[mk_proj2]] to state
+the intended axioms.
+\end{node}
+
+<<Specification for $FS_{0}$ axioms>>=
+val axiom_pair : Term.t -> Term.t -> t;
+val axiom_proj1 : Term.t -> Term.t -> t;
+val axiom_proj2 : Term.t -> Term.t -> t;
+@ 
+<<Axioms for $FS_{0}$>>=
+fun axiom_pair x1 x2 =
+  mk_axiom(FS0.not_equal (FS0.pair x1 x2) FS0.zero);
+
+fun axiom_proj1 x1 x2 =
+  mk_axiom(FS0.equal (FS0.mk_proj1 (FS0.pair x1 x2)) x1);
+
+fun axiom_proj2 x1 x2 =
+  mk_axiom(FS0.equal (FS0.mk_proj2 (FS0.pair x1 x2)) x2);
+@ %def Thm.axiom_pair Thm.axiom_proj1 Thm.axiom_proj2
+
+\begin{node}
+The axioms for functions:
+\begin{enumerate}
+\item $Ix=x$
+\item $K(a)x=a$
+\item $x_{1}=x_{2}\implies D(x_{1},x_{2},y_{1},y_{2})=y_{1}$
+\item $x_{1}\neq x_{2}\implies D(x_{1},x_{2},y_{1},y_{2})=y_{2}$
+\item $\neg(\exists x_{1},x_{2},y_{1},y_{2}\ldotp u=(x_{1},x_{2},y_{1},y_{2}))\implies Du=0$
+\end{enumerate}
+Funny enough, Feferman originally intended $D$ to be ``definition by
+cases'', but later~\cite[\S5.3]{feferman1982inductively} its name appeared to change to ``decide''.
+\end{node}
+
+
+<<Specification for $FS_{0}$ axioms>>=
+val axiom_id : Term.t -> t;
+val axiom_const : Term.t -> Term.t -> t;
+val axiom_cond_true : Term.t -> Term.t -> Term.t -> Term.t -> t;
+val axiom_cond_false : Term.t -> Term.t -> Term.t -> Term.t -> t;
+val axiom_cond_err : Term.t -> Term.t -> Term.t -> Term.t -> t;
+@
+<<Axioms for $FS_{0}$>>=
+fun axiom_id x = mk_axiom(FS0.equal (FS0.mk_id x) x);
+
+fun axiom_const a x = mk_axiom(FS0.equal (FS0.app (FS0.const a) x) a);
+
+local
+  fun quad x1 x2 y1 y2 = FS0.pair x1 (FS0.pair x2 (FS0.pair y1 y2));
+in
+fun axiom_cond_true x1 x2 y1 y2 =
+  mk_axiom(Formula.mk_imp(FS0.equal x1 x2,
+                              FS0.equal (FS0.mk_if_eq (quad x1 x2 y1 y2))
+                                        y1));
+fun axiom_cond_false x1 x2 y1 y2 =
+  mk_axiom(Formula.mk_imp(FS0.not_equal x1 x2,
+                              FS0.equal (FS0.mk_if_eq (quad x1 x2 y1 y2))
+                                        y2));
+
+fun axiom_cond_err x1 x2 y1 y2 =
+  let
+    val u = Term.fresh_var "u" Sort.IND ((Term.fv x1) @
+                                         (Term.fv x2) @
+                                         (Term.fv y1) @
+                                         (Term.fv y2));
+    val ex = List.foldr Formula.mk_exists
+                        (FS0.equal u (quad x1 x2 y1 y2))
+                        [x1,x2,y1,y2];
+  in
+    mk_axiom(Formula.mk_imp(Formula.mk_not(ex),
+                            FS0.equal (FS0.mk_if_eq u)
+                                      FS0.zero))
+  end;
+end;
+@ %def Thm.axiom_id Thm.axiom_const Thm.axiom_cond_true Thm.axiom_cond_false Thm.axiom_cond_err
+
+\begin{node}
+The compound function axioms.
+\begin{enumerate}
+\item $\forall f,g,h:\textit{Fun}\ldotp h=\mathcal{P}(f,g)\implies(\forall x:\textit{Ind}\ldotp hx=(fx,gx))$
+\item $\forall f,g,h:\textit{Fun}\ldotp h=\mathcal{C}(f,g)\implies(\forall x:\textit{Ind}\ldotp hx=f(gx))$
+\end{enumerate}
+\end{node}
+
+<<Specification for $FS_{0}$ axioms>>=
+val axiom_juxt : Term.t -> Term.t -> t;
+val axiom_comp : Term.t -> Term.t -> t;
+@ 
+<<Axioms for $FS_{0}$>>=
+fun axiom_juxt f g =
+  let val x = Term.fresh_var "x" Sort.IND ((Term.fv f) @ (Term.fv g))
+  in mk_axiom(Formula.mk_forall(x, FS0.equal (FS0.app (FS0.juxt f g) x)
+                                             (FS0.pair (FS0.app f x)
+                                                       (FS0.app g x))))
+  end;
+
+fun axiom_comp f g =
+  let val x = Term.fresh_var "x" Sort.IND ((Term.fv f) @ (Term.fv g))
+  in mk_axiom(Formula.mk_forall(x, FS0.equal (FS0.app (FS0.comp f g) x)
+                                             (FS0.app f (FS0.app g x))))
+  end;
+@ %def Thm.axiom_juxt Thm.axiom_comp
+
+\begin{node}
+Primitive recursion axioms.
+\begin{enumerate}
+  \item $\forall f,g:\textit{Fun}\ldotp \mathcal{R}(f,g)0=0$
+  \item $\forall f,g:\textit{Fun}\ldotp \forall x:\textit{Ind}\ldotp \mathcal{R}(f,g)(x,0)=fx$
+  \item $\forall f,g:\textit{Fun}\ldotp\forall x,y,z:\textit{Ind}\ldotp \mathcal{R}(f,g)(x,(y,z))=g(x,y,z,\mathcal{R}(f,g)(x,y),\mathcal{R}(f,g)(x,z)))$
+\end{enumerate}
+More generally, Feferman~\cite[\S5.2]{feferman1982inductively} shows
+us how to extend $FS_{0}$ to support a [nonempty] set of
+Urelements $U$, then we need to change the first axiom to something
+like $\mathcal{R}(f_{0},f_{1},g)(x,u)=f_{1}(x,u)=f_{0}u$ and
+$\mathcal{R}(f_{0},f_{1},g)(x,u)=f_{1}(x,u)$ for all $u\in U$, and
+$\mathcal{R}(f_{0},f_{1},g)(x,(y,z))=g(x,y,z,\mathcal{R}(f_{0},f_{1},g)(x,y),\mathcal{R}(f_{0},f_{1},g)(x,z))$. In
+other words, we change the $\mathcal{R}(f,g)0=0$ clause to a more
+general clause.
+\end{node}
+
+<<Specification for $FS_{0}$ axioms>>=
+val axiom_recur_zero : Term.t -> Term.t -> t;
+val axiom_recur_base : Term.t -> Term.t -> t;
+val axiom_recur_rec : Term.t -> Term.t -> t;
+@ 
+<<Axioms for $FS_{0}$>>=
+fun axiom_recur_zero f g =
+  mk_axiom(FS0.equal (FS0.app (FS0.recur f g) FS0.zero)
+                     FS0.zero);
+
+fun axiom_recur_base f g =
+  let val x = Term.fresh_var "x" Sort.IND ((Term.fv f) @ (Term.fv g))
+  in mk_axiom(Formula.mk_forall(x,
+                                FS0.equal (FS0.app (FS0.recur f g)
+                                                   (FS0.pair x FS0.zero))
+                                          (FS0.app f x)))
+  end;
+
+fun axiom_recur_rec f g =
+  let
+    val vars = (Term.fv f) @ (Term.fv g);
+    fun var x = Term.fresh_var x Sort.IND vars;
+    val x = var "x";
+    val y = var "y";
+    val z = var "z";
+    fun h x1 x2 = FS0.app (FS0.recur f g) (FS0.pair x1 x2);
+    val lhs = h x (FS0.pair y z);
+    val args = List.foldr (fn (a,b) => FS0.pair a b)
+                          (h x z)
+                          [x, y, z, (h x y)];
+    val rhs = FS0.app g args;
+    val eq = FS0.equal lhs rhs;
+  in
+    mk_axiom(List.foldr Formula.mk_forall eq [x,y,z])
+  end;
+@ %def Thm.axiom_recur_zero Thm.axiom_recur_base Thm.axiom_recur_rec
+
+\begin{node}
+The class axioms.
+\begin{enumerate}
+  \item $\forall x:\textit{Ind}\ldotp x\in\{0\}\iff x=0$ --- although
+    this could be ``weakened'' to allow any singleton any we'd have
+    $\forall x,y:\textit{Ind}\ldotp x\in\{y\}\iff x=y$
+  \item $\forall A:\textit{Class}\ldotp\forall f:\textit{Fun}\ldotp\forall x:\textit{Ind}\ldotp x\in f^{-1}A\iff fx\in A$
+  \item $\forall A,B : \textit{Class}\ldotp\forall x:\textit{Ind}\ldotp x\in A\cap B\iff x\in A\land x\in B$
+  \item $\forall A,B : \textit{Class}\ldotp\forall x:\textit{Ind}\ldotp x\in A\cup B\iff x\in A\lor x\in B$
+\end{enumerate}
+\end{node}
+
+<<Specification for $FS_{0}$ axioms>>=
+val axiom_singleton : Term.t -> Term.t -> t;
+val axiom_preimage : Term.t -> Term.t -> t;
+val axiom_union : Term.t -> Term.t -> t;
+val axiom_intersection : Term.t -> Term.t -> t;
+@ 
+<<Axioms for $FS_{0}$>>=
+fun axiom_singleton obj elt =
+  mk_axiom(Formula.mk_iff(FS0.In obj (FS0.singleton elt),
+                          FS0.equal obj elt));
+
+fun axiom_preimage f C =
+  let val x = Term.fresh_var "x" Sort.IND ((Term.fv f) @ (Term.fv C))
+  in mk_axiom(Formula.mk_iff(FS0.In x (FS0.preimage f C),
+                             FS0.In (FS0.app f x) C))
+  end;
+
+fun axiom_union A B =
+  let val x = Term.fresh_var "x" Sort.IND ((Term.fv A) @ (Term.fv B))
+  in mk_axiom(Formula.mk_iff(FS0.In x (FS0.union A B),
+                             Formula.mk_or(FS0.In x A,
+                                           FS0.In x B)))
+  end;
+
+fun axiom_intersection A B =
+  let val x = Term.fresh_var "x" Sort.IND ((Term.fv A) @ (Term.fv B))
+  in mk_axiom(Formula.mk_iff(FS0.In x (FS0.intersection A B),
+                             Formula.mk_and(FS0.In x A,
+                                            FS0.In x B)))
+  end;
+@ %def Thm.axiom_singleton Thm.axiom_preimage Thm.axiom_union Thm.axiom_intersection
+
+\begin{node}
+Inductive generation axioms.
+\begin{enumerate}
+  \item $\forall A,B : \textit{Class}\ldotp A\subset \mathcal{I}_{2}(A,B)$
+  \item $\forall A,B : \textit{Class}\ldotp\forall
+    x,y_{1},y_{2}:\textit{Ind}\ldotp (y_{1}\in \mathcal{I}_{2}(A,B)\implies y_{2}\in
+    \mathcal{I}_{2}(A,B)\implies(x,y_{1},y_{2})\in B\implies x\in \mathcal{I}_{2}(A,B))$
+  \item $\forall A,B,C,X : \textit{Class}\ldotp
+    C=\mathcal{I}_{2}(A,B)\implies A\subset X\land(\forall
+    x,y_{1},y_{2}:\textit{Ind}\ldotp (y_{1}\in X\implies y_{2}\in
+    X\implies(x,y_{1},y_{2})\in B\implies x\in X))\implies C\subset X$
+\end{enumerate}
+\end{node}
+<<Specification for $FS_{0}$ axioms>>=
+val axiom_induct_base : Term.t -> Term.t -> t;
+val axiom_induct_gen : Term.t -> Term.t -> t;
+val axiom_induct_min : Term.t -> Term.t -> Term.t -> t;
+@ 
+<<Axioms for $FS_{0}$>>=
+fun axiom_induct_base A B =
+  let val x = Term.fresh_var "x" Sort.IND ((Term.fv A) @ (Term.fv B))
+  in mk_axiom(Formula.mk_forall(x, Formula.mk_imp(FS0.In x A,
+                                                  FS0.In x (FS0.induct A B))))
+  end;
+
+fun axiom_induct_gen A B =
+  let
+    val vars = ((Term.fv A) @ (Term.fv B));
+    fun var x = Term.fresh_var x Sort.IND vars;
+    val x = var "x";
+    val y = var "y";
+    val z = var "z";
+    val C = FS0.induct A B;
+    val triple = FS0.pair x (FS0.pair y z);
+    val p1 = FS0.In y C;
+    val p2 = FS0.In z C;
+    val p3 = FS0.In triple B;
+    val p4 = FS0.In x C;
+    val premises = List.foldr Formula.mk_and p3 [p1, p2];
+    val claim = Formula.mk_imp(premises, p4);
+  in
+    mk_axiom(List.foldr Formula.mk_forall claim [x,y,z])
+  end;
+
+fun axiom_induct_min A B X =
+  let
+    val vars = ((Term.fv A) @ (Term.fv B));
+    fun var x = Term.fresh_var x Sort.IND vars;
+    val x = var "x";
+    val y = var "y";
+    val z = var "z";
+    val p0 = Formula.mk_forall(x, Formula.mk_imp(FS0.In x A,
+                                                 FS0.In x X));
+    val C = FS0.induct A B;
+    val triple = FS0.pair x (FS0.pair y z);
+    val p1 = FS0.In y X;
+    val p2 = FS0.In z X;
+    val p3 = FS0.In triple B;
+    val p4 = FS0.In x X;
+    val premises = List.foldr Formula.mk_and p3 [p1, p2];
+    val claim = Formula.mk_imp(premises, p4);
+    val ind_case = List.foldr Formula.mk_forall claim [x,y,z];
+    val conc = Formula.mk_forall(x, Formula.mk_imp(FS0.In x C,
+                                                   FS0.In x X));
+  in
+    mk_axiom(Formula.mk_imp(Formula.mk_and(p0,ind_case),
+                            conc))
+  end;
+@ %def Thm.axiom_induct_base Thm.axiom_induct_gen Thm.axiom_induct_min
+
+\begin{node}
+We also have induction on the universe.
+\begin{enumerate}
+  \item $\forall X:\textit{Class}\ldotp 0\in X\land(\forall
+    x,y:\textit{Ind}\ldotp(x\in X\implies y\in X\implies(x,y)\in
+    X))\implies(\forall x:\textit{Ind}\ldotp x\in X)$.
+\end{enumerate}
+More generally, as Feferman observed earlier~\cite[\S2.1]{feferman1982inductively}, if we have a [nonempty] set of Urelements $U$, then we
+need to change the premise $0\in X$ to $(\forall u\ldotp u\in U\implies u\in X)$.
+\end{node}
+
+<<Specification for $FS_{0}$ axioms>>=
+val axiom_universe_ind : Term.t -> t;
+@ 
+
+<<Axioms for $FS_{0}$>>=
+fun axiom_universe_ind X =
+  let
+    val vars = (Term.fv X);
+    fun var x = Term.fresh_var x Sort.IND vars;
+    val x = var "x";
+    val y = var "y";
+    val p0 = FS0.In (FS0.zero) X;
+    val claim = Formula.mk_imp(Formula.mk_and(FS0.In x X,
+                                              FS0.In y X),
+                               FS0.In (FS0.pair x y) X);
+    val p1 = List.foldr Formula.mk_forall claim [x,y];
+    val conc = Formula.mk_forall(x, FS0.In x X);
+  in
+    mk_axiom(Formula.mk_imp(Formula.mk_and(p0, p1),
+                            conc))
+  end;
+@ %def Thm.axiom_universe_ind
+
+\begin{node}[Structural induction axioms]
+Feferman implicitly has induction axioms for the three sorts. For
+individuals, this looks like:
+\begin{quote}
+Let $\mathcal{P}[-]$ be a unary predicate of individual-sorted
+terms. Then: $\mathcal{P}[0]\land(\forall x,y\ldotp\mathcal{P}[x]\land\mathcal{P}[y]\implies\mathcal{P}[(x,y)])\land(\forall f,\forall x\ldotp\mathcal{P}[x]\implies\mathcal{P}[f(x)])\implies\forall x\ldotp\mathcal{P}[x]$ 
+where $x$ and $y$ are [fresh] individual-sorted variables and $f$ is a [fresh]
+function-sorted individual.
+\end{quote}
+There are similar induction principles for function-sorted terms and
+class-sorted terms. Formally, the structural induction principle for individuals:
+\begin{equation}
+\begin{split}
+\mathcal{P}[0]&\land(\forall x,y:Ind\ldotp\mathcal{P}[x]\land\mathcal{P}[y]\implies\mathcal{P}[(x,y)])\land\\
+&\land(\forall f:Fun,\forall x:Ind\ldotp\mathcal{P}[x]\implies\mathcal{P}[f(x)])\implies\\
+&\quad\implies(\forall x:Ind\ldotp\mathcal{P}[x])
+\end{split}
+\end{equation}
+First, we will construct a helper function to ensure that we have
+fresh variables used for binding.
+\end{node}
+
+<<Specification for $FS_{0}$ axioms>>=
+val Ind_ind : (Term.t -> Formula.t) -> t;
+@ 
+
+<<Axioms for $FS_{0}$>>=
+<<Fresh variable for a formula>>
+
+(* Ind_ind : (Term.t -> Formula.t) -> Thm.t *)
+fun Ind_ind P = 
+  let
+    val tmp = Term.Var("_", Sort.IND);
+    val x = fresh_var_in "x" Sort.IND (P tmp);
+    val y = fresh_var_in "y" Sort.IND (P x);
+    val f = fresh_var_in "f" Sort.FUN (P x);
+    val base = P (FS0.zero);
+    val pair = Formula.mk_forall(x, Formula.mk_forall(y, Formula.mk_imp(Formula.mk_and(P x, P y),
+                                                                        P (FS0.pair x y))));
+    val app = Formula.mk_forall(f, Formula.mk_forall(x,
+                                                     Formula.mk_imp(P x,
+                                                                    P(FS0.app f x))));
+    val hypo = Formula.mk_and(base, Formula.mk_and(pair,
+                                                   app));
+    val conc = Formula.mk_forall(x, P x);
+  in
+    mk_axiom(Formula.mk_imp(hypo,
+                            conc))
+  end;
+@ %def Thm.Ind_ind
+
+\begin{node}
+Structural induction for function-sorted terms looks like,
+\begin{equation*}
+\begin{split}
+\mathcal{P}[\id]&\land\mathcal{P}[\pi_{1}]\land\mathcal{P}[\pi_{2}]\land\mathcal{P}[D]\land(\forall a:Ind\ldotp\mathcal{P}[K_{a}])\land\\
+&\land(\forall f,g:Fun\ldotp\mathcal{P}[f]\land\mathcal{P}[g]\implies\mathcal{P}[f\circ g])\land\\
+&\land(\forall f,g:Fun\ldotp\mathcal{P}[f]\land\mathcal{P}[g]\implies\mathcal{P}[(f,g)])\land\\
+&\land(\forall f,g:Fun\ldotp\mathcal{P}[f]\land\mathcal{P}[g]\implies\mathcal{P}[\mathcal{R}(f,g)])\implies\\
+&\quad\implies(\forall f:Fun\ldotp\mathcal{P}[f])
+\end{split}
+\end{equation*}
+\end{node}
+
+<<Specification for $FS_{0}$ axioms>>=
+val Fun_ind : (Term.t -> Formula.t) -> t;
+@ 
+
+<<Axioms for $FS_{0}$>>=
+(* Fun_ind : (Term.t -> Formula.t) -> t *)
+fun Fun_ind P =
+  let
+    val tmp = Term.Var("_", Sort.FUN);
+    val a = fresh_var_in "a" Sort.IND (P tmp);
+    val f = fresh_var_in "f" Sort.FUN (P tmp);
+    val g = fresh_var_in "g" Sort.FUN (P tmp);
+    fun ind_case (con : Term.t -> Term.t -> Term.t) =
+      Formula.mk_forall(f, Formula.mk_forall(g, Formula.mk_imp(Formula.mk_and(P f,
+                                                                              P g),
+                                                               P(con f g))));
+    val premises =
+      List.foldr Formula.mk_and
+                 (ind_case FS0.recur)
+                 [P (FS0.id_const),
+                  P (FS0.proj1_const),
+                  P (FS0.proj2_const),
+                  Formula.mk_forall(a, P (FS0.const a)),
+                  ind_case (FS0.comp),
+                  ind_case (FS0.juxt)];
+    val conc = Formula.mk_forall(f, P f);
+  in
+    mk_axiom(Formula.mk_imp(premises,
+                            conc))
+  end;  
+@ %def Thm.Fun_ind
+
+\begin{node}
+Structural induction principle for classes:
+\begin{equation*}
+\begin{split}
+\mathcal{P}[\{0\}]&\land(\forall f:Fun\forall A:Cl\ldotp\mathcal{P}[A]\implies\mathcal{P}[f^{-1}A])\land\\
+&\land(\forall A,B:Cl\ldotp\mathcal{P}[A]\land\mathcal{P}[B]\implies\mathcal{P}[A\cup B])\land\\
+&\land(\forall A,B:Cl\ldotp\mathcal{P}[A]\land\mathcal{P}[B]\implies\mathcal{P}[A\cap B])\land\\
+&\land(\forall A,B:Cl\ldotp\mathcal{P}[A]\land\mathcal{P}[B]\implies\mathcal{P}[I_{2}(A,B)])\implies\\
+&\quad\implies(\forall A:Cl\ldotp\mathcal{P}[A])
+\end{split}
+\end{equation*}
+\end{node}
+
+<<Specification for $FS_{0}$ axioms>>=
+val Class_ind : (Term.t -> Formula.t) -> t;
+@ 
+
+<<Axioms for $FS_{0}$>>=
+(* Class_ind : (Term.t -> Formula.t) -> Thm.t *)
+fun Class_ind P =
+  let
+    val tmp = Term.Var("_", Sort.CLASS);
+    val a = fresh_var_in "a" Sort.IND (P tmp);
+    val f = fresh_var_in "f" Sort.FUN (P tmp);
+    val A = fresh_var_in "A" Sort.CLASS (P tmp);
+    val B = fresh_var_in "B" Sort.CLASS (P tmp);
+    fun ind_case (con : Term.t -> Term.t -> Term.t) =
+      Formula.mk_forall(A, Formula.mk_forall(B, Formula.mk_imp(Formula.mk_and(P A,
+                                                                              P B),
+                                                               P(con A B))));
+    val premises =
+      List.foldr Formula.mk_and
+                 (ind_case (FS0.induct))
+                 [P (FS0.singleton (FS0.zero)),
+                  Formula.mk_forall(f, Formula.mk_forall(A, Formula.mk_imp(P A,
+                                                                           P (FS0.preimage f A)))),
+                  ind_case (FS0.union),
+                  ind_case (FS0.intersection)];
+    val conc = Formula.mk_forall(A, P A);
+  in
+    mk_axiom (Formula.mk_imp(premises, conc))
+  end;
+@ %def Thm.Class_ind
+
+\begin{node}
+We will want to ensure we are working with a fresh identifier. Towards
+that end, we will just accumulate the identifiers for all predicates,
+functions, and terms appearing in a formula, and make sure that the
+proposed variable does not appear in them.
+\end{node}
+
+<<Fresh variable for a formula>>=
+fun fresh_var_in (x : string) (s : Sort.t) (fm : Formula.t) =
+  let
+    fun tm_ident (tm as (Term.Var _)) = [tm]
+      | tm_ident (Term.Fun(f,s0,args)) =
+          (Term.Var(f,s0))::(List.concat(map tm_ident args));
+    fun fm_ident (P : Formula.t) =
+      if Formula.is_pred P
+      then let val (P0,args) = Formula.dest_pred P
+           in (Term.Var(P0,Sort.IND))::(List.concat(map tm_ident args)) end
+      else [];
+    val vars = fm_ident fm;
+  in
+    Term.fresh_var x s vars
+  end;
+@ 
+
+\begin{node}
+We also have set comprehension available for $FS_{0}$, but first-order
+logic is too weak to prove its existence (we cannot quantify over
+formulas, or express as a term parametrized by a formula). Using
+any $\exists^{+}$-formula $\phi$, we can form a set $S_{\phi}$ such
+that if $FV(\phi)\subset\{x_{1},\dots,x_{n}\}$ contain the free
+variables of the formula,
+\begin{equation}
+\vdash(x_{1},\dots,x_{n})\in S_{\phi}\iff\phi.
+\end{equation}
+Normally, we write $S_{\phi}$ using set builder notation $\{(x_{1},\dots,x_{n})\mid\phi\}$.
+We could, ostensibly, prove this in a fragment of second-order logic,
+but that is not available to us. Instead, we need to add this as an
+axiom schema for our proof assistant.
+
+Care must be taken so that the list of variables given $[x_{1},\dots,x_{n}]$
+is transformed into a tuple with the same order $(x_{1},\dots,x_{n})$.
+
+What should happen when $n=0$ variables are given? This would look
+like ``$\{\mid\phi\}$'' where $\phi$ has no free variables (or should not
+have any). We can do two things here: we can raise an exception, or we
+can return the empty set. I'm not sure which should be preferable.
+\end{node}
+
+<<Specification for $FS_{0}$ axioms>>=
+val axiom_class_comp : Formula.t -> Term.t list -> t;
+@ 
+<<Axioms for $FS_{0}$>>=
+(* axiom_class_comp : Formula.t -> Term.t list -> Thm.t *)
+fun axiom_class_comp (P : Formula.t) ([] : Term.t list) =
+      (* return empty set *)
+      (FS0.preimage (FS0.const (FS0.pair FS0.zero FS0.zero))
+                    (FS0.singleton FS0.zero))
+  | axiom_class_comp P ((vars as (h::hs)) : Term.t list) =
+      let
+        fun not_in_vars y = List.all (not o (Term.eq y)) vars;
+        val xs : Term.t = List.foldl (fn (x,acc) => FS0.pair acc x)
+                                     h
+                                     hs;
+        val S = Term.Fun("S_{("^
+                         (String.concatWith "," (map (fn (Term.Var(x,_)) => x)
+                                                     vars))
+                         ^")|"^(Formula.serialize P)^"}",
+                         Sort.CLASS,
+                         []);
+      in
+        if not(Formula.is_e_plus P)
+        then raise Fail("axiom_class_comp: formula is not E+")
+        else if List.exists not_in_vars (Formula.fv P)
+        then raise Fail("axiom_class_comp: not all free variables of predicate "^
+                        "contained in given list of variables")
+        else if List.exists (not o Term.is_var) vars
+        then raise Fail "axiom_class_comp: given list of variables contains a function"
+        else if List.exists (not o Term.is_ind) vars
+        then raise Fail "axiom_class_comp: given list of variables not all individual-sorted"
+        else [] |- (List.foldr Formula.mk_forall
+                               (Formula.mk_iff (FS0.In xs S,
+                                                P))
+                               vars)
+      end;
+@ %def Thm.axiom_class_comp
+
+\begin{node}
+We have extensionality axioms telling us how to prove two functions
+are equal to each other, and how two classes are equal to each other.
+Functions $f$ and $g$ are equal if and only if for any
+individual-sorted term $x$ we have $fx=gx$.
+\end{node}
+<<Specification for $FS_{0}$ axioms>>=
+val axiom_fun_eq : Term.t -> Term.t -> t;
+@
+<<Axioms for $FS_{0}$>>=
+(* axiom_fun_eq : Term.t -> Term.t -> Thm.t *)
+fun axiom_fun_eq lhs rhs =
+  if not(Term.is_fun lhs)
+  then raise Fail "axiom_fun_eq: left-hand side is not a function"
+  else if not(Term.is_fun rhs)
+  then raise Fail "axiom_fun_eq: right-hand side is not a function"
+  else let val vars = (Term.fv lhs)@(Term.fv rhs);
+           val x = Term.fresh_var "x" Sort.IND vars;
+           val iff = Formula.mk_iff;
+           val forall = Formula.mk_forall;
+       in [] |- iff(forall(x, FS0.equal (FS0.app lhs x)
+                                        (FS0.app rhs x)),
+                    FS0.equal lhs rhs)
+       end;
+@ %def Thm.axiom_fun_eq 
+\begin{node}
+Class extensionality should be far more familiar to Mathematicians:
+two classes are equal if and only if they contain the same elements.
+\end{node}
+<<Specification for $FS_{0}$ axioms>>=
+val axiom_class_eq : Term.t -> Term.t -> t;
+@
+<<Axioms for $FS_{0}$>>=
+(* axiom_class_eq : Term.t -> Term.t -> Thm.t *)
+fun axiom_class_eq lhs rhs =
+  if not(Term.is_class lhs)
+  then raise Fail "axiom_class_eq: left-hand side is not a function"
+  else if not(Term.is_class rhs)
+  then raise Fail "axiom_class_eq: right-hand side is not a function"
+  else let val vars = (Term.fv lhs)@(Term.fv rhs);
+           val x = Term.fresh_var "x" Sort.IND vars;
+           val iff = Formula.mk_iff;
+           val forall = Formula.mk_forall;
+       in [] |- iff(forall(x, Formula.mk_iff (FS0.In x lhs,
+                                              FS0.In x rhs)),
+                    (FS0.equal lhs rhs))
+       end;
+@ %def Thm.axiom_class_eq
+
+\begin{problem}[Severe]
+The sentence ``$\forall x\ldotp0=x\lor\bigl(\exists y,z\ldotp x=(y,z)\bigr)$''
+is independent of the axioms of $FS_{0}$.
+\end{problem}
+
+This is more critical than I think most people appreciate, because the
+entire axiomatization of $FS_{0}$ is predicated on the premise that
+every individual-sorted term is either $0$ or else it's an ordered
+pair of individual terms. With that implicit premise removed, you can
+end up in very unpleasant situations with inductive proofs. But you'd
+only realize this if you are foolish enough to use $FS_{0}$ as the
+basis for a proof assistant\dots
+
+Of course, this only matters if you are trying to prove a
+claim of the form $\forall x\ldotp P[x]$ where $P[-]$ is a
+predicate. In practice, this does not really matter since we end up
+proving claims of the form,
+\begin{equation*}
+\forall x\ldotp x\in C\implies P[x].
+\end{equation*}
+This makes the axiom of the universe useful for such purposes.
+
+\begin{problem}[Minor]
+The projection functions are ambiguous on $0$, i.e., $P_{1}0$ and
+$P_{2}0$ are not specified but should be (and a good choice would be
+$P_{1}0=P_{2}0=0$). 
+\end{problem}
+

@@ -1,0 +1,813 @@
+\nwfilename{nw/many-sorted-formula.nw}\nwbegindocs{0}% -*- mode: poly-noweb; noweb-code-mode: sml-mode; -*-% ===> this file was generated automatically by noweave --- better not edit it
+%%
+%% many-sorted-formula.nw
+%% 
+%% Made by Alex Nelson <pqnelson@gmail.com>
+%% Login   <alex@lisp>
+%% 
+%% Started on  2026-04-04T18:49:02-0700
+%% Last update 2026-04-04T18:49:02-0700
+%%
+
+\section{Syntax for formulas}
+
+\begin{node}
+We need to use opaque types for formulas, because we want to use smart
+constructors to ensure quantifiers are given variable {\Tt{}Term.t\nwendquote} instances.
+Otherwise it'd be too easy to accidentally change the sort of a bound
+variable, which will produce bugs later on (bugs that will be
+difficult to trace).
+
+Consequently, we will want to provide \define{Destructuring} functions
+to ``break apart'' the abstract syntax tree for a formula, so we can
+recover its constituent parts. We have one destructuring function for
+each data constructor. If the user mistakenly applies an incorrect
+destructuring formula to a different formula (e.g., {\Tt{}dest{\_}forall\nwendquote}
+applied to an implication), then an exception should be raised. This
+is precisely the {\Tt{}\nwlinkedidentq{Formula.Dest}{NW3w0iRO-2jnj9W-1}\nwendquote} exception's role.
+\end{node}
+
+\nwenddocs{}\nwbegincode{1}\sublabel{NW3w0iRO-5BH7S-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-5BH7S-1}}}\moddef{Formula.sig~{\nwtagstyle{}\subpageref{NW3w0iRO-5BH7S-1}}}\endmoddef\nwstartdeflinemarkup\nwenddeflinemarkup
+signature Formula = sig
+  exception Dest of string;
+  type t;
+  val is_atom : t -> bool;
+  \LA{}Specification for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-1}}\RA{}
+end;
+\nwnotused{Formula.sig}\nwendcode{}\nwbegindocs{2}\nwdocspar
+
+\nwenddocs{}\nwbegincode{3}\sublabel{NW3w0iRO-2jnj9W-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-2jnj9W-1}}}\moddef{Formula.sml~{\nwtagstyle{}\subpageref{NW3w0iRO-2jnj9W-1}}}\endmoddef\nwstartdeflinemarkup\nwenddeflinemarkup
+structure Formula :> Formula = struct
+exception Dest of string;
+
+datatype t = \nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1}
+           | \nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1} of string * Term.t list
+           | \nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1} of t
+           | \nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1} of t * t
+           | \nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1} of t * t
+           | \nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1} of t * t
+           | \nwlinkedidentc{Iff}{NW3w0iRO-2jnj9W-1} of t * t
+           | \nwlinkedidentc{Forall}{NW3w0iRO-2jnj9W-1} of Term.t * t
+           | \nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1} of Term.t * t;
+
+fun is_atom (\nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1}) = true
+  | is_atom (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1} _) = true
+  | is_atom _ = false;
+
+\LA{}Constructors for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-3SlqND-1}}\RA{}
+
+\LA{}Destructors for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-1Yt1Jl-1}}\RA{}
+
+\LA{}Predicates for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-3NyJLv-1}}\RA{}
+
+\LA{}Substitution in a formula~{\nwtagstyle{}\subpageref{NW3w0iRO-1jtQRV-1}}\RA{}
+
+\LA{}Folding formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-1UOPDY-1}}\RA{}
+
+\LA{}Free and bound variables in a formula~{\nwtagstyle{}\subpageref{NW3w0iRO-jRgYZ-1}}\RA{}
+
+\LA{}Check if a formula contains a variable~{\nwtagstyle{}\subpageref{NW3w0iRO-4DOLFK-1}}\RA{}
+
+\LA{}Precedence for connectives~{\nwtagstyle{}\subpageref{NW3w0iRO-3yI6te-1}}\RA{}
+
+\LA{}Comparing formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-35s47m-1}}\RA{}
+
+\LA{}Test if two formulas are equal~{\nwtagstyle{}\subpageref{NW3w0iRO-5gQzE-1}}\RA{}
+
+\LA{}Test a term is free for a variable in a formula~{\nwtagstyle{}\subpageref{NW3w0iRO-ZZefY-1}}\RA{}
+
+\LA{}Test for $E^{+}$-formula~{\nwtagstyle{}\subpageref{NW3w0iRO-1O1TnJ-1}}\RA{}
+
+\LA{}Serialize a formula~{\nwtagstyle{}\subpageref{NW3w0iRO-3H9tUA-1}}\RA{}
+
+\LA{}Take the union of applying a function to atoms~{\nwtagstyle{}\subpageref{NW3w0iRO-28e6MC-1}}\RA{}
+end;
+\nwindexdefn{\nwixident{Formula.Dest}}{Formula.Dest}{NW3w0iRO-2jnj9W-1}\nwindexdefn{\nwixident{Formula.t}}{Formula.t}{NW3w0iRO-2jnj9W-1}\nwindexdefn{\nwixident{False}}{False}{NW3w0iRO-2jnj9W-1}\nwindexdefn{\nwixident{Pred}}{Pred}{NW3w0iRO-2jnj9W-1}\nwindexdefn{\nwixident{Not}}{Not}{NW3w0iRO-2jnj9W-1}\nwindexdefn{\nwixident{And}}{And}{NW3w0iRO-2jnj9W-1}\nwindexdefn{\nwixident{Or}}{Or}{NW3w0iRO-2jnj9W-1}\nwindexdefn{\nwixident{Implies}}{Implies}{NW3w0iRO-2jnj9W-1}\nwindexdefn{\nwixident{Iff}}{Iff}{NW3w0iRO-2jnj9W-1}\nwindexdefn{\nwixident{Forall}}{Forall}{NW3w0iRO-2jnj9W-1}\nwindexdefn{\nwixident{Exists}}{Exists}{NW3w0iRO-2jnj9W-1}\eatline
+\nwnotused{Formula.sml}\nwidentdefs{\\{{\nwixident{And}}{And}}\\{{\nwixident{Exists}}{Exists}}\\{{\nwixident{False}}{False}}\\{{\nwixident{Forall}}{Forall}}\\{{\nwixident{Formula.Dest}}{Formula.Dest}}\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Iff}}{Iff}}\\{{\nwixident{Implies}}{Implies}}\\{{\nwixident{Not}}{Not}}\\{{\nwixident{Or}}{Or}}\\{{\nwixident{Pred}}{Pred}}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW3w0iRO-2jnj9W-1}\nwendcode{}\nwbegindocs{4}\nwdocspar
+\begin{node}
+The canonical contradiction $\bot$ can be constructed, and we can test
+for it. But it does not make sense to ``destructure'' it, so we omit
+its destructor.
+
+The canonical ``tautology'' \textit{verum} $\top$ is an abbreviation
+for $\neg\bot$. Like the canonical contradiction, there's no
+destructuring function for it (it is ``atomic'').
+\end{node}
+
+\nwenddocs{}\nwbegincode{5}\sublabel{NW3w0iRO-2HPkc8-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-1}}}\moddef{Specification for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-5BH7S-1}}\nwprevnextdefs{\relax}{NW3w0iRO-2HPkc8-2}\nwenddeflinemarkup
+val mk_verum : unit -> t;
+val mk_falsum : unit -> t;
+val mk_pred : string * Term.t list -> t;
+\nwalsodefined{\\{NW3w0iRO-2HPkc8-2}\\{NW3w0iRO-2HPkc8-3}\\{NW3w0iRO-2HPkc8-4}\\{NW3w0iRO-2HPkc8-5}\\{NW3w0iRO-2HPkc8-6}\\{NW3w0iRO-2HPkc8-7}\\{NW3w0iRO-2HPkc8-8}\\{NW3w0iRO-2HPkc8-9}\\{NW3w0iRO-2HPkc8-A}\\{NW3w0iRO-2HPkc8-B}\\{NW3w0iRO-2HPkc8-C}\\{NW3w0iRO-2HPkc8-D}\\{NW3w0iRO-2HPkc8-E}\\{NW3w0iRO-2HPkc8-F}\\{NW3w0iRO-2HPkc8-G}\\{NW3w0iRO-2HPkc8-H}}\nwused{\\{NW3w0iRO-5BH7S-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW3w0iRO-2HPkc8-1}\nwendcode{}\nwbegindocs{6}\nwdocspar
+\nwenddocs{}\nwbegincode{7}\sublabel{NW3w0iRO-3SlqND-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-3SlqND-1}}}\moddef{Constructors for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-3SlqND-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwprevnextdefs{\relax}{NW3w0iRO-3SlqND-2}\nwenddeflinemarkup
+fun mk_falsum () = \nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1};
+
+fun mk_verum () = \nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1}(\nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1});
+
+fun mk_pred args = \nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1} args;
+\nwindexdefn{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}{NW3w0iRO-3SlqND-1}\nwindexdefn{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW3w0iRO-3SlqND-1}\nwindexdefn{\nwixident{Formula.mk{\_}verum}}{Formula.mk:unverum}{NW3w0iRO-3SlqND-1}\eatline
+\nwalsodefined{\\{NW3w0iRO-3SlqND-2}\\{NW3w0iRO-3SlqND-3}\\{NW3w0iRO-3SlqND-4}}\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentdefs{\\{{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.mk{\_}verum}}{Formula.mk:unverum}}}\nwidentuses{\\{{\nwixident{False}}{False}}\\{{\nwixident{Not}}{Not}}\\{{\nwixident{Pred}}{Pred}}}\nwindexuse{\nwixident{False}}{False}{NW3w0iRO-3SlqND-1}\nwindexuse{\nwixident{Not}}{Not}{NW3w0iRO-3SlqND-1}\nwindexuse{\nwixident{Pred}}{Pred}{NW3w0iRO-3SlqND-1}\nwendcode{}\nwbegindocs{8}\nwdocspar
+
+\nwenddocs{}\nwbegincode{9}\sublabel{NW3w0iRO-2HPkc8-2}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-2}}}\moddef{Specification for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-5BH7S-1}}\nwprevnextdefs{NW3w0iRO-2HPkc8-1}{NW3w0iRO-2HPkc8-3}\nwenddeflinemarkup
+val dest_pred : t -> string * Term.t list;
+\nwused{\\{NW3w0iRO-5BH7S-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW3w0iRO-2HPkc8-2}\nwendcode{}\nwbegindocs{10}\nwdocspar
+\nwenddocs{}\nwbegincode{11}\sublabel{NW3w0iRO-1Yt1Jl-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-1Yt1Jl-1}}}\moddef{Destructors for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-1Yt1Jl-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwprevnextdefs{\relax}{NW3w0iRO-1Yt1Jl-2}\nwenddeflinemarkup
+fun dest_pred (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1} args) = args
+  | dest_pred _ = raise Dest "dest_pred";
+\nwindexdefn{\nwixident{Formula.dest{\_}pred}}{Formula.dest:unpred}{NW3w0iRO-1Yt1Jl-1}\eatline
+\nwalsodefined{\\{NW3w0iRO-1Yt1Jl-2}\\{NW3w0iRO-1Yt1Jl-3}\\{NW3w0iRO-1Yt1Jl-4}}\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentdefs{\\{{\nwixident{Formula.dest{\_}pred}}{Formula.dest:unpred}}}\nwidentuses{\\{{\nwixident{Pred}}{Pred}}}\nwindexuse{\nwixident{Pred}}{Pred}{NW3w0iRO-1Yt1Jl-1}\nwendcode{}\nwbegindocs{12}\nwdocspar
+\nwenddocs{}\nwbegincode{13}\sublabel{NW3w0iRO-2HPkc8-3}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-3}}}\moddef{Specification for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-5BH7S-1}}\nwprevnextdefs{NW3w0iRO-2HPkc8-2}{NW3w0iRO-2HPkc8-4}\nwenddeflinemarkup
+val is_verum : t -> bool;
+val is_falsum : t -> bool;
+val is_pred : t -> bool;
+\nwused{\\{NW3w0iRO-5BH7S-1}}\nwendcode{}\nwbegindocs{14}\nwdocspar
+\nwenddocs{}\nwbegincode{15}\sublabel{NW3w0iRO-3NyJLv-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-3NyJLv-1}}}\moddef{Predicates for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-3NyJLv-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwprevnextdefs{\relax}{NW3w0iRO-3NyJLv-2}\nwenddeflinemarkup
+fun is_falsum (\nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1}) = true
+  | is_falsum _ = false;
+
+fun is_verum (\nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1}(\nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1})) = true
+  | is_verum _ = false;
+
+fun is_pred (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1} _) = true
+  | is_pred _ = false;
+\nwindexdefn{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}{NW3w0iRO-3NyJLv-1}\nwindexdefn{\nwixident{Formula.is{\_}verum}}{Formula.is:unverum}{NW3w0iRO-3NyJLv-1}\nwindexdefn{\nwixident{Formula.is{\_}pred}}{Formula.is:unpred}{NW3w0iRO-3NyJLv-1}\eatline
+\nwalsodefined{\\{NW3w0iRO-3NyJLv-2}\\{NW3w0iRO-3NyJLv-3}\\{NW3w0iRO-3NyJLv-4}}\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentdefs{\\{{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}}\\{{\nwixident{Formula.is{\_}pred}}{Formula.is:unpred}}\\{{\nwixident{Formula.is{\_}verum}}{Formula.is:unverum}}}\nwidentuses{\\{{\nwixident{False}}{False}}\\{{\nwixident{Not}}{Not}}\\{{\nwixident{Pred}}{Pred}}}\nwindexuse{\nwixident{False}}{False}{NW3w0iRO-3NyJLv-1}\nwindexuse{\nwixident{Not}}{Not}{NW3w0iRO-3NyJLv-1}\nwindexuse{\nwixident{Pred}}{Pred}{NW3w0iRO-3NyJLv-1}\nwendcode{}\nwbegindocs{16}\nwdocspar
+\begin{node}
+Negation is the only unary logical connective. Intuitionistic logic
+can abbreviate negation as ``implies $\bot$''. The advantage to such
+an abbreviation is that negation-introduction and elimination
+inference rules do not need to be present in the kernel. We can
+implement them as derived inference rules, i.e., as functions outside
+the kernel using kernel primitives.
+\end{node}
+
+\nwenddocs{}\nwbegincode{17}\sublabel{NW3w0iRO-2HPkc8-4}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-4}}}\moddef{Specification for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-5BH7S-1}}\nwprevnextdefs{NW3w0iRO-2HPkc8-3}{NW3w0iRO-2HPkc8-5}\nwenddeflinemarkup
+val mk_not : t -> t;
+val dest_not : t -> t;
+val is_not : t -> bool;
+\nwused{\\{NW3w0iRO-5BH7S-1}}\nwendcode{}\nwbegindocs{18}\nwdocspar
+
+\nwenddocs{}\nwbegincode{19}\sublabel{NW3w0iRO-3SlqND-2}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-3SlqND-2}}}\moddef{Constructors for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-3SlqND-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwprevnextdefs{NW3w0iRO-3SlqND-1}{NW3w0iRO-3SlqND-3}\nwenddeflinemarkup
+fun mk_not fm = \nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1} fm;
+\nwindexdefn{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW3w0iRO-3SlqND-2}\eatline
+\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentdefs{\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}}\nwidentuses{\\{{\nwixident{Not}}{Not}}}\nwindexuse{\nwixident{Not}}{Not}{NW3w0iRO-3SlqND-2}\nwendcode{}\nwbegindocs{20}\nwdocspar
+\nwenddocs{}\nwbegincode{21}\sublabel{NW3w0iRO-1Yt1Jl-2}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-1Yt1Jl-2}}}\moddef{Destructors for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-1Yt1Jl-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwprevnextdefs{NW3w0iRO-1Yt1Jl-1}{NW3w0iRO-1Yt1Jl-3}\nwenddeflinemarkup
+fun dest_not (\nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1} fm) = fm
+  | dest_not _ = raise Dest "dest_not";
+\nwindexdefn{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}{NW3w0iRO-1Yt1Jl-2}\eatline
+\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentdefs{\\{{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}}}\nwidentuses{\\{{\nwixident{Not}}{Not}}}\nwindexuse{\nwixident{Not}}{Not}{NW3w0iRO-1Yt1Jl-2}\nwendcode{}\nwbegindocs{22}\nwdocspar
+\nwenddocs{}\nwbegincode{23}\sublabel{NW3w0iRO-3NyJLv-2}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-3NyJLv-2}}}\moddef{Predicates for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-3NyJLv-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwprevnextdefs{NW3w0iRO-3NyJLv-1}{NW3w0iRO-3NyJLv-3}\nwenddeflinemarkup
+fun is_not (\nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1} _) = true
+  | is_not _ = false;
+\nwindexdefn{\nwixident{Formula.is{\_}not}}{Formula.is:unnot}{NW3w0iRO-3NyJLv-2}\eatline
+\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentdefs{\\{{\nwixident{Formula.is{\_}not}}{Formula.is:unnot}}}\nwidentuses{\\{{\nwixident{Not}}{Not}}}\nwindexuse{\nwixident{Not}}{Not}{NW3w0iRO-3NyJLv-2}\nwendcode{}\nwbegindocs{24}\nwdocspar
+\begin{node}
+The binary connectives all have similar constructors, destructors, and
+predicates. A more extensible way to implement formulas would be to
+have a single data constructor for binary connectives with a string
+holding the connective. This is the approach
+Paulson~\cite{paulson1990designing} takes.
+\end{node}
+
+\nwenddocs{}\nwbegincode{25}\sublabel{NW3w0iRO-2HPkc8-5}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-5}}}\moddef{Specification for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-5BH7S-1}}\nwprevnextdefs{NW3w0iRO-2HPkc8-4}{NW3w0iRO-2HPkc8-6}\nwenddeflinemarkup
+val mk_and : t * t -> t;
+val mk_or : t * t -> t;
+val mk_imp : t * t -> t;
+val mk_iff : t * t -> t;
+
+val dest_and : t -> t * t;
+val dest_or : t -> t * t;
+val dest_imp : t -> t * t;
+val dest_iff : t -> t * t;
+
+val is_and : t -> bool;
+val is_or : t -> bool;
+val is_imp : t -> bool;
+val is_iff : t -> bool;
+\nwused{\\{NW3w0iRO-5BH7S-1}}\nwendcode{}\nwbegindocs{26}\nwdocspar
+
+\nwenddocs{}\nwbegincode{27}\sublabel{NW3w0iRO-3SlqND-3}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-3SlqND-3}}}\moddef{Constructors for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-3SlqND-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwprevnextdefs{NW3w0iRO-3SlqND-2}{NW3w0iRO-3SlqND-4}\nwenddeflinemarkup
+fun mk_and args = \nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1} args;
+
+fun mk_or args = \nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1} args;
+
+fun mk_imp args = \nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1} args;
+
+fun mk_iff args = \nwlinkedidentc{Iff}{NW3w0iRO-2jnj9W-1} args;
+\nwindexdefn{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW3w0iRO-3SlqND-3}\nwindexdefn{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}{NW3w0iRO-3SlqND-3}\nwindexdefn{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW3w0iRO-3SlqND-3}\nwindexdefn{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}{NW3w0iRO-3SlqND-3}\eatline
+\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentdefs{\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}}\nwidentuses{\\{{\nwixident{And}}{And}}\\{{\nwixident{Iff}}{Iff}}\\{{\nwixident{Implies}}{Implies}}\\{{\nwixident{Or}}{Or}}}\nwindexuse{\nwixident{And}}{And}{NW3w0iRO-3SlqND-3}\nwindexuse{\nwixident{Iff}}{Iff}{NW3w0iRO-3SlqND-3}\nwindexuse{\nwixident{Implies}}{Implies}{NW3w0iRO-3SlqND-3}\nwindexuse{\nwixident{Or}}{Or}{NW3w0iRO-3SlqND-3}\nwendcode{}\nwbegindocs{28}\nwdocspar
+\nwenddocs{}\nwbegincode{29}\sublabel{NW3w0iRO-1Yt1Jl-3}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-1Yt1Jl-3}}}\moddef{Destructors for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-1Yt1Jl-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwprevnextdefs{NW3w0iRO-1Yt1Jl-2}{NW3w0iRO-1Yt1Jl-4}\nwenddeflinemarkup
+fun dest_and (\nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1} args) = args
+  | dest_and _ = raise Dest "dest_and";
+
+fun dest_or (\nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1} args) = args
+  | dest_or _ = raise Dest "dest_or";
+
+fun dest_imp (\nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1} args) = args
+  | dest_imp _ = raise Dest "dest_imp";
+
+fun dest_iff (\nwlinkedidentc{Iff}{NW3w0iRO-2jnj9W-1} args) = args
+  | dest_iff _ = raise Dest "dest_iff";
+\nwindexdefn{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}{NW3w0iRO-1Yt1Jl-3}\nwindexdefn{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}{NW3w0iRO-1Yt1Jl-3}\nwindexdefn{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}{NW3w0iRO-1Yt1Jl-3}\nwindexdefn{\nwixident{Formula.dest{\_}iff}}{Formula.dest:uniff}{NW3w0iRO-1Yt1Jl-3}\eatline
+\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentdefs{\\{{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}}\\{{\nwixident{Formula.dest{\_}iff}}{Formula.dest:uniff}}\\{{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}}\\{{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}}}\nwidentuses{\\{{\nwixident{And}}{And}}\\{{\nwixident{Iff}}{Iff}}\\{{\nwixident{Implies}}{Implies}}\\{{\nwixident{Or}}{Or}}}\nwindexuse{\nwixident{And}}{And}{NW3w0iRO-1Yt1Jl-3}\nwindexuse{\nwixident{Iff}}{Iff}{NW3w0iRO-1Yt1Jl-3}\nwindexuse{\nwixident{Implies}}{Implies}{NW3w0iRO-1Yt1Jl-3}\nwindexuse{\nwixident{Or}}{Or}{NW3w0iRO-1Yt1Jl-3}\nwendcode{}\nwbegindocs{30}\nwdocspar
+\nwenddocs{}\nwbegincode{31}\sublabel{NW3w0iRO-3NyJLv-3}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-3NyJLv-3}}}\moddef{Predicates for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-3NyJLv-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwprevnextdefs{NW3w0iRO-3NyJLv-2}{NW3w0iRO-3NyJLv-4}\nwenddeflinemarkup
+fun is_and (\nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1} _) = true
+  | is_and _ = false;
+
+fun is_or (\nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1} _) = true
+  | is_or _ = false;
+
+fun is_imp (\nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1} _) = true
+  | is_imp _ = false;
+
+fun is_iff (\nwlinkedidentc{Iff}{NW3w0iRO-2jnj9W-1} _) = true
+  | is_iff _ = false;
+\nwindexdefn{\nwixident{Formula.is{\_}and}}{Formula.is:unand}{NW3w0iRO-3NyJLv-3}\nwindexdefn{\nwixident{Formula.is{\_}or}}{Formula.is:unor}{NW3w0iRO-3NyJLv-3}\nwindexdefn{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}{NW3w0iRO-3NyJLv-3}\nwindexdefn{\nwixident{Formula.is{\_}iff}}{Formula.is:uniff}{NW3w0iRO-3NyJLv-3}\eatline
+\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentdefs{\\{{\nwixident{Formula.is{\_}and}}{Formula.is:unand}}\\{{\nwixident{Formula.is{\_}iff}}{Formula.is:uniff}}\\{{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}}\\{{\nwixident{Formula.is{\_}or}}{Formula.is:unor}}}\nwidentuses{\\{{\nwixident{And}}{And}}\\{{\nwixident{Iff}}{Iff}}\\{{\nwixident{Implies}}{Implies}}\\{{\nwixident{Or}}{Or}}}\nwindexuse{\nwixident{And}}{And}{NW3w0iRO-3NyJLv-3}\nwindexuse{\nwixident{Iff}}{Iff}{NW3w0iRO-3NyJLv-3}\nwindexuse{\nwixident{Implies}}{Implies}{NW3w0iRO-3NyJLv-3}\nwindexuse{\nwixident{Or}}{Or}{NW3w0iRO-3NyJLv-3}\nwendcode{}\nwbegindocs{32}\nwdocspar
+\begin{node}
+Quantifiers are essentially ordered pairs of a {\Tt{}Term.t\nwendquote} variable and
+a formula.
+\end{node}
+
+\nwenddocs{}\nwbegincode{33}\sublabel{NW3w0iRO-2HPkc8-6}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-6}}}\moddef{Specification for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-5BH7S-1}}\nwprevnextdefs{NW3w0iRO-2HPkc8-5}{NW3w0iRO-2HPkc8-7}\nwenddeflinemarkup
+  val mk_forall : Term.t * t -> t;
+  val mk_exists : Term.t * t -> t;
+  
+  val dest_forall : t -> Term.t * t;
+  val dest_exists : t -> Term.t * t;
+
+  val is_forall : t -> bool;
+  val is_exists : t -> bool;
+\nwused{\\{NW3w0iRO-5BH7S-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW3w0iRO-2HPkc8-6}\nwendcode{}\nwbegindocs{34}\nwdocspar
+
+\nwenddocs{}\nwbegincode{35}\sublabel{NW3w0iRO-3SlqND-4}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-3SlqND-4}}}\moddef{Constructors for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-3SlqND-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwprevnextdefs{NW3w0iRO-3SlqND-3}{\relax}\nwenddeflinemarkup
+fun mk_forall (x, fm) =
+  if Term.is_var x then \nwlinkedidentc{Forall}{NW3w0iRO-2jnj9W-1}(x, fm)
+  else raise Fail "mk_forall: Term must be a variable";
+
+fun mk_exists (x, fm) =
+  if Term.is_var x then \nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1}(x, fm)
+  else raise Fail "mk_exists: Term must be a variable";
+\nwindexdefn{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW3w0iRO-3SlqND-4}\nwindexdefn{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW3w0iRO-3SlqND-4}\eatline
+\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentdefs{\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}}\nwidentuses{\\{{\nwixident{Exists}}{Exists}}\\{{\nwixident{Forall}}{Forall}}}\nwindexuse{\nwixident{Exists}}{Exists}{NW3w0iRO-3SlqND-4}\nwindexuse{\nwixident{Forall}}{Forall}{NW3w0iRO-3SlqND-4}\nwendcode{}\nwbegindocs{36}\nwdocspar
+\nwenddocs{}\nwbegincode{37}\sublabel{NW3w0iRO-1Yt1Jl-4}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-1Yt1Jl-4}}}\moddef{Destructors for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-1Yt1Jl-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwprevnextdefs{NW3w0iRO-1Yt1Jl-3}{\relax}\nwenddeflinemarkup
+fun dest_forall (\nwlinkedidentc{Forall}{NW3w0iRO-2jnj9W-1} args) = args
+  | dest_forall _ = raise Dest "dest_forall";
+
+fun dest_exists (\nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1} args) = args
+  | dest_exists _ = raise Dest "dest_exists";
+\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentuses{\\{{\nwixident{Exists}}{Exists}}\\{{\nwixident{Forall}}{Forall}}}\nwindexuse{\nwixident{Exists}}{Exists}{NW3w0iRO-1Yt1Jl-4}\nwindexuse{\nwixident{Forall}}{Forall}{NW3w0iRO-1Yt1Jl-4}\nwendcode{}\nwbegindocs{38}\nwdocspar
+
+\nwenddocs{}\nwbegincode{39}\sublabel{NW3w0iRO-3NyJLv-4}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-3NyJLv-4}}}\moddef{Predicates for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-3NyJLv-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwprevnextdefs{NW3w0iRO-3NyJLv-3}{\relax}\nwenddeflinemarkup
+fun is_forall (\nwlinkedidentc{Forall}{NW3w0iRO-2jnj9W-1} _) = true
+  | is_forall _ = false;
+
+fun is_exists (\nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1} _) = true
+  | is_exists _ = false;
+\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentuses{\\{{\nwixident{Exists}}{Exists}}\\{{\nwixident{Forall}}{Forall}}}\nwindexuse{\nwixident{Exists}}{Exists}{NW3w0iRO-3NyJLv-4}\nwindexuse{\nwixident{Forall}}{Forall}{NW3w0iRO-3NyJLv-4}\nwendcode{}\nwbegindocs{40}\nwdocspar
+
+\begin{node}
+Substitution is defined by the rules:
+\begin{enumerate}
+\item $\bot[t/x]=\bot$
+\item $(P[t_{1},\dots,t_{n}])[t/x] = P[t_{1}[t/x], \dots, t_{n}[t/x]]$
+\item $(\neg\phi)[t/x]=\neg(\phi[t/x])$
+\item $(\phi\land\psi)[t/x]=(\phi[t/x])\land(\psi[t/x])$
+\item $(\phi\lor\psi)[t/x]=(\phi[t/x])\lor(\psi[t/x])$
+\item $(\phi\implies\psi)[t/x]=(\phi[t/x])\implies(\psi[t/x])$
+\item $(\phi\iff\psi)[t/x]=(\phi[t/x])\iff(\psi[t/x])$
+\item $(\forall x\ldotp\phi)[t/x]=\forall x\ldotp\phi$
+\item $(\forall y\ldotp\phi)[t/x]=\forall y\ldotp(\phi[t/x])$ if
+  $y\neq x$
+\item $(\exists x\ldotp\phi)[t/x]=\exists x\ldotp\phi$
+\item $(\exists y\ldotp\phi)[t/x]=\exists y\ldotp(\phi[t/x])$ if
+  $y\neq x$
+\end{enumerate}
+I suppose an error should be raised if $x$ is not a variable, but I
+don't feel strongly enough about it.
+
+We only need to check once that the variable $x$ and its replacement
+$t$ have the same sort. The code reflects this, and then iterates
+through the subformulas, making all replacements as needed.
+\end{node}
+
+\nwenddocs{}\nwbegincode{41}\sublabel{NW3w0iRO-2HPkc8-7}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-7}}}\moddef{Specification for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-5BH7S-1}}\nwprevnextdefs{NW3w0iRO-2HPkc8-6}{NW3w0iRO-2HPkc8-8}\nwenddeflinemarkup
+val subst : Term.t -> Term.t -> t -> t;
+\nwused{\\{NW3w0iRO-5BH7S-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW3w0iRO-2HPkc8-7}\nwendcode{}\nwbegindocs{42}\nwdocspar
+
+\nwenddocs{}\nwbegincode{43}\sublabel{NW3w0iRO-1jtQRV-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-1jtQRV-1}}}\moddef{Substitution in a formula~{\nwtagstyle{}\subpageref{NW3w0iRO-1jtQRV-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwenddeflinemarkup
+(* subst : Term.t -> Term.t -> \nwlinkedidentc{Formula.t}{NW3w0iRO-2jnj9W-1} -> \nwlinkedidentc{Formula.t}{NW3w0iRO-2jnj9W-1} *)
+local
+fun iter x t fm =
+ (case fm of
+   (\nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1}) => fm
+ | (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1}(P,args)) => \nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1}(P, map (Term.subst x t) args)
+ | (\nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1} A) => \nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1}(iter x t A)
+ | (\nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1}(A,B)) => \nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1}(iter x t A, iter x t B)
+ | (\nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1}(A,B)) => \nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1}(iter x t A, iter x t B)
+ | (\nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1}(A,B)) => \nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1}(iter x t A, iter x t B)
+ | (\nwlinkedidentc{Iff}{NW3w0iRO-2jnj9W-1}(A,B)) => \nwlinkedidentc{Iff}{NW3w0iRO-2jnj9W-1}(iter x t A, iter x t B)
+ | (\nwlinkedidentc{Forall}{NW3w0iRO-2jnj9W-1}(y,A)) => if Term.eq x y then fm
+                    else \nwlinkedidentc{Forall}{NW3w0iRO-2jnj9W-1}(y, iter x t A)
+ | (\nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1}(y,A)) => if Term.eq x y then fm
+                    else \nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1}(y, iter x t A));
+in
+fun subst x t fm =
+  if not(Term.have_same_sort x t)
+  then raise Sort.Mismatch "\nwlinkedidentc{Formula.subst}{NW3w0iRO-1jtQRV-1}: variable and replacement have different sorts"
+  else iter x t fm
+end;
+\nwindexdefn{\nwixident{Formula.subst}}{Formula.subst}{NW3w0iRO-1jtQRV-1}\eatline
+\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentdefs{\\{{\nwixident{Formula.subst}}{Formula.subst}}}\nwidentuses{\\{{\nwixident{And}}{And}}\\{{\nwixident{Exists}}{Exists}}\\{{\nwixident{False}}{False}}\\{{\nwixident{Forall}}{Forall}}\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Iff}}{Iff}}\\{{\nwixident{Implies}}{Implies}}\\{{\nwixident{Not}}{Not}}\\{{\nwixident{Or}}{Or}}\\{{\nwixident{Pred}}{Pred}}\\{{\nwixident{Term.eq}}{Term.eq}}\\{{\nwixident{Term.have{\_}same{\_}sort}}{Term.have:unsame:unsort}}\\{{\nwixident{Term.subst}}{Term.subst}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{And}}{And}{NW3w0iRO-1jtQRV-1}\nwindexuse{\nwixident{Exists}}{Exists}{NW3w0iRO-1jtQRV-1}\nwindexuse{\nwixident{False}}{False}{NW3w0iRO-1jtQRV-1}\nwindexuse{\nwixident{Forall}}{Forall}{NW3w0iRO-1jtQRV-1}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW3w0iRO-1jtQRV-1}\nwindexuse{\nwixident{Iff}}{Iff}{NW3w0iRO-1jtQRV-1}\nwindexuse{\nwixident{Implies}}{Implies}{NW3w0iRO-1jtQRV-1}\nwindexuse{\nwixident{Not}}{Not}{NW3w0iRO-1jtQRV-1}\nwindexuse{\nwixident{Or}}{Or}{NW3w0iRO-1jtQRV-1}\nwindexuse{\nwixident{Pred}}{Pred}{NW3w0iRO-1jtQRV-1}\nwindexuse{\nwixident{Term.eq}}{Term.eq}{NW3w0iRO-1jtQRV-1}\nwindexuse{\nwixident{Term.have{\_}same{\_}sort}}{Term.have:unsame:unsort}{NW3w0iRO-1jtQRV-1}\nwindexuse{\nwixident{Term.subst}}{Term.subst}{NW3w0iRO-1jtQRV-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW3w0iRO-1jtQRV-1}\nwendcode{}\nwbegindocs{44}\nwdocspar
+\begin{node}
+Free variables in  a formula is defined recursively on subformulas by
+the rules:
+\begin{enumerate}
+\item $FV(\bot)=\{\}$
+\item $FV(P[t_{1},\dots,t_{n}])=FV(t_{1})\cup(\cdots)\cup FV(t_{n})$
+\item $FV(\neg A)=FV(A)$
+\item $FV(A\land B)=FV(A)\cup FV(B)$
+\item $FV(A\lor B)=FV(A)\cup FV(B)$
+\item $FV(A\implies B)=FV(A)\cup FV(B)$
+\item $FV(A\iff B)=FV(A)\cup FV(B)$
+\item $FV(\forall x\ldotp A)=FV(A)\setminus\{x\}$
+\item $FV(\exists x\ldotp A)=FV(A)\setminus\{x\}$
+\end{enumerate}
+\end{node}
+
+
+\nwenddocs{}\nwbegincode{45}\sublabel{NW3w0iRO-2HPkc8-8}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-8}}}\moddef{Specification for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-5BH7S-1}}\nwprevnextdefs{NW3w0iRO-2HPkc8-7}{NW3w0iRO-2HPkc8-9}\nwenddeflinemarkup
+val fv : t -> Term.t list;
+\nwused{\\{NW3w0iRO-5BH7S-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW3w0iRO-2HPkc8-8}\nwendcode{}\nwbegindocs{46}\nwdocspar
+
+\nwenddocs{}\nwbegincode{47}\sublabel{NW3w0iRO-jRgYZ-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-jRgYZ-1}}}\moddef{Free and bound variables in a formula~{\nwtagstyle{}\subpageref{NW3w0iRO-jRgYZ-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwprevnextdefs{\relax}{NW3w0iRO-jRgYZ-2}\nwenddeflinemarkup
+(* fv : \nwlinkedidentc{Formula.t}{NW3w0iRO-2jnj9W-1} -> Term.t list *)
+fun fv (\nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1}) = []
+  | fv (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1} (_, args)) = List.foldl (fn (arg, fvs') => (Term.fv arg) @ fvs')
+                                     []
+                                     args
+  | fv (\nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1} A) = fv A
+  | fv (\nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1}(A, B)) = (fv A) @ (fv B)
+  | fv (\nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1}(A, B)) = (fv A) @ (fv B)
+  | fv (\nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1}(A, B)) = (fv A) @ (fv B)
+  | fv (\nwlinkedidentc{Iff}{NW3w0iRO-2jnj9W-1}(A, B)) = (fv A) @ (fv B)
+  | fv (\nwlinkedidentc{Forall}{NW3w0iRO-2jnj9W-1}(x, A)) = List.filter (not o (Term.eq x)) (fv A)
+  | fv (\nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1}(x, A)) = List.filter (not o (Term.eq x)) (fv A);
+\nwalsodefined{\\{NW3w0iRO-jRgYZ-2}}\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentuses{\\{{\nwixident{And}}{And}}\\{{\nwixident{Exists}}{Exists}}\\{{\nwixident{False}}{False}}\\{{\nwixident{Forall}}{Forall}}\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Iff}}{Iff}}\\{{\nwixident{Implies}}{Implies}}\\{{\nwixident{Not}}{Not}}\\{{\nwixident{Or}}{Or}}\\{{\nwixident{Pred}}{Pred}}\\{{\nwixident{Term.eq}}{Term.eq}}\\{{\nwixident{Term.fv}}{Term.fv}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{And}}{And}{NW3w0iRO-jRgYZ-1}\nwindexuse{\nwixident{Exists}}{Exists}{NW3w0iRO-jRgYZ-1}\nwindexuse{\nwixident{False}}{False}{NW3w0iRO-jRgYZ-1}\nwindexuse{\nwixident{Forall}}{Forall}{NW3w0iRO-jRgYZ-1}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW3w0iRO-jRgYZ-1}\nwindexuse{\nwixident{Iff}}{Iff}{NW3w0iRO-jRgYZ-1}\nwindexuse{\nwixident{Implies}}{Implies}{NW3w0iRO-jRgYZ-1}\nwindexuse{\nwixident{Not}}{Not}{NW3w0iRO-jRgYZ-1}\nwindexuse{\nwixident{Or}}{Or}{NW3w0iRO-jRgYZ-1}\nwindexuse{\nwixident{Pred}}{Pred}{NW3w0iRO-jRgYZ-1}\nwindexuse{\nwixident{Term.eq}}{Term.eq}{NW3w0iRO-jRgYZ-1}\nwindexuse{\nwixident{Term.fv}}{Term.fv}{NW3w0iRO-jRgYZ-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW3w0iRO-jRgYZ-1}\nwendcode{}\nwbegindocs{48}\nwdocspar
+
+\begin{node}
+Bound variables in  a formula is defined recursively on subformulas by
+the rules:
+\begin{enumerate}
+\item $BV(\bot)=\{\}$
+\item $BV(P[t_{1},\dots,t_{n}])=\{\}$
+\item $BV(\neg A)=BV(A)$
+\item $BV(A\land B)=BV(A)\cup BV(B)$
+\item $BV(A\lor B)=BV(A)\cup BV(B)$
+\item $BV(A\implies B)=BV(A)\cup BV(B)$
+\item $BV(A\iff B)=BV(A)\cup BV(B)$
+\item $BV(\forall x\ldotp A)=BV(A)\cup\{x\}$
+\item $BV(\exists x\ldotp A)=BV(A)\cup\{x\}$
+\end{enumerate}
+\end{node}
+\nwenddocs{}\nwbegincode{49}\sublabel{NW3w0iRO-2HPkc8-9}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-9}}}\moddef{Specification for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-5BH7S-1}}\nwprevnextdefs{NW3w0iRO-2HPkc8-8}{NW3w0iRO-2HPkc8-A}\nwenddeflinemarkup
+val bv : t -> Term.t list;
+\nwused{\\{NW3w0iRO-5BH7S-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW3w0iRO-2HPkc8-9}\nwendcode{}\nwbegindocs{50}\nwdocspar
+
+\nwenddocs{}\nwbegincode{51}\sublabel{NW3w0iRO-jRgYZ-2}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-jRgYZ-2}}}\moddef{Free and bound variables in a formula~{\nwtagstyle{}\subpageref{NW3w0iRO-jRgYZ-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwprevnextdefs{NW3w0iRO-jRgYZ-1}{\relax}\nwenddeflinemarkup
+(* bv : \nwlinkedidentc{Formula.t}{NW3w0iRO-2jnj9W-1} -> Term.t list *)
+fun bv (\nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1}) = []
+  | bv (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1} _) = []
+  | bv (\nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1} A) = bv A
+  | bv (\nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1}(A, B)) = (bv A) @ (bv B)
+  | bv (\nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1}(A, B)) = (bv A) @ (bv B)
+  | bv (\nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1}(A, B)) = (bv A) @ (bv B)
+  | bv (\nwlinkedidentc{Iff}{NW3w0iRO-2jnj9W-1}(A, B)) = (bv A) @ (bv B)
+  | bv (\nwlinkedidentc{Forall}{NW3w0iRO-2jnj9W-1}(x, A)) = x::(bv A)
+  | bv (\nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1}(x, A)) = x::(bv A);
+\nwindexdefn{\nwixident{Formula.fv}}{Formula.fv}{NW3w0iRO-jRgYZ-2}\nwindexdefn{\nwixident{Formula.bv}}{Formula.bv}{NW3w0iRO-jRgYZ-2}\eatline
+\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentdefs{\\{{\nwixident{Formula.bv}}{Formula.bv}}\\{{\nwixident{Formula.fv}}{Formula.fv}}}\nwidentuses{\\{{\nwixident{And}}{And}}\\{{\nwixident{Exists}}{Exists}}\\{{\nwixident{False}}{False}}\\{{\nwixident{Forall}}{Forall}}\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Iff}}{Iff}}\\{{\nwixident{Implies}}{Implies}}\\{{\nwixident{Not}}{Not}}\\{{\nwixident{Or}}{Or}}\\{{\nwixident{Pred}}{Pred}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{And}}{And}{NW3w0iRO-jRgYZ-2}\nwindexuse{\nwixident{Exists}}{Exists}{NW3w0iRO-jRgYZ-2}\nwindexuse{\nwixident{False}}{False}{NW3w0iRO-jRgYZ-2}\nwindexuse{\nwixident{Forall}}{Forall}{NW3w0iRO-jRgYZ-2}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW3w0iRO-jRgYZ-2}\nwindexuse{\nwixident{Iff}}{Iff}{NW3w0iRO-jRgYZ-2}\nwindexuse{\nwixident{Implies}}{Implies}{NW3w0iRO-jRgYZ-2}\nwindexuse{\nwixident{Not}}{Not}{NW3w0iRO-jRgYZ-2}\nwindexuse{\nwixident{Or}}{Or}{NW3w0iRO-jRgYZ-2}\nwindexuse{\nwixident{Pred}}{Pred}{NW3w0iRO-jRgYZ-2}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW3w0iRO-jRgYZ-2}\nwendcode{}\nwbegindocs{52}\nwdocspar
+\begin{node}
+The calculations for bound variables and free variables follows the
+same basic template: tell me what happens on atomic formulas, and what
+to do with quantifiers, then tell me how to ``recursively combine
+results from subformulas''. Computer scientists call this sort of a
+function a ``fold''.
+\end{node}
+
+\nwenddocs{}\nwbegincode{53}\sublabel{NW3w0iRO-1UOPDY-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-1UOPDY-1}}}\moddef{Folding formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-1UOPDY-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwenddeflinemarkup
+(* foldl : (\nwlinkedidentc{Formula.t}{NW3w0iRO-2jnj9W-1} * 'a -> 'a) -> (Term.t * 'a -> 'a) -> 'a * \nwlinkedidentc{Formula.t}{NW3w0iRO-2jnj9W-1} -> 'a *)
+fun foldl (f : t * 'a -> 'a) (q : Term.t * 'a -> 'a) (init : 'a) (fm : t) : 'a =
+  (case fm of
+    \nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1} => f(fm, init)
+  | (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1} _) => f(fm, init)
+  | (\nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1} A) => foldl f q init A 
+  | (\nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1}(A,B)) => foldl f q (foldl f q init A) B
+  | (\nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1}(A,B)) => foldl f q (foldl f q init A) B
+  | (\nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1}(A,B)) => foldl f q (foldl f q init A) B
+  | (\nwlinkedidentc{Iff}{NW3w0iRO-2jnj9W-1}(A,B)) => foldl f q (foldl f q init A) B
+  | (\nwlinkedidentc{Forall}{NW3w0iRO-2jnj9W-1}(x,A)) => foldl f q (q(x, init)) A
+  | (\nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1}(x,A)) => foldl f q (q(x, init)) A);
+
+(* foldr : (\nwlinkedidentc{Formula.t}{NW3w0iRO-2jnj9W-1} * 'a -> 'a) -> (Term.t * 'a -> 'a) -> 'a * \nwlinkedidentc{Formula.t}{NW3w0iRO-2jnj9W-1} -> 'a *)
+fun foldr f q init fm =
+  (case fm of
+    \nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1} => f(fm, init)
+  | (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1} _) => f(fm, init)
+  | (\nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1} A) => foldr f q init A 
+  | (\nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1}(A,B)) => foldr f q (foldr f q init B) A
+  | (\nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1}(A,B)) => foldr f q (foldr f q init B) A
+  | (\nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1}(A,B)) => foldr f q (foldr f q init B) A
+  | (\nwlinkedidentc{Iff}{NW3w0iRO-2jnj9W-1}(A,B)) => foldr f  q(foldr f q init B) A
+  | (\nwlinkedidentc{Forall}{NW3w0iRO-2jnj9W-1}(x,A)) => foldr f q (q(x, init)) A
+  | (\nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1}(x,A)) => foldr f q (q(x, init)) A);
+\nwindexdefn{\nwixident{Formula.foldl}}{Formula.foldl}{NW3w0iRO-1UOPDY-1}\nwindexdefn{\nwixident{Formula.foldr}}{Formula.foldr}{NW3w0iRO-1UOPDY-1}\eatline
+\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentdefs{\\{{\nwixident{Formula.foldl}}{Formula.foldl}}\\{{\nwixident{Formula.foldr}}{Formula.foldr}}}\nwidentuses{\\{{\nwixident{And}}{And}}\\{{\nwixident{Exists}}{Exists}}\\{{\nwixident{False}}{False}}\\{{\nwixident{Forall}}{Forall}}\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Iff}}{Iff}}\\{{\nwixident{Implies}}{Implies}}\\{{\nwixident{Not}}{Not}}\\{{\nwixident{Or}}{Or}}\\{{\nwixident{Pred}}{Pred}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{And}}{And}{NW3w0iRO-1UOPDY-1}\nwindexuse{\nwixident{Exists}}{Exists}{NW3w0iRO-1UOPDY-1}\nwindexuse{\nwixident{False}}{False}{NW3w0iRO-1UOPDY-1}\nwindexuse{\nwixident{Forall}}{Forall}{NW3w0iRO-1UOPDY-1}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW3w0iRO-1UOPDY-1}\nwindexuse{\nwixident{Iff}}{Iff}{NW3w0iRO-1UOPDY-1}\nwindexuse{\nwixident{Implies}}{Implies}{NW3w0iRO-1UOPDY-1}\nwindexuse{\nwixident{Not}}{Not}{NW3w0iRO-1UOPDY-1}\nwindexuse{\nwixident{Or}}{Or}{NW3w0iRO-1UOPDY-1}\nwindexuse{\nwixident{Pred}}{Pred}{NW3w0iRO-1UOPDY-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW3w0iRO-1UOPDY-1}\nwendcode{}\nwbegindocs{54}\nwdocspar
+
+\nwenddocs{}\nwbegincode{55}\sublabel{NW3w0iRO-2HPkc8-A}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-A}}}\moddef{Specification for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-5BH7S-1}}\nwprevnextdefs{NW3w0iRO-2HPkc8-9}{NW3w0iRO-2HPkc8-B}\nwenddeflinemarkup
+val contains_var : Term.t -> t -> bool;
+\nwused{\\{NW3w0iRO-5BH7S-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW3w0iRO-2HPkc8-A}\nwendcode{}\nwbegindocs{56}\nwdocspar
+\nwenddocs{}\nwbegincode{57}\sublabel{NW3w0iRO-4DOLFK-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-4DOLFK-1}}}\moddef{Check if a formula contains a variable~{\nwtagstyle{}\subpageref{NW3w0iRO-4DOLFK-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwenddeflinemarkup
+fun contains_var x =
+ (fn (\nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1}) => false
+   | (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1} (_, args)) => List.exists (Term.occurs_in x) args
+   | (\nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1} A) => contains_var x A
+   | (\nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1}(A,B)) => (contains_var x A) orelse (contains_var x B)
+   | (\nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1}(A,B)) => (contains_var x A) orelse (contains_var x B)
+   | (\nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1}(A,B)) => (contains_var x A) orelse (contains_var x B)
+   | (\nwlinkedidentc{Iff}{NW3w0iRO-2jnj9W-1}(A,B)) => (contains_var x A) orelse (contains_var x B)
+   | (\nwlinkedidentc{Forall}{NW3w0iRO-2jnj9W-1}(y, A)) => (Term.eq x y) orelse (contains_var x A)
+   | (\nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1}(y, A)) => (Term.eq x y) orelse (contains_var x A));
+\nwindexdefn{\nwixident{Formula.contains{\_}var}}{Formula.contains:unvar}{NW3w0iRO-4DOLFK-1}\eatline
+\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentdefs{\\{{\nwixident{Formula.contains{\_}var}}{Formula.contains:unvar}}}\nwidentuses{\\{{\nwixident{And}}{And}}\\{{\nwixident{Exists}}{Exists}}\\{{\nwixident{False}}{False}}\\{{\nwixident{Forall}}{Forall}}\\{{\nwixident{Iff}}{Iff}}\\{{\nwixident{Implies}}{Implies}}\\{{\nwixident{Not}}{Not}}\\{{\nwixident{Or}}{Or}}\\{{\nwixident{Pred}}{Pred}}\\{{\nwixident{Term.eq}}{Term.eq}}\\{{\nwixident{Term.occurs{\_}in}}{Term.occurs:unin}}}\nwindexuse{\nwixident{And}}{And}{NW3w0iRO-4DOLFK-1}\nwindexuse{\nwixident{Exists}}{Exists}{NW3w0iRO-4DOLFK-1}\nwindexuse{\nwixident{False}}{False}{NW3w0iRO-4DOLFK-1}\nwindexuse{\nwixident{Forall}}{Forall}{NW3w0iRO-4DOLFK-1}\nwindexuse{\nwixident{Iff}}{Iff}{NW3w0iRO-4DOLFK-1}\nwindexuse{\nwixident{Implies}}{Implies}{NW3w0iRO-4DOLFK-1}\nwindexuse{\nwixident{Not}}{Not}{NW3w0iRO-4DOLFK-1}\nwindexuse{\nwixident{Or}}{Or}{NW3w0iRO-4DOLFK-1}\nwindexuse{\nwixident{Pred}}{Pred}{NW3w0iRO-4DOLFK-1}\nwindexuse{\nwixident{Term.eq}}{Term.eq}{NW3w0iRO-4DOLFK-1}\nwindexuse{\nwixident{Term.occurs{\_}in}}{Term.occurs:unin}{NW3w0iRO-4DOLFK-1}\nwendcode{}\nwbegindocs{58}\nwdocspar
+\begin{node}
+The precedence is $\bot > \mbox{predicates} > \neg > \land > \lor > \implies > \iff > \forall > \exists$.
+\end{node}
+
+\nwenddocs{}\nwbegincode{59}\sublabel{NW3w0iRO-2HPkc8-B}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-B}}}\moddef{Specification for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-5BH7S-1}}\nwprevnextdefs{NW3w0iRO-2HPkc8-A}{NW3w0iRO-2HPkc8-C}\nwenddeflinemarkup
+val precedence : t -> t -> order;
+\nwused{\\{NW3w0iRO-5BH7S-1}}\nwendcode{}\nwbegindocs{60}\nwdocspar
+
+\nwenddocs{}\nwbegincode{61}\sublabel{NW3w0iRO-3yI6te-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-3yI6te-1}}}\moddef{Precedence for connectives~{\nwtagstyle{}\subpageref{NW3w0iRO-3yI6te-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwenddeflinemarkup
+fun precedence (\nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1}) (\nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1}) = EQUAL
+  | precedence (\nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1}) _ = GREATER
+  | precedence (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1}) = LESS
+  | precedence (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1} _) = EQUAL
+  | precedence (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1} _) _ = GREATER
+  | precedence (\nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1}) = LESS
+  | precedence (\nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1} _) = LESS
+  | precedence (\nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1} _) _ = GREATER
+  | precedence (\nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1}) = LESS
+  | precedence (\nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1} _) = LESS
+  | precedence (\nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1} _) = LESS
+  | precedence (\nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1} _) = EQUAL
+  | precedence (\nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1} _) _ = GREATER
+  | precedence (\nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1}) = LESS
+  | precedence (\nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1} _) = LESS
+  | precedence (\nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1} _) = LESS
+  | precedence (\nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1} _) = LESS
+  | precedence (\nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1} _) = EQUAL
+  | precedence (\nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1} _) _ = GREATER
+  | precedence (\nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1}) = LESS
+  | precedence (\nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1} _) = LESS
+  | precedence (\nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1} _) = LESS
+  | precedence (\nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1} _) = LESS
+  | precedence (\nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1} _) = LESS
+  | precedence (\nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1} _) = EQUAL
+  | precedence (\nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1} _) _ = GREATER
+  | precedence (\nwlinkedidentc{Iff}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{Forall}{NW3w0iRO-2jnj9W-1} _) = GREATER
+  | precedence (\nwlinkedidentc{Iff}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1} _) = GREATER
+  | precedence (\nwlinkedidentc{Iff}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{Iff}{NW3w0iRO-2jnj9W-1} _) = EQUAL
+  | precedence (\nwlinkedidentc{Iff}{NW3w0iRO-2jnj9W-1} _) _ = LESS
+  | precedence (\nwlinkedidentc{Forall}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1} _) = GREATER
+  | precedence (\nwlinkedidentc{Forall}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{Forall}{NW3w0iRO-2jnj9W-1} _) = EQUAL
+  | precedence (\nwlinkedidentc{Forall}{NW3w0iRO-2jnj9W-1} _) _ = LESS
+  | precedence (\nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1} _) (\nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1} _) = EQUAL
+  | precedence (\nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1} _) _ = LESS
+\nwindexdefn{\nwixident{Formula.precedence}}{Formula.precedence}{NW3w0iRO-3yI6te-1}\eatline
+\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentdefs{\\{{\nwixident{Formula.precedence}}{Formula.precedence}}}\nwidentuses{\\{{\nwixident{And}}{And}}\\{{\nwixident{Exists}}{Exists}}\\{{\nwixident{False}}{False}}\\{{\nwixident{Forall}}{Forall}}\\{{\nwixident{Iff}}{Iff}}\\{{\nwixident{Implies}}{Implies}}\\{{\nwixident{Not}}{Not}}\\{{\nwixident{Or}}{Or}}\\{{\nwixident{Pred}}{Pred}}}\nwindexuse{\nwixident{And}}{And}{NW3w0iRO-3yI6te-1}\nwindexuse{\nwixident{Exists}}{Exists}{NW3w0iRO-3yI6te-1}\nwindexuse{\nwixident{False}}{False}{NW3w0iRO-3yI6te-1}\nwindexuse{\nwixident{Forall}}{Forall}{NW3w0iRO-3yI6te-1}\nwindexuse{\nwixident{Iff}}{Iff}{NW3w0iRO-3yI6te-1}\nwindexuse{\nwixident{Implies}}{Implies}{NW3w0iRO-3yI6te-1}\nwindexuse{\nwixident{Not}}{Not}{NW3w0iRO-3yI6te-1}\nwindexuse{\nwixident{Or}}{Or}{NW3w0iRO-3yI6te-1}\nwindexuse{\nwixident{Pred}}{Pred}{NW3w0iRO-3yI6te-1}\nwendcode{}\nwbegindocs{62}\nwdocspar
+\begin{node}
+The expectation is that: if {\Tt{}precedence\ lhs\ rhs\ <>\ EQUAL\nwendquote},
+then {\Tt{}compare(lhs,rhs)\ =\ precedence\ lhs\ rhs\nwendquote}. Otherwise, we just
+recursively work our way down lexicographically comparing subformulas.
+\end{node}
+
+\nwenddocs{}\nwbegincode{63}\sublabel{NW3w0iRO-2HPkc8-C}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-C}}}\moddef{Specification for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-5BH7S-1}}\nwprevnextdefs{NW3w0iRO-2HPkc8-B}{NW3w0iRO-2HPkc8-D}\nwenddeflinemarkup
+val compare : t * t -> order;
+\nwused{\\{NW3w0iRO-5BH7S-1}}\nwendcode{}\nwbegindocs{64}\nwdocspar
+\nwenddocs{}\nwbegincode{65}\sublabel{NW3w0iRO-35s47m-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-35s47m-1}}}\moddef{Comparing formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-35s47m-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwenddeflinemarkup
+fun compare(lhs, rhs) =
+ (case precedence lhs rhs of
+   EQUAL => (case (lhs, rhs) of
+              (\nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1}, \nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1}) => EQUAL
+            | (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1}(P1,args1),\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1}(P2,args2)) =>
+              (case String.compare(P1, P2) of
+                EQUAL => Term.compare_lists args1 args2
+              | r => r)
+            | (\nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1} A, \nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1} B) => compare(A, B)
+            | (\nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1}(A1,B1), \nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1}(A2,B2)) => 
+                (case compare(A1, A2) of
+                  EQUAL => compare(B1,B2)
+                | r => r)
+            | (\nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1}(A1,B1), \nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1}(A2,B2)) => 
+                (case compare(A1, A2) of
+                  EQUAL => compare(B1,B2)
+                | r => r)
+            | (\nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1}(A1,B1), \nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1}(A2,B2)) => 
+                (case compare(A1, A2) of
+                  EQUAL => compare(B1,B2)
+                | r => r)
+            | (\nwlinkedidentc{Iff}{NW3w0iRO-2jnj9W-1}(A1,B1), \nwlinkedidentc{Iff}{NW3w0iRO-2jnj9W-1}(A2,B2)) => 
+                (case compare(A1, A2) of
+                  EQUAL => compare(B1,B2)
+                | r => r)
+            | (\nwlinkedidentc{Forall}{NW3w0iRO-2jnj9W-1}(x, A), \nwlinkedidentc{Forall}{NW3w0iRO-2jnj9W-1}(y, B)) =>
+                (case Term.compare(x, y) of
+                  EQUAL => compare(A, B)
+                | r => r)
+            | (\nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1}(x, A), \nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1}(y, B)) =>
+                (case Term.compare(x, y) of
+                  EQUAL => compare(A, B)
+                | r => r)
+            | _ => raise Fail "\nwlinkedidentc{Formula.compare}{NW3w0iRO-35s47m-1}: I shouldn't be here...")
+   | r => r);
+\nwindexdefn{\nwixident{Formula.compare}}{Formula.compare}{NW3w0iRO-35s47m-1}\eatline
+\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentdefs{\\{{\nwixident{Formula.compare}}{Formula.compare}}}\nwidentuses{\\{{\nwixident{And}}{And}}\\{{\nwixident{Exists}}{Exists}}\\{{\nwixident{False}}{False}}\\{{\nwixident{Forall}}{Forall}}\\{{\nwixident{Iff}}{Iff}}\\{{\nwixident{Implies}}{Implies}}\\{{\nwixident{Not}}{Not}}\\{{\nwixident{Or}}{Or}}\\{{\nwixident{Pred}}{Pred}}\\{{\nwixident{Term.compare}}{Term.compare}}\\{{\nwixident{Term.compare{\_}lists}}{Term.compare:unlists}}}\nwindexuse{\nwixident{And}}{And}{NW3w0iRO-35s47m-1}\nwindexuse{\nwixident{Exists}}{Exists}{NW3w0iRO-35s47m-1}\nwindexuse{\nwixident{False}}{False}{NW3w0iRO-35s47m-1}\nwindexuse{\nwixident{Forall}}{Forall}{NW3w0iRO-35s47m-1}\nwindexuse{\nwixident{Iff}}{Iff}{NW3w0iRO-35s47m-1}\nwindexuse{\nwixident{Implies}}{Implies}{NW3w0iRO-35s47m-1}\nwindexuse{\nwixident{Not}}{Not}{NW3w0iRO-35s47m-1}\nwindexuse{\nwixident{Or}}{Or}{NW3w0iRO-35s47m-1}\nwindexuse{\nwixident{Pred}}{Pred}{NW3w0iRO-35s47m-1}\nwindexuse{\nwixident{Term.compare}}{Term.compare}{NW3w0iRO-35s47m-1}\nwindexuse{\nwixident{Term.compare{\_}lists}}{Term.compare:unlists}{NW3w0iRO-35s47m-1}\nwendcode{}\nwbegindocs{66}\nwdocspar
+\begin{node}
+We can test if two formulas are equal to each other in a more
+optimized manner, by directly checking each connective matches, and
+each subformula matches, and each subterm matches.
+\end{node}
+
+\nwenddocs{}\nwbegincode{67}\sublabel{NW3w0iRO-2HPkc8-D}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-D}}}\moddef{Specification for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-5BH7S-1}}\nwprevnextdefs{NW3w0iRO-2HPkc8-C}{NW3w0iRO-2HPkc8-E}\nwenddeflinemarkup
+val eq : t -> t -> bool;
+\nwused{\\{NW3w0iRO-5BH7S-1}}\nwendcode{}\nwbegindocs{68}\nwdocspar
+
+\nwenddocs{}\nwbegincode{69}\sublabel{NW3w0iRO-5gQzE-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-5gQzE-1}}}\moddef{Test if two formulas are equal~{\nwtagstyle{}\subpageref{NW3w0iRO-5gQzE-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwenddeflinemarkup
+fun eq (\nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1}) (\nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1}) = true
+  | eq (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1}(P,args1)) (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1}(Q,args2)) = (P=Q) andalso
+                                         (Term.eq_lists args1 args2)
+  | eq (\nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1} A) (\nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1} B) = eq A B
+  | eq (\nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1}(A1,A2)) (\nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1}(B1,B2)) = (eq A1 B1) andalso (eq A2 B2)
+  | eq (\nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1}(A1,A2)) (\nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1}(B1,B2)) = (eq A1 B1) andalso (eq A2 B2)
+  | eq (\nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1}(A1,A2)) (\nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1}(B1,B2)) = (eq A1 B1) andalso (eq A2 B2)
+  | eq (\nwlinkedidentc{Iff}{NW3w0iRO-2jnj9W-1}(A1,A2)) (\nwlinkedidentc{Iff}{NW3w0iRO-2jnj9W-1}(B1,B2)) = (eq A1 B1) andalso (eq A2 B2)
+  | eq (\nwlinkedidentc{Forall}{NW3w0iRO-2jnj9W-1}(x,A)) (\nwlinkedidentc{Forall}{NW3w0iRO-2jnj9W-1}(y,B)) = (Term.eq x y) andalso (eq A B)
+  | eq (\nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1}(x,A)) (\nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1}(y,B)) = (Term.eq x y) andalso (eq A B)
+  | eq _ _ = false;
+\nwindexdefn{\nwixident{Formula.eq}}{Formula.eq}{NW3w0iRO-5gQzE-1}\eatline
+\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentdefs{\\{{\nwixident{Formula.eq}}{Formula.eq}}}\nwidentuses{\\{{\nwixident{And}}{And}}\\{{\nwixident{Exists}}{Exists}}\\{{\nwixident{False}}{False}}\\{{\nwixident{Forall}}{Forall}}\\{{\nwixident{Iff}}{Iff}}\\{{\nwixident{Implies}}{Implies}}\\{{\nwixident{Not}}{Not}}\\{{\nwixident{Or}}{Or}}\\{{\nwixident{Pred}}{Pred}}\\{{\nwixident{Term.eq}}{Term.eq}}\\{{\nwixident{Term.eq{\_}lists}}{Term.eq:unlists}}}\nwindexuse{\nwixident{And}}{And}{NW3w0iRO-5gQzE-1}\nwindexuse{\nwixident{Exists}}{Exists}{NW3w0iRO-5gQzE-1}\nwindexuse{\nwixident{False}}{False}{NW3w0iRO-5gQzE-1}\nwindexuse{\nwixident{Forall}}{Forall}{NW3w0iRO-5gQzE-1}\nwindexuse{\nwixident{Iff}}{Iff}{NW3w0iRO-5gQzE-1}\nwindexuse{\nwixident{Implies}}{Implies}{NW3w0iRO-5gQzE-1}\nwindexuse{\nwixident{Not}}{Not}{NW3w0iRO-5gQzE-1}\nwindexuse{\nwixident{Or}}{Or}{NW3w0iRO-5gQzE-1}\nwindexuse{\nwixident{Pred}}{Pred}{NW3w0iRO-5gQzE-1}\nwindexuse{\nwixident{Term.eq}}{Term.eq}{NW3w0iRO-5gQzE-1}\nwindexuse{\nwixident{Term.eq{\_}lists}}{Term.eq:unlists}{NW3w0iRO-5gQzE-1}\nwendcode{}\nwbegindocs{70}\nwdocspar
+\begin{node}
+Last, we will want to test if a term $t$ is free for $x$ in a formula
+$\phi$. This means that no free variable of $t$ becomes bound when we
+substitute $\phi[t/x]$.
+\end{node}
+
+\begin{node}
+Let $\phi$ be a formula, $x$ be a variable, and $t$ be a term. Suppose
+$x$ and $t$ have the same sort. We say ``$t$ is free for $x$ in $\phi$''
+by recursively defining it on subformulas:
+\begin{enumerate}
+\item If $\phi=\bot$, then $t$ is free for $x$ in $\phi$
+\item If $\phi=P[t_{1},\dots,t_{n}]$, then $t$ is free for $x$ in $\phi$
+\item If $\phi=\neg A$, then we need to check $t$ is free for $x$ in $A$
+\item If $\phi$ is $A\land B$ or $A\lor B$ or $A\implies B$ or $A\iff B$,
+  then we need to check $t$ is free for $x$ in both $A$ and $B$
+\item If $\phi$ is $\exists y\ldotp A$ or $\forall y\ldotp A$ where
+  $y\neq x$, if
+  $y\in FV(t)$ and $x$ appears in $A$, then $t$ \textbf{is not} free
+  for $x$ in $\phi$ (because $y$ will become bound in $t$ after substitution);
+On the other hand, if $y\notin FV(t)$, then we recursively check on
+the subformula that $t$ is free for $x$ in $A$.
+\end{enumerate}
+Alternatively, we can perform the following algorithm: compute $V:=FV(t)$.
+\begin{enumerate}
+\item If $\phi=\bot$, then return true
+\item If $\phi=P[t_{1},\dots,t_{n}]$, then return true
+\item If $\phi=\neg A$, then perform the algorithm on $A$
+\item If $\phi=A\land B$ or $\phi=A\lor B$ or $\phi=A\implies B$ or
+  $\phi=A\iff B$, then perform the algorithm on $A$. If the result is
+  true, then perform the algorithm on $B$ and return this as the
+  result. On the other hand, if the result of the algorithm on $A$ is
+  false, then return false as the result.
+\item If $\phi=\exists y\ldotp A$ or $\phi=\forall y\ldotp A$ where
+  $y=x$, then return true.
+\item If $\phi=\exists y\ldotp A$ or $\phi=\forall y\ldotp A$ where
+  $y\neq x$,
+  \begin{enumerate}
+  \item If $y\in V$ and $x\in FV(A)$, then return false
+  \item If $x\notin FV(A)$, then return true
+  \item If $y\notin V$, then iterate on the subformula $A$ instead of $\phi$
+  \end{enumerate}
+\end{enumerate}
+\end{node}
+
+
+\nwenddocs{}\nwbegincode{71}\sublabel{NW3w0iRO-2HPkc8-E}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-E}}}\moddef{Specification for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-5BH7S-1}}\nwprevnextdefs{NW3w0iRO-2HPkc8-D}{NW3w0iRO-2HPkc8-F}\nwenddeflinemarkup
+val free_for : Term.t -> Term.t -> t -> bool;
+\nwused{\\{NW3w0iRO-5BH7S-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW3w0iRO-2HPkc8-E}\nwendcode{}\nwbegindocs{72}\nwdocspar
+
+\nwenddocs{}\nwbegincode{73}\sublabel{NW3w0iRO-ZZefY-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-ZZefY-1}}}\moddef{Test a term is free for a variable in a formula~{\nwtagstyle{}\subpageref{NW3w0iRO-ZZefY-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwenddeflinemarkup
+fun member x [] = false
+  | member x (y::ys) = (x = y) orelse (member x ys);
+
+fun free_for_iter vars x (fm : t) =
+  if is_falsum fm then true
+  else if is_pred fm then true
+  else if is_not fm
+  then let val A = dest_not fm
+       in free_for_iter vars x A end
+  else if is_and fm
+  then let val (A,B) = dest_and fm
+       in (free_for_iter vars x A) andalso (free_for_iter vars x B) end
+  else if is_or fm
+  then let val (A,B) = dest_or fm
+       in (free_for_iter vars x A) andalso (free_for_iter vars x B) end
+  else if is_imp fm
+  then let val (A,B) = dest_imp fm
+       in (free_for_iter vars x A) andalso (free_for_iter vars x B) end
+  else if is_iff fm
+  then let val (A,B) = dest_iff fm
+       in (free_for_iter vars x A) andalso (free_for_iter vars x B) end
+  else if is_forall fm
+  then let val (y,A) = dest_forall fm
+       in (Term.eq x y) orelse
+          if member y vars
+          then not(member x (fv A))
+          else free_for_iter vars x A
+       end
+  else let val (y,A) = dest_exists fm
+       in (Term.eq x y) orelse
+          if member y vars
+          then not(member x (fv A))
+          else free_for_iter vars x A
+       end;
+
+fun free_for (tm : Term.t) (x : Term.t) fm =
+  free_for_iter (Term.fv tm) x fm;
+\nwindexdefn{\nwixident{Formula.free{\_}for}}{Formula.free:unfor}{NW3w0iRO-ZZefY-1}\eatline
+\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentdefs{\\{{\nwixident{Formula.free{\_}for}}{Formula.free:unfor}}}\nwidentuses{\\{{\nwixident{Term.eq}}{Term.eq}}\\{{\nwixident{Term.fv}}{Term.fv}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.eq}}{Term.eq}{NW3w0iRO-ZZefY-1}\nwindexuse{\nwixident{Term.fv}}{Term.fv}{NW3w0iRO-ZZefY-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW3w0iRO-ZZefY-1}\nwendcode{}\nwbegindocs{74}\nwdocspar
+\begin{node}
+Serializing a formula is useful for debugging purposes.
+\end{node}
+
+\nwenddocs{}\nwbegincode{75}\sublabel{NW3w0iRO-2HPkc8-F}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-F}}}\moddef{Specification for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-5BH7S-1}}\nwprevnextdefs{NW3w0iRO-2HPkc8-E}{NW3w0iRO-2HPkc8-G}\nwenddeflinemarkup
+val serialize : t -> string;
+\nwused{\\{NW3w0iRO-5BH7S-1}}\nwendcode{}\nwbegindocs{76}\nwdocspar
+
+\nwenddocs{}\nwbegincode{77}\sublabel{NW3w0iRO-3H9tUA-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-3H9tUA-1}}}\moddef{Serialize a formula~{\nwtagstyle{}\subpageref{NW3w0iRO-3H9tUA-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwenddeflinemarkup
+fun serialize (\nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1}) = "\nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1}"
+  | serialize (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1}(P,args)) = "\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1}("^
+                               P^
+                               "["^
+                               (String.concatWith ", " (map Term.serialize
+                                                            args))^
+                               "])"
+  | serialize (\nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1}(A)) = "\nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1}("^(serialize A)^")"
+  | serialize (\nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1}(A, B)) = "\nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1}("^(serialize A)^", "^(serialize B)^")"
+  | serialize (\nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1}(A, B)) = "\nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1}("^(serialize A)^", "^(serialize B)^")"
+  | serialize (\nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1}(A, B)) = "\nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1}("^(serialize A)^", "^(serialize B)^")"
+  | serialize (\nwlinkedidentc{Iff}{NW3w0iRO-2jnj9W-1}(A, B)) = "\nwlinkedidentc{Iff}{NW3w0iRO-2jnj9W-1}("^(serialize A)^", "^(serialize B)^")"
+  | serialize (\nwlinkedidentc{Forall}{NW3w0iRO-2jnj9W-1}(x, A)) = "\nwlinkedidentc{Forall}{NW3w0iRO-2jnj9W-1}("^(Term.serialize x)^", "^(serialize A)^")"
+  | serialize (\nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1}(x, A)) = "\nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1}("^(Term.serialize x)^", "^(serialize A)^")";
+\nwindexdefn{\nwixident{Formula.serialize}}{Formula.serialize}{NW3w0iRO-3H9tUA-1}\eatline
+\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentdefs{\\{{\nwixident{Formula.serialize}}{Formula.serialize}}}\nwidentuses{\\{{\nwixident{And}}{And}}\\{{\nwixident{Exists}}{Exists}}\\{{\nwixident{False}}{False}}\\{{\nwixident{Forall}}{Forall}}\\{{\nwixident{Iff}}{Iff}}\\{{\nwixident{Implies}}{Implies}}\\{{\nwixident{Not}}{Not}}\\{{\nwixident{Or}}{Or}}\\{{\nwixident{Pred}}{Pred}}\\{{\nwixident{Term.serialize}}{Term.serialize}}}\nwindexuse{\nwixident{And}}{And}{NW3w0iRO-3H9tUA-1}\nwindexuse{\nwixident{Exists}}{Exists}{NW3w0iRO-3H9tUA-1}\nwindexuse{\nwixident{False}}{False}{NW3w0iRO-3H9tUA-1}\nwindexuse{\nwixident{Forall}}{Forall}{NW3w0iRO-3H9tUA-1}\nwindexuse{\nwixident{Iff}}{Iff}{NW3w0iRO-3H9tUA-1}\nwindexuse{\nwixident{Implies}}{Implies}{NW3w0iRO-3H9tUA-1}\nwindexuse{\nwixident{Not}}{Not}{NW3w0iRO-3H9tUA-1}\nwindexuse{\nwixident{Or}}{Or}{NW3w0iRO-3H9tUA-1}\nwindexuse{\nwixident{Pred}}{Pred}{NW3w0iRO-3H9tUA-1}\nwindexuse{\nwixident{Term.serialize}}{Term.serialize}{NW3w0iRO-3H9tUA-1}\nwendcode{}\nwbegindocs{78}\nwdocspar
+\begin{node}
+Feferman defines $E^{+}$-formulas as those whose atomic formulas are
+$t_{1}=t_{2}$, $t_{1}\neq t_{2}$, and $t\in C$, and the only
+connectives allowed are disjunction $\lor$ and conjunction $\land$,
+and the only possible quantifier is existentially quantified
+individual-sorted variables $\exists x\ldotp\phi$ provided $\phi$ is
+another $E^{+}$-formula. We will extend this to support $\top$ as an
+$E^{+}$-formula.
+
+These are particularly important in $FS_{0}$ because set comprehension
+only makes sense for expressions of the form $\{x\mid\phi[x]\}$ where
+$\phi$ is an $E^{+}$-formula.
+
+Why are we sticking this function into the {\Tt{}Formula\nwendquote} module? Well,
+the naming convention tells us the predicate fully: {\Tt{}\nwlinkedidentq{Formula.is{\_}e{\_}plus}{NW3w0iRO-1O1TnJ-1}\nwendquote}
+tests if a formula is an $E^{+}$-formula or not.
+\end{node}
+
+\nwenddocs{}\nwbegincode{79}\sublabel{NW3w0iRO-2HPkc8-G}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-G}}}\moddef{Specification for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-5BH7S-1}}\nwprevnextdefs{NW3w0iRO-2HPkc8-F}{NW3w0iRO-2HPkc8-H}\nwenddeflinemarkup
+val is_e_plus : t -> bool;
+\nwused{\\{NW3w0iRO-5BH7S-1}}\nwendcode{}\nwbegindocs{80}\nwdocspar
+
+\nwenddocs{}\nwbegincode{81}\sublabel{NW3w0iRO-1O1TnJ-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-1O1TnJ-1}}}\moddef{Test for $E^{+}$-formula~{\nwtagstyle{}\subpageref{NW3w0iRO-1O1TnJ-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwenddeflinemarkup
+fun is_e_plus (\nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1}(\nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1})) = true
+  | is_e_plus (\nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1}(\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1}("=",[lhs,rhs]))) = Term.is_ind lhs andalso
+                                           Term.is_ind rhs
+  | is_e_plus (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1}("=",[lhs,rhs])) = Term.is_ind lhs andalso
+                                      Term.is_ind rhs
+  | is_e_plus (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1}("in",[lhs,rhs])) = Term.is_ind lhs andalso
+                                       Term.is_class rhs
+  | is_e_plus (\nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1}(A,B)) = is_e_plus A andalso is_e_plus B
+  | is_e_plus (\nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1}(A,B)) = is_e_plus A andalso is_e_plus B
+  | is_e_plus (\nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1}(x,A)) = Term.is_ind x andalso is_e_plus A
+  | is_e_plus _ = false; 
+\nwindexdefn{\nwixident{Formula.is{\_}e{\_}plus}}{Formula.is:une:unplus}{NW3w0iRO-1O1TnJ-1}\eatline
+\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentdefs{\\{{\nwixident{Formula.is{\_}e{\_}plus}}{Formula.is:une:unplus}}}\nwidentuses{\\{{\nwixident{And}}{And}}\\{{\nwixident{Exists}}{Exists}}\\{{\nwixident{False}}{False}}\\{{\nwixident{Not}}{Not}}\\{{\nwixident{Or}}{Or}}\\{{\nwixident{Pred}}{Pred}}\\{{\nwixident{Term.is{\_}class}}{Term.is:unclass}}\\{{\nwixident{Term.is{\_}ind}}{Term.is:unind}}}\nwindexuse{\nwixident{And}}{And}{NW3w0iRO-1O1TnJ-1}\nwindexuse{\nwixident{Exists}}{Exists}{NW3w0iRO-1O1TnJ-1}\nwindexuse{\nwixident{False}}{False}{NW3w0iRO-1O1TnJ-1}\nwindexuse{\nwixident{Not}}{Not}{NW3w0iRO-1O1TnJ-1}\nwindexuse{\nwixident{Or}}{Or}{NW3w0iRO-1O1TnJ-1}\nwindexuse{\nwixident{Pred}}{Pred}{NW3w0iRO-1O1TnJ-1}\nwindexuse{\nwixident{Term.is{\_}class}}{Term.is:unclass}{NW3w0iRO-1O1TnJ-1}\nwindexuse{\nwixident{Term.is{\_}ind}}{Term.is:unind}{NW3w0iRO-1O1TnJ-1}\nwendcode{}\nwbegindocs{82}\nwdocspar
+\begin{node}
+We will also want to apply functions of the form $f\colon
+P[\vec{t}]\to \alpha~\mathrm{list}$ to predicates, and to just
+recursively work our way down subformulas, concatenating the results together.
+\end{node}
+
+\nwenddocs{}\nwbegincode{83}\sublabel{NW3w0iRO-2HPkc8-H}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-H}}}\moddef{Specification for formulas~{\nwtagstyle{}\subpageref{NW3w0iRO-2HPkc8-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-5BH7S-1}}\nwprevnextdefs{NW3w0iRO-2HPkc8-G}{\relax}\nwenddeflinemarkup
+val atom_union : (t -> 'a list) -> t -> 'a list;
+\nwused{\\{NW3w0iRO-5BH7S-1}}\nwendcode{}\nwbegindocs{84}\nwdocspar
+
+\nwenddocs{}\nwbegincode{85}\sublabel{NW3w0iRO-28e6MC-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW3w0iRO-28e6MC-1}}}\moddef{Take the union of applying a function to atoms~{\nwtagstyle{}\subpageref{NW3w0iRO-28e6MC-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW3w0iRO-2jnj9W-1}}\nwenddeflinemarkup
+(* atom_union : (t -> 'a list) -> 'a list *)
+fun atom_union f =
+  (fn (\nwlinkedidentc{False}{NW3w0iRO-2jnj9W-1}) => []
+    | (fm as (\nwlinkedidentc{Pred}{NW3w0iRO-2jnj9W-1} _)) => f fm
+    | (\nwlinkedidentc{Not}{NW3w0iRO-2jnj9W-1} A) => atom_union f A
+    | (\nwlinkedidentc{And}{NW3w0iRO-2jnj9W-1}(A,B)) => (atom_union f A) @ (atom_union f B)
+    | (\nwlinkedidentc{Or}{NW3w0iRO-2jnj9W-1}(A,B)) => (atom_union f A) @ (atom_union f B)
+    | (\nwlinkedidentc{Implies}{NW3w0iRO-2jnj9W-1}(A,B)) => (atom_union f A) @ (atom_union f B)
+    | (\nwlinkedidentc{Iff}{NW3w0iRO-2jnj9W-1}(A,B)) => (atom_union f A) @ (atom_union f B)
+    | (\nwlinkedidentc{Forall}{NW3w0iRO-2jnj9W-1}(_, A)) => atom_union f A
+    | (\nwlinkedidentc{Exists}{NW3w0iRO-2jnj9W-1}(_, A)) => atom_union f A);
+\nwindexdefn{\nwixident{Formula.atom{\_}union}}{Formula.atom:ununion}{NW3w0iRO-28e6MC-1}\eatline
+\nwused{\\{NW3w0iRO-2jnj9W-1}}\nwidentdefs{\\{{\nwixident{Formula.atom{\_}union}}{Formula.atom:ununion}}}\nwidentuses{\\{{\nwixident{And}}{And}}\\{{\nwixident{Exists}}{Exists}}\\{{\nwixident{False}}{False}}\\{{\nwixident{Forall}}{Forall}}\\{{\nwixident{Iff}}{Iff}}\\{{\nwixident{Implies}}{Implies}}\\{{\nwixident{Not}}{Not}}\\{{\nwixident{Or}}{Or}}\\{{\nwixident{Pred}}{Pred}}}\nwindexuse{\nwixident{And}}{And}{NW3w0iRO-28e6MC-1}\nwindexuse{\nwixident{Exists}}{Exists}{NW3w0iRO-28e6MC-1}\nwindexuse{\nwixident{False}}{False}{NW3w0iRO-28e6MC-1}\nwindexuse{\nwixident{Forall}}{Forall}{NW3w0iRO-28e6MC-1}\nwindexuse{\nwixident{Iff}}{Iff}{NW3w0iRO-28e6MC-1}\nwindexuse{\nwixident{Implies}}{Implies}{NW3w0iRO-28e6MC-1}\nwindexuse{\nwixident{Not}}{Not}{NW3w0iRO-28e6MC-1}\nwindexuse{\nwixident{Or}}{Or}{NW3w0iRO-28e6MC-1}\nwindexuse{\nwixident{Pred}}{Pred}{NW3w0iRO-28e6MC-1}\nwendcode{}
+
+\nwixlogsorted{c}{{Check if a formula contains a variable}{NW3w0iRO-4DOLFK-1}{\nwixu{NW3w0iRO-2jnj9W-1}\nwixd{NW3w0iRO-4DOLFK-1}}}%
+\nwixlogsorted{c}{{Comparing formulas}{NW3w0iRO-35s47m-1}{\nwixu{NW3w0iRO-2jnj9W-1}\nwixd{NW3w0iRO-35s47m-1}}}%
+\nwixlogsorted{c}{{Constructors for formulas}{NW3w0iRO-3SlqND-1}{\nwixu{NW3w0iRO-2jnj9W-1}\nwixd{NW3w0iRO-3SlqND-1}\nwixd{NW3w0iRO-3SlqND-2}\nwixd{NW3w0iRO-3SlqND-3}\nwixd{NW3w0iRO-3SlqND-4}}}%
+\nwixlogsorted{c}{{Destructors for formulas}{NW3w0iRO-1Yt1Jl-1}{\nwixu{NW3w0iRO-2jnj9W-1}\nwixd{NW3w0iRO-1Yt1Jl-1}\nwixd{NW3w0iRO-1Yt1Jl-2}\nwixd{NW3w0iRO-1Yt1Jl-3}\nwixd{NW3w0iRO-1Yt1Jl-4}}}%
+\nwixlogsorted{c}{{Folding formulas}{NW3w0iRO-1UOPDY-1}{\nwixu{NW3w0iRO-2jnj9W-1}\nwixd{NW3w0iRO-1UOPDY-1}}}%
+\nwixlogsorted{c}{{Formula.sig}{NW3w0iRO-5BH7S-1}{\nwixd{NW3w0iRO-5BH7S-1}}}%
+\nwixlogsorted{c}{{Formula.sml}{NW3w0iRO-2jnj9W-1}{\nwixd{NW3w0iRO-2jnj9W-1}}}%
+\nwixlogsorted{c}{{Free and bound variables in a formula}{NW3w0iRO-jRgYZ-1}{\nwixu{NW3w0iRO-2jnj9W-1}\nwixd{NW3w0iRO-jRgYZ-1}\nwixd{NW3w0iRO-jRgYZ-2}}}%
+\nwixlogsorted{c}{{Precedence for connectives}{NW3w0iRO-3yI6te-1}{\nwixu{NW3w0iRO-2jnj9W-1}\nwixd{NW3w0iRO-3yI6te-1}}}%
+\nwixlogsorted{c}{{Predicates for formulas}{NW3w0iRO-3NyJLv-1}{\nwixu{NW3w0iRO-2jnj9W-1}\nwixd{NW3w0iRO-3NyJLv-1}\nwixd{NW3w0iRO-3NyJLv-2}\nwixd{NW3w0iRO-3NyJLv-3}\nwixd{NW3w0iRO-3NyJLv-4}}}%
+\nwixlogsorted{c}{{Serialize a formula}{NW3w0iRO-3H9tUA-1}{\nwixu{NW3w0iRO-2jnj9W-1}\nwixd{NW3w0iRO-3H9tUA-1}}}%
+\nwixlogsorted{c}{{Specification for formulas}{NW3w0iRO-2HPkc8-1}{\nwixu{NW3w0iRO-5BH7S-1}\nwixd{NW3w0iRO-2HPkc8-1}\nwixd{NW3w0iRO-2HPkc8-2}\nwixd{NW3w0iRO-2HPkc8-3}\nwixd{NW3w0iRO-2HPkc8-4}\nwixd{NW3w0iRO-2HPkc8-5}\nwixd{NW3w0iRO-2HPkc8-6}\nwixd{NW3w0iRO-2HPkc8-7}\nwixd{NW3w0iRO-2HPkc8-8}\nwixd{NW3w0iRO-2HPkc8-9}\nwixd{NW3w0iRO-2HPkc8-A}\nwixd{NW3w0iRO-2HPkc8-B}\nwixd{NW3w0iRO-2HPkc8-C}\nwixd{NW3w0iRO-2HPkc8-D}\nwixd{NW3w0iRO-2HPkc8-E}\nwixd{NW3w0iRO-2HPkc8-F}\nwixd{NW3w0iRO-2HPkc8-G}\nwixd{NW3w0iRO-2HPkc8-H}}}%
+\nwixlogsorted{c}{{Substitution in a formula}{NW3w0iRO-1jtQRV-1}{\nwixu{NW3w0iRO-2jnj9W-1}\nwixd{NW3w0iRO-1jtQRV-1}}}%
+\nwixlogsorted{c}{{Take the union of applying a function to atoms}{NW3w0iRO-28e6MC-1}{\nwixu{NW3w0iRO-2jnj9W-1}\nwixd{NW3w0iRO-28e6MC-1}}}%
+\nwixlogsorted{c}{{Test a term is free for a variable in a formula}{NW3w0iRO-ZZefY-1}{\nwixu{NW3w0iRO-2jnj9W-1}\nwixd{NW3w0iRO-ZZefY-1}}}%
+\nwixlogsorted{c}{{Test for $E^{+}$-formula}{NW3w0iRO-1O1TnJ-1}{\nwixu{NW3w0iRO-2jnj9W-1}\nwixd{NW3w0iRO-1O1TnJ-1}}}%
+\nwixlogsorted{c}{{Test if two formulas are equal}{NW3w0iRO-5gQzE-1}{\nwixu{NW3w0iRO-2jnj9W-1}\nwixd{NW3w0iRO-5gQzE-1}}}%
+\nwixlogsorted{i}{{\nwixident{And}}{And}}%
+\nwixlogsorted{i}{{\nwixident{Exists}}{Exists}}%
+\nwixlogsorted{i}{{\nwixident{False}}{False}}%
+\nwixlogsorted{i}{{\nwixident{Forall}}{Forall}}%
+\nwixlogsorted{i}{{\nwixident{Formula.atom{\_}union}}{Formula.atom:ununion}}%
+\nwixlogsorted{i}{{\nwixident{Formula.bv}}{Formula.bv}}%
+\nwixlogsorted{i}{{\nwixident{Formula.compare}}{Formula.compare}}%
+\nwixlogsorted{i}{{\nwixident{Formula.contains{\_}var}}{Formula.contains:unvar}}%
+\nwixlogsorted{i}{{\nwixident{Formula.Dest}}{Formula.Dest}}%
+\nwixlogsorted{i}{{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}}%
+\nwixlogsorted{i}{{\nwixident{Formula.dest{\_}iff}}{Formula.dest:uniff}}%
+\nwixlogsorted{i}{{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}}%
+\nwixlogsorted{i}{{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}}%
+\nwixlogsorted{i}{{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}}%
+\nwixlogsorted{i}{{\nwixident{Formula.dest{\_}pred}}{Formula.dest:unpred}}%
+\nwixlogsorted{i}{{\nwixident{Formula.eq}}{Formula.eq}}%
+\nwixlogsorted{i}{{\nwixident{Formula.foldl}}{Formula.foldl}}%
+\nwixlogsorted{i}{{\nwixident{Formula.foldr}}{Formula.foldr}}%
+\nwixlogsorted{i}{{\nwixident{Formula.free{\_}for}}{Formula.free:unfor}}%
+\nwixlogsorted{i}{{\nwixident{Formula.fv}}{Formula.fv}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}and}}{Formula.is:unand}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}e{\_}plus}}{Formula.is:une:unplus}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}iff}}{Formula.is:uniff}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}not}}{Formula.is:unnot}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}or}}{Formula.is:unor}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}pred}}{Formula.is:unpred}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}verum}}{Formula.is:unverum}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}verum}}{Formula.mk:unverum}}%
+\nwixlogsorted{i}{{\nwixident{Formula.precedence}}{Formula.precedence}}%
+\nwixlogsorted{i}{{\nwixident{Formula.serialize}}{Formula.serialize}}%
+\nwixlogsorted{i}{{\nwixident{Formula.subst}}{Formula.subst}}%
+\nwixlogsorted{i}{{\nwixident{Formula.t}}{Formula.t}}%
+\nwixlogsorted{i}{{\nwixident{Iff}}{Iff}}%
+\nwixlogsorted{i}{{\nwixident{Implies}}{Implies}}%
+\nwixlogsorted{i}{{\nwixident{Not}}{Not}}%
+\nwixlogsorted{i}{{\nwixident{Or}}{Or}}%
+\nwixlogsorted{i}{{\nwixident{Pred}}{Pred}}%
+\nwixlogsorted{i}{{\nwixident{Term.compare}}{Term.compare}}%
+\nwixlogsorted{i}{{\nwixident{Term.compare{\_}lists}}{Term.compare:unlists}}%
+\nwixlogsorted{i}{{\nwixident{Term.eq}}{Term.eq}}%
+\nwixlogsorted{i}{{\nwixident{Term.eq{\_}lists}}{Term.eq:unlists}}%
+\nwixlogsorted{i}{{\nwixident{Term.fv}}{Term.fv}}%
+\nwixlogsorted{i}{{\nwixident{Term.have{\_}same{\_}sort}}{Term.have:unsame:unsort}}%
+\nwixlogsorted{i}{{\nwixident{Term.is{\_}class}}{Term.is:unclass}}%
+\nwixlogsorted{i}{{\nwixident{Term.is{\_}ind}}{Term.is:unind}}%
+\nwixlogsorted{i}{{\nwixident{Term.occurs{\_}in}}{Term.occurs:unin}}%
+\nwixlogsorted{i}{{\nwixident{Term.serialize}}{Term.serialize}}%
+\nwixlogsorted{i}{{\nwixident{Term.subst}}{Term.subst}}%
+\nwixlogsorted{i}{{\nwixident{Term.t}}{Term.t}}%
+

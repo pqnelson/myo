@@ -1,0 +1,20 @@
+# emacs autosaves
+.\#*
+\#*\#
+*~
+refs/
+
+# TeX generated stuff
+*.aux
+*.dvi
+*.log
+*.out
+*.pdf
+*.toc
+
+# BibTeX generated stuff
+*.blg
+*.bbl
+
+# Noweb stuff
+*.defs

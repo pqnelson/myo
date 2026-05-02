@@ -1,0 +1,166 @@
+%%
+%% style.tex
+%% 
+%% Made by Alex Nelson <pqnelson@gmail.com>
+%% Login   <alex@lisp>
+%% 
+%% Started on  2026-04-26T11:05:02-0700
+%% Last update 2026-04-26T11:05:02-0700
+%% 
+
+\section{Code Style Guide}
+
+\begin{node}
+I will probably forget my coding conventions, or develop new
+conventions as the need arises. This appendix just reviews the
+decisions.
+
+We openly acknowledge a lot of our \SML/ style decisions have been
+guided by Isabelle/ML's style guide\footnote{\url{https://isabelle.in.tum.de/library/Doc/Implementation/ML.html}}.
+\end{node}
+
+\begin{node}
+The \SML/ code may be separated from the literate program, so it is
+wise to have coding conventions which are adequate if the code
+``stands alone''.
+\end{node}
+
+\begin{node}[Guiding principle: portability]
+We want to have as many platforms supported as possible. This forces
+our hand to support Moscow~ML, which is supported almost
+everywhere. However, Moscow ML has peculiar conventions, like placing
+signatures in their own ``\texttt{.sig}'' file. We are forced to adopt
+these conventions.
+\end{node}
+
+\begin{node}[Function comments]
+Every function should have a comment with at least its type
+signature. Any assumptions about the inputs should be given in a
+``\texttt{REQUIRES:}'' preconditions clause in this comment. Any guarantees should
+be placed in an ``\texttt{ENSURES:}'' postconditions clause.
+
+Multiply preconditions clauses should be understood as conjoined
+together (i.e., they all must be true). It may be more readable to
+break out preconditions into multiple clauses (e.g., to stress certain
+preconditions). Similarly for postconditions, we may have multiple
+clauses and we understand that they are all conjoined together.
+\end{node}
+
+\begin{node}[Data structure invariants]
+We will also try to document any invariants stipulated about a data
+structure somewhere near the module using a comment with a
+``\texttt{INVARIANT:}'' clause (or possibly several such clauses,
+understood that they are all conjoined together). We will document the
+invariant(s) in prose using an invariant enunciation, as we did for
+partial maps used in unification~(\S\ref{invariant:unification:cycle-free}).
+\end{node}
+
+\begin{node}[Naming conventions]
+For the most part,
+\begin{enumerate}
+\item We organize code around abstract data types
+\item Abstract data types are modules (\texttt{structure}s) almost
+  always with an abstract ``\texttt{t}'' data type to ``piggieback''
+  of the structure name (e.g., \texttt{Env.t}, \texttt{Thm.t},
+  \texttt{Term.t}, \texttt{Formula.t}, etc.). The only way to
+  construct such types are with the constructors provided.
+\item Structures are named using \texttt{PascalCase}---the only
+  exception is \texttt{FS0} because $FS_{0}$ uses two capitalized letters
+\item Signatures are named using \texttt{PascalCase}
+\item Functors are named like structures, but with a prefix
+  \texttt{Mk} (e.g., \texttt{MkRedBlackTree}, \texttt{MkAssocList}, etc.).
+\item Variables and Functions are named using \texttt{snake\_case}
+\item Types are named \emph{either} as \texttt{t} for abstract data
+  types, \emph{or} using \texttt{PascalCase}
+\item Data constructors are named using \texttt{PascalCase}
+\item Exceptions are named using \texttt{PascalCase}
+\end{enumerate}
+We are essentially growing a collection of ``name parts'', and when we
+name things we ``concatenate'' them together (separated by an
+underscore [for snake case] or case difference [for Pascal case]).
+Studies have indicated people remember ``three or less'' without much
+loss of concentration (the ``$7\pm2$'' rule seems to lack empirical grounding),
+therefore we try to restrict ourselves to 1--3 ``name parts'' in an
+identifier (e.g., \texttt{is\_cyclic} has 2 name parts ``is'' and ``cyclic'',
+\texttt{refute} has 1 name part, \texttt{refute\_dnf} has 2 name
+parts, \texttt{axiom\_ind\_universe} has 3 name parts).
+\end{node}
+
+\begin{node}
+Following the ``three or fewer'' rule, we can add up to three
+apostrophes to the name of an identifier (e.g., \texttt{fns},
+\texttt{fns'}, \texttt{fns''}, \texttt{fns'''}, but not \texttt{fns''''}).
+If more is needed, use numeric suffixes (e.g., \texttt{fns},
+\texttt{fns1}, \texttt{fns2}, \texttt{fns3}, \texttt{fns4}, etc.).
+\end{node}
+
+\begin{node}
+Following the Standard ML Basis, we are ``naming similar things similarly''.
+A generic ``collection'' abstract data type (like a set) would have
+similar functions as the Standard Basis's \texttt{List} module
+(\texttt{filter}, \texttt{exists}, \texttt{all}, etc.) with type
+signatures resembling the existing ones.
+\end{node}
+
+\begin{node}[Specific naming conventions]
+There are a few specific naming conventions we follow:
+\begin{enumerate}
+\item Converting \texttt{Foo.t} types to \texttt{Bar.t} types are done
+  with the function \texttt{Foo.to\_bar}
+\item Variables which hold a formula are usually abbreviated \texttt{fm}
+\item Variables which hold a term are usually abbreviated \texttt{tm}
+  (not \texttt{t}, which is the type of an abstract data type).
+\item Theorems are named \texttt{thm} or \texttt{th}
+\item When dealing with an equation or a binary operator, \texttt{lhs} and \texttt{rhs} may
+  be used for identifiers referring to the left-hand side (resp.,
+  right-hand side) of the equation (resp., binary operator).
+\item Predicates start with ``\texttt{is\_}'' prefix, constructors
+  start with ``\texttt{mk\_}'' prefix, and destructors/destructuring
+  functions start with ``\texttt{dest\_}'' prefix.
+\item Use ``\texttt{eq}'' for testing equality of two objects of the
+  same type
+\item Use ``\texttt{compare(x,y)}'' for a total ordering where if
+  $x<y$ returns \texttt{LESS}, if $x>y$ returns
+  \texttt{GREATER}. Require ``\texttt{compare(x,y)}'' to return
+  \texttt{EQUAL} if and only if ``\texttt{eq~x~y}'' is true.
+\end{enumerate}
+\end{node}
+
+\begin{node}[Whitespace]
+Indentation is 2-spaces, sometimes 1, rarely 4-spaces. Never use tabs.
+Indentation follows a logical format following nesting depth.
+
+Wrap lines at 80 characters long.
+
+For complex expressions consisting of multi-clausal function
+definitions, \texttt{handle}, \texttt{case}, and \texttt{let}
+expressions are trickier. The multiple clauses of \texttt{fun},
+\texttt{fn}, \texttt{handle}, and \texttt{case} get extra indentation
+to indicate the nesting clearly.
+
+For multi-clausal \texttt{fun} and \texttt{fn} expressions, the
+vertical bar aligns with the ``\texttt{n}'' of \texttt{fun} (resp.,
+\texttt{fn}). 
+
+The \texttt{case} expression should be wrapped in a parentheses for
+extra clarity. The opening parentheses can be counted as taking one
+space of the indentation.
+\end{node}
+
+\begin{node}[Indenting modules]
+Signatures get indentation after the opening \texttt{sig}.
+But neither functors nor structures receive any extra indentation.
+\end{node}
+
+\begin{node}
+Always end lines with semicolons where sensible. This includes
+\texttt{let}-expressions with more than one local declaration, at the
+end of a \texttt{val} or \texttt{fun} declaration, at the end of each
+declaration in a signature, after the \texttt{end} in a \texttt{let}
+or \texttt{local} expression. After each type declaration. After an
+exception declaration.
+
+Semicolons end ``sentences'' in \SML/, that is how we use them. Some
+people can write 500 page long sentences like James Joyce. But only
+Joyce can succeed at doing so.
+\end{node}

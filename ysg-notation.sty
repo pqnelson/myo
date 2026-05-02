@@ -1,0 +1,80 @@
+%%
+%% This is file `ysg-notation.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% ysg-notation.dtx  (with options: `package')
+%% ------------:| ------------------------------------------------------------
+%% ysg-notation:| A new LaTeX package
+%%       Author:| Alex Nelson
+%%       E-mail:| pqnelson@gmail.com
+%%      License:| Released under the LaTeX Project Public License v1.3c or later
+%%          See:| http://www.latex-project.org/lppl.txt
+%% 
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+\ProvidesPackage{ysg-notation}
+    [2026/01/22 v0.1.0 A new LaTeX package]
+\RequirePackage{amsmath}
+\let\propersubset\subset
+\let\subset\subseteq
+\let\propersupset\supset
+\let\supset\supseteq
+\DeclareMathOperator\bigOh{\mathcal{O}}
+\DeclareMathOperator\dom{dom}
+\DeclareMathOperator\id{id}
+\DeclareMathOperator\powerset{\mathcal{P}}
+\newcommand\N{\mathbb{N}}
+\newcommand\Z{\mathbb{Z}}
+\newcommand\concat{\mathbin{\frown}}
+\DeclareMathOperator\Seg{Seg}
+
+\RequirePackage{relsize}
+\def\mc{\smaller}
+\newcommand\acro[1]{{\mc#1\spacefactor1000}}
+\providecommand\AmS{$\mathcal{A}$%
+  \kern-.1667em\lower.5ex\hbox{$\mathcal{M}$}%
+  \kern-.125em$\mathcal{S}$}
+\def\GNU/{{\mc GNU\spacefactor1000}} % ltugboat.cls
+\def\IEEE/{{\mc IEEE\spacefactor1000}} % ltugboat.cls
+\def\POSIX/{{\mc POSIX\spacefactor1000}} % s-tugboat.mkiv
+\def\DVIPDFMx{{\mc DVIPDFM}$x$} % ltugcomn.sty
+\def\leanTAP{\mbox{{\sf lean}$T^{\!\textstyle{A}}\!P$}} % ltugcomn.sty
+\def\TANGLE{\texttt{TANGLE}\spacefactor1000}
+\def\UNIX/{{\mc U\kern-.05emNIX\spacefactor1000}}
+\def\WEAVE{\texttt{WEAVE}\spacefactor1000}
+\newcommand{\CSharp}{C\hspace{-.05em}\raisebox{.4ex}{\footnotesize\#}}
+\newcommand{\FSharp}{F\hspace{-.05em}\raisebox{.4ex}{\footnotesize\#}} % ${}^{\sharp}$}
+\def\MATLAB{{MATLAB\spacefactor1000}}
+\def\PASCAL/{{P\kern-.075em{\mc ASCAL}\spacefactor1000}}
+\def\SML/{{Standard~ML\spacefactor1000}}
+\def\WEB{\texttt{WEB\spacefactor1000}}
+\def\HTML{{\mc HTML\spacefactor1000}} % ltugboat.cls
+\def\ARM/{{ARM\spacefactor1000}}
+\def\RISC/{{RISC\spacefactor1000}}
+\def\VAX/{{V\kern-.12em A\kern-.1em X\spacefactor1000}} % ltugcomn.sty
+\def\defaxiom#1#2{\def#1{\ifmmode\mbox{\textsf{#2}}\else\textsf{#2}\fi}}
+\defaxiom\HOL{HOL}
+\defaxiom\PRA{PRA}
+\defaxiom\ZF{ZF}
+
+%% 
+%% Copyright (C) 2026 by Alex Nelson <pqnelson@gmail.com>
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL), either
+%% version 1.3c of this license or (at your option) any later
+%% version.  The latest version of this license is in the file:
+%% 
+%% http://www.latex-project.org/lppl.txt
+%% 
+%% This work is "maintained" (as per LPPL maintenance status) by
+%% Alex Nelson.
+%% 
+%% This work consists of the file ysg-notation.dtx and a Makefile.
+%% Running "make" generates the derived files README, ysg-notation.pdf and ysg-notation.sty.
+%% Running "make inst" installs the files in the user's TeX tree.
+%% Running "make install" installs the files in the local TeX tree.
+%% 
+%%
+%% End of file `ysg-notation.sty'.

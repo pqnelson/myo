@@ -1,0 +1,733 @@
+% -*- mode: poly-noweb; noweb-code-mode: sml-mode; -*-
+%%
+%% many-sorted-formula.nw
+%% 
+%% Made by Alex Nelson <pqnelson@gmail.com>
+%% Login   <alex@lisp>
+%% 
+%% Started on  2026-04-04T18:49:02-0700
+%% Last update 2026-04-04T18:49:02-0700
+%%
+
+\section{Syntax for formulas}
+
+\begin{node}
+We need to use opaque types for formulas, because we want to use smart
+constructors to ensure quantifiers are given variable [[Term.t]] instances.
+Otherwise it'd be too easy to accidentally change the sort of a bound
+variable, which will produce bugs later on (bugs that will be
+difficult to trace).
+
+Consequently, we will want to provide \define{Destructuring} functions
+to ``break apart'' the abstract syntax tree for a formula, so we can
+recover its constituent parts. We have one destructuring function for
+each data constructor. If the user mistakenly applies an incorrect
+destructuring formula to a different formula (e.g., [[dest_forall]]
+applied to an implication), then an exception should be raised. This
+is precisely the [[Formula.Dest]] exception's role.
+\end{node}
+
+<<Formula.sig>>=
+signature Formula = sig
+  exception Dest of string;
+  type t;
+  val is_atom : t -> bool;
+  <<Specification for formulas>>
+end;
+@ 
+
+<<Formula.sml>>=
+structure Formula :> Formula = struct
+exception Dest of string;
+
+datatype t = False
+           | Pred of string * Term.t list
+           | Not of t
+           | And of t * t
+           | Or of t * t
+           | Implies of t * t
+           | Iff of t * t
+           | Forall of Term.t * t
+           | Exists of Term.t * t;
+
+fun is_atom (False) = true
+  | is_atom (Pred _) = true
+  | is_atom _ = false;
+
+<<Constructors for formulas>>
+
+<<Destructors for formulas>>
+
+<<Predicates for formulas>>
+
+<<Substitution in a formula>>
+
+<<Folding formulas>>
+
+<<Free and bound variables in a formula>>
+
+<<Check if a formula contains a variable>>
+
+<<Precedence for connectives>>
+
+<<Comparing formulas>>
+
+<<Test if two formulas are equal>>
+
+<<Test a term is free for a variable in a formula>>
+
+<<Test for $E^{+}$-formula>>
+
+<<Serialize a formula>>
+
+<<Take the union of applying a function to atoms>>
+end;
+@ %def Formula.Dest Formula.t False Pred Not And Or Implies Iff Forall Exists
+
+\begin{node}
+The canonical contradiction $\bot$ can be constructed, and we can test
+for it. But it does not make sense to ``destructure'' it, so we omit
+its destructor.
+
+The canonical ``tautology'' \textit{verum} $\top$ is an abbreviation
+for $\neg\bot$. Like the canonical contradiction, there's no
+destructuring function for it (it is ``atomic'').
+\end{node}
+
+<<Specification for formulas>>=
+val mk_verum : unit -> t;
+val mk_falsum : unit -> t;
+val mk_pred : string * Term.t list -> t;
+@
+<<Constructors for formulas>>=
+fun mk_falsum () = False;
+
+fun mk_verum () = Not(False);
+
+fun mk_pred args = Pred args;
+@ %def Formula.mk_falsum Formula.mk_pred Formula.mk_verum
+
+
+<<Specification for formulas>>=
+val dest_pred : t -> string * Term.t list;
+@
+<<Destructors for formulas>>=
+fun dest_pred (Pred args) = args
+  | dest_pred _ = raise Dest "dest_pred";
+@ %def Formula.dest_pred
+
+<<Specification for formulas>>=
+val is_verum : t -> bool;
+val is_falsum : t -> bool;
+val is_pred : t -> bool;
+@
+<<Predicates for formulas>>=
+fun is_falsum (False) = true
+  | is_falsum _ = false;
+
+fun is_verum (Not(False)) = true
+  | is_verum _ = false;
+
+fun is_pred (Pred _) = true
+  | is_pred _ = false;
+@ %def Formula.is_falsum Formula.is_verum Formula.is_pred
+
+\begin{node}
+Negation is the only unary logical connective. Intuitionistic logic
+can abbreviate negation as ``implies $\bot$''. The advantage to such
+an abbreviation is that negation-introduction and elimination
+inference rules do not need to be present in the kernel. We can
+implement them as derived inference rules, i.e., as functions outside
+the kernel using kernel primitives.
+\end{node}
+
+<<Specification for formulas>>=
+val mk_not : t -> t;
+val dest_not : t -> t;
+val is_not : t -> bool;
+@
+
+<<Constructors for formulas>>=
+fun mk_not fm = Not fm;
+@ %def Formula.mk_not
+
+<<Destructors for formulas>>=
+fun dest_not (Not fm) = fm
+  | dest_not _ = raise Dest "dest_not";
+@ %def Formula.dest_not
+
+<<Predicates for formulas>>=
+fun is_not (Not _) = true
+  | is_not _ = false;
+@ %def Formula.is_not
+
+\begin{node}
+The binary connectives all have similar constructors, destructors, and
+predicates. A more extensible way to implement formulas would be to
+have a single data constructor for binary connectives with a string
+holding the connective. This is the approach
+Paulson~\cite{paulson1990designing} takes.
+\end{node}
+
+<<Specification for formulas>>=
+val mk_and : t * t -> t;
+val mk_or : t * t -> t;
+val mk_imp : t * t -> t;
+val mk_iff : t * t -> t;
+
+val dest_and : t -> t * t;
+val dest_or : t -> t * t;
+val dest_imp : t -> t * t;
+val dest_iff : t -> t * t;
+
+val is_and : t -> bool;
+val is_or : t -> bool;
+val is_imp : t -> bool;
+val is_iff : t -> bool;
+@
+
+<<Constructors for formulas>>=
+fun mk_and args = And args;
+
+fun mk_or args = Or args;
+
+fun mk_imp args = Implies args;
+
+fun mk_iff args = Iff args;
+@ %def Formula.mk_and Formula.mk_or Formula.mk_imp Formula.mk_iff
+
+<<Destructors for formulas>>=
+fun dest_and (And args) = args
+  | dest_and _ = raise Dest "dest_and";
+
+fun dest_or (Or args) = args
+  | dest_or _ = raise Dest "dest_or";
+
+fun dest_imp (Implies args) = args
+  | dest_imp _ = raise Dest "dest_imp";
+
+fun dest_iff (Iff args) = args
+  | dest_iff _ = raise Dest "dest_iff";
+@ %def Formula.dest_and Formula.dest_or Formula.dest_imp Formula.dest_iff
+
+<<Predicates for formulas>>=
+fun is_and (And _) = true
+  | is_and _ = false;
+
+fun is_or (Or _) = true
+  | is_or _ = false;
+
+fun is_imp (Implies _) = true
+  | is_imp _ = false;
+
+fun is_iff (Iff _) = true
+  | is_iff _ = false;
+@ %def Formula.is_and Formula.is_or Formula.is_imp Formula.is_iff
+
+\begin{node}
+Quantifiers are essentially ordered pairs of a [[Term.t]] variable and
+a formula.
+\end{node}
+
+<<Specification for formulas>>=
+  val mk_forall : Term.t * t -> t;
+  val mk_exists : Term.t * t -> t;
+  
+  val dest_forall : t -> Term.t * t;
+  val dest_exists : t -> Term.t * t;
+
+  val is_forall : t -> bool;
+  val is_exists : t -> bool;
+@ 
+
+<<Constructors for formulas>>=
+fun mk_forall (x, fm) =
+  if Term.is_var x then Forall(x, fm)
+  else raise Fail "mk_forall: Term must be a variable";
+
+fun mk_exists (x, fm) =
+  if Term.is_var x then Exists(x, fm)
+  else raise Fail "mk_exists: Term must be a variable";
+@ %def Formula.mk_forall Formula.mk_exists
+
+<<Destructors for formulas>>=
+fun dest_forall (Forall args) = args
+  | dest_forall _ = raise Dest "dest_forall";
+
+fun dest_exists (Exists args) = args
+  | dest_exists _ = raise Dest "dest_exists";
+@
+
+<<Predicates for formulas>>=
+fun is_forall (Forall _) = true
+  | is_forall _ = false;
+
+fun is_exists (Exists _) = true
+  | is_exists _ = false;
+@
+
+\begin{node}
+Substitution is defined by the rules:
+\begin{enumerate}
+\item $\bot[t/x]=\bot$
+\item $(P[t_{1},\dots,t_{n}])[t/x] = P[t_{1}[t/x], \dots, t_{n}[t/x]]$
+\item $(\neg\phi)[t/x]=\neg(\phi[t/x])$
+\item $(\phi\land\psi)[t/x]=(\phi[t/x])\land(\psi[t/x])$
+\item $(\phi\lor\psi)[t/x]=(\phi[t/x])\lor(\psi[t/x])$
+\item $(\phi\implies\psi)[t/x]=(\phi[t/x])\implies(\psi[t/x])$
+\item $(\phi\iff\psi)[t/x]=(\phi[t/x])\iff(\psi[t/x])$
+\item $(\forall x\ldotp\phi)[t/x]=\forall x\ldotp\phi$
+\item $(\forall y\ldotp\phi)[t/x]=\forall y\ldotp(\phi[t/x])$ if
+  $y\neq x$
+\item $(\exists x\ldotp\phi)[t/x]=\exists x\ldotp\phi$
+\item $(\exists y\ldotp\phi)[t/x]=\exists y\ldotp(\phi[t/x])$ if
+  $y\neq x$
+\end{enumerate}
+I suppose an error should be raised if $x$ is not a variable, but I
+don't feel strongly enough about it.
+
+We only need to check once that the variable $x$ and its replacement
+$t$ have the same sort. The code reflects this, and then iterates
+through the subformulas, making all replacements as needed.
+\end{node}
+
+<<Specification for formulas>>=
+val subst : Term.t -> Term.t -> t -> t;
+@ 
+
+<<Substitution in a formula>>=
+(* subst : Term.t -> Term.t -> Formula.t -> Formula.t *)
+local
+fun iter x t fm =
+ (case fm of
+   (False) => fm
+ | (Pred(P,args)) => Pred(P, map (Term.subst x t) args)
+ | (Not A) => Not(iter x t A)
+ | (And(A,B)) => And(iter x t A, iter x t B)
+ | (Or(A,B)) => Or(iter x t A, iter x t B)
+ | (Implies(A,B)) => Implies(iter x t A, iter x t B)
+ | (Iff(A,B)) => Iff(iter x t A, iter x t B)
+ | (Forall(y,A)) => if Term.eq x y then fm
+                    else Forall(y, iter x t A)
+ | (Exists(y,A)) => if Term.eq x y then fm
+                    else Exists(y, iter x t A));
+in
+fun subst x t fm =
+  if not(Term.have_same_sort x t)
+  then raise Sort.Mismatch "Formula.subst: variable and replacement have different sorts"
+  else iter x t fm
+end;
+@ %def Formula.subst
+
+\begin{node}
+Free variables in  a formula is defined recursively on subformulas by
+the rules:
+\begin{enumerate}
+\item $FV(\bot)=\{\}$
+\item $FV(P[t_{1},\dots,t_{n}])=FV(t_{1})\cup(\cdots)\cup FV(t_{n})$
+\item $FV(\neg A)=FV(A)$
+\item $FV(A\land B)=FV(A)\cup FV(B)$
+\item $FV(A\lor B)=FV(A)\cup FV(B)$
+\item $FV(A\implies B)=FV(A)\cup FV(B)$
+\item $FV(A\iff B)=FV(A)\cup FV(B)$
+\item $FV(\forall x\ldotp A)=FV(A)\setminus\{x\}$
+\item $FV(\exists x\ldotp A)=FV(A)\setminus\{x\}$
+\end{enumerate}
+\end{node}
+
+
+<<Specification for formulas>>=
+val fv : t -> Term.t list;
+@ 
+
+<<Free and bound variables in a formula>>=
+(* fv : Formula.t -> Term.t list *)
+fun fv (False) = []
+  | fv (Pred (_, args)) = List.foldl (fn (arg, fvs') => (Term.fv arg) @ fvs')
+                                     []
+                                     args
+  | fv (Not A) = fv A
+  | fv (And(A, B)) = (fv A) @ (fv B)
+  | fv (Or(A, B)) = (fv A) @ (fv B)
+  | fv (Implies(A, B)) = (fv A) @ (fv B)
+  | fv (Iff(A, B)) = (fv A) @ (fv B)
+  | fv (Forall(x, A)) = List.filter (not o (Term.eq x)) (fv A)
+  | fv (Exists(x, A)) = List.filter (not o (Term.eq x)) (fv A);
+@
+
+\begin{node}
+Bound variables in  a formula is defined recursively on subformulas by
+the rules:
+\begin{enumerate}
+\item $BV(\bot)=\{\}$
+\item $BV(P[t_{1},\dots,t_{n}])=\{\}$
+\item $BV(\neg A)=BV(A)$
+\item $BV(A\land B)=BV(A)\cup BV(B)$
+\item $BV(A\lor B)=BV(A)\cup BV(B)$
+\item $BV(A\implies B)=BV(A)\cup BV(B)$
+\item $BV(A\iff B)=BV(A)\cup BV(B)$
+\item $BV(\forall x\ldotp A)=BV(A)\cup\{x\}$
+\item $BV(\exists x\ldotp A)=BV(A)\cup\{x\}$
+\end{enumerate}
+\end{node}
+<<Specification for formulas>>=
+val bv : t -> Term.t list;
+@ 
+
+<<Free and bound variables in a formula>>=
+(* bv : Formula.t -> Term.t list *)
+fun bv (False) = []
+  | bv (Pred _) = []
+  | bv (Not A) = bv A
+  | bv (And(A, B)) = (bv A) @ (bv B)
+  | bv (Or(A, B)) = (bv A) @ (bv B)
+  | bv (Implies(A, B)) = (bv A) @ (bv B)
+  | bv (Iff(A, B)) = (bv A) @ (bv B)
+  | bv (Forall(x, A)) = x::(bv A)
+  | bv (Exists(x, A)) = x::(bv A);
+@ %def Formula.fv Formula.bv
+
+\begin{node}
+The calculations for bound variables and free variables follows the
+same basic template: tell me what happens on atomic formulas, and what
+to do with quantifiers, then tell me how to ``recursively combine
+results from subformulas''. Computer scientists call this sort of a
+function a ``fold''.
+\end{node}
+
+<<Folding formulas>>=
+(* foldl : (Formula.t * 'a -> 'a) -> (Term.t * 'a -> 'a) -> 'a * Formula.t -> 'a *)
+fun foldl (f : t * 'a -> 'a) (q : Term.t * 'a -> 'a) (init : 'a) (fm : t) : 'a =
+  (case fm of
+    False => f(fm, init)
+  | (Pred _) => f(fm, init)
+  | (Not A) => foldl f q init A 
+  | (And(A,B)) => foldl f q (foldl f q init A) B
+  | (Or(A,B)) => foldl f q (foldl f q init A) B
+  | (Implies(A,B)) => foldl f q (foldl f q init A) B
+  | (Iff(A,B)) => foldl f q (foldl f q init A) B
+  | (Forall(x,A)) => foldl f q (q(x, init)) A
+  | (Exists(x,A)) => foldl f q (q(x, init)) A);
+
+(* foldr : (Formula.t * 'a -> 'a) -> (Term.t * 'a -> 'a) -> 'a * Formula.t -> 'a *)
+fun foldr f q init fm =
+  (case fm of
+    False => f(fm, init)
+  | (Pred _) => f(fm, init)
+  | (Not A) => foldr f q init A 
+  | (And(A,B)) => foldr f q (foldr f q init B) A
+  | (Or(A,B)) => foldr f q (foldr f q init B) A
+  | (Implies(A,B)) => foldr f q (foldr f q init B) A
+  | (Iff(A,B)) => foldr f  q(foldr f q init B) A
+  | (Forall(x,A)) => foldr f q (q(x, init)) A
+  | (Exists(x,A)) => foldr f q (q(x, init)) A);
+@ %def Formula.foldl Formula.foldr
+
+
+<<Specification for formulas>>=
+val contains_var : Term.t -> t -> bool;
+@ 
+<<Check if a formula contains a variable>>=
+fun contains_var x =
+ (fn (False) => false
+   | (Pred (_, args)) => List.exists (Term.occurs_in x) args
+   | (Not A) => contains_var x A
+   | (And(A,B)) => (contains_var x A) orelse (contains_var x B)
+   | (Or(A,B)) => (contains_var x A) orelse (contains_var x B)
+   | (Implies(A,B)) => (contains_var x A) orelse (contains_var x B)
+   | (Iff(A,B)) => (contains_var x A) orelse (contains_var x B)
+   | (Forall(y, A)) => (Term.eq x y) orelse (contains_var x A)
+   | (Exists(y, A)) => (Term.eq x y) orelse (contains_var x A));
+@ %def Formula.contains_var
+
+\begin{node}
+The precedence is $\bot > \mbox{predicates} > \neg > \land > \lor > \implies > \iff > \forall > \exists$.
+\end{node}
+
+<<Specification for formulas>>=
+val precedence : t -> t -> order;
+@
+
+<<Precedence for connectives>>=
+fun precedence (False) (False) = EQUAL
+  | precedence (False) _ = GREATER
+  | precedence (Pred _) (False) = LESS
+  | precedence (Pred _) (Pred _) = EQUAL
+  | precedence (Pred _) _ = GREATER
+  | precedence (Not _) (False) = LESS
+  | precedence (Not _) (Pred _) = LESS
+  | precedence (Not _) _ = GREATER
+  | precedence (And _) (False) = LESS
+  | precedence (And _) (Pred _) = LESS
+  | precedence (And _) (Not _) = LESS
+  | precedence (And _) (And _) = EQUAL
+  | precedence (And _) _ = GREATER
+  | precedence (Or _) (False) = LESS
+  | precedence (Or _) (Pred _) = LESS
+  | precedence (Or _) (Not _) = LESS
+  | precedence (Or _) (And _) = LESS
+  | precedence (Or _) (Or _) = EQUAL
+  | precedence (Or _) _ = GREATER
+  | precedence (Implies _) (False) = LESS
+  | precedence (Implies _) (Pred _) = LESS
+  | precedence (Implies _) (Not _) = LESS
+  | precedence (Implies _) (And _) = LESS
+  | precedence (Implies _) (Or _) = LESS
+  | precedence (Implies _) (Implies _) = EQUAL
+  | precedence (Implies _) _ = GREATER
+  | precedence (Iff _) (Forall _) = GREATER
+  | precedence (Iff _) (Exists _) = GREATER
+  | precedence (Iff _) (Iff _) = EQUAL
+  | precedence (Iff _) _ = LESS
+  | precedence (Forall _) (Exists _) = GREATER
+  | precedence (Forall _) (Forall _) = EQUAL
+  | precedence (Forall _) _ = LESS
+  | precedence (Exists _) (Exists _) = EQUAL
+  | precedence (Exists _) _ = LESS
+@ %def Formula.precedence
+
+\begin{node}
+The expectation is that: if [[precedence lhs rhs <> EQUAL]],
+then [[compare(lhs,rhs) = precedence lhs rhs]]. Otherwise, we just
+recursively work our way down lexicographically comparing subformulas.
+\end{node}
+
+<<Specification for formulas>>=
+val compare : t * t -> order;
+@
+<<Comparing formulas>>=
+fun compare(lhs, rhs) =
+ (case precedence lhs rhs of
+   EQUAL => (case (lhs, rhs) of
+              (False, False) => EQUAL
+            | (Pred(P1,args1),Pred(P2,args2)) =>
+              (case String.compare(P1, P2) of
+                EQUAL => Term.compare_lists args1 args2
+              | r => r)
+            | (Not A, Not B) => compare(A, B)
+            | (And(A1,B1), And(A2,B2)) => 
+                (case compare(A1, A2) of
+                  EQUAL => compare(B1,B2)
+                | r => r)
+            | (Or(A1,B1), Or(A2,B2)) => 
+                (case compare(A1, A2) of
+                  EQUAL => compare(B1,B2)
+                | r => r)
+            | (Implies(A1,B1), Implies(A2,B2)) => 
+                (case compare(A1, A2) of
+                  EQUAL => compare(B1,B2)
+                | r => r)
+            | (Iff(A1,B1), Iff(A2,B2)) => 
+                (case compare(A1, A2) of
+                  EQUAL => compare(B1,B2)
+                | r => r)
+            | (Forall(x, A), Forall(y, B)) =>
+                (case Term.compare(x, y) of
+                  EQUAL => compare(A, B)
+                | r => r)
+            | (Exists(x, A), Exists(y, B)) =>
+                (case Term.compare(x, y) of
+                  EQUAL => compare(A, B)
+                | r => r)
+            | _ => raise Fail "Formula.compare: I shouldn't be here...")
+   | r => r);
+@ %def Formula.compare
+
+\begin{node}
+We can test if two formulas are equal to each other in a more
+optimized manner, by directly checking each connective matches, and
+each subformula matches, and each subterm matches.
+\end{node}
+
+<<Specification for formulas>>=
+val eq : t -> t -> bool;
+@
+
+<<Test if two formulas are equal>>=
+fun eq (False) (False) = true
+  | eq (Pred(P,args1)) (Pred(Q,args2)) = (P=Q) andalso
+                                         (Term.eq_lists args1 args2)
+  | eq (Not A) (Not B) = eq A B
+  | eq (And(A1,A2)) (And(B1,B2)) = (eq A1 B1) andalso (eq A2 B2)
+  | eq (Or(A1,A2)) (Or(B1,B2)) = (eq A1 B1) andalso (eq A2 B2)
+  | eq (Implies(A1,A2)) (Implies(B1,B2)) = (eq A1 B1) andalso (eq A2 B2)
+  | eq (Iff(A1,A2)) (Iff(B1,B2)) = (eq A1 B1) andalso (eq A2 B2)
+  | eq (Forall(x,A)) (Forall(y,B)) = (Term.eq x y) andalso (eq A B)
+  | eq (Exists(x,A)) (Exists(y,B)) = (Term.eq x y) andalso (eq A B)
+  | eq _ _ = false;
+@ %def Formula.eq
+
+\begin{node}
+Last, we will want to test if a term $t$ is free for $x$ in a formula
+$\phi$. This means that no free variable of $t$ becomes bound when we
+substitute $\phi[t/x]$.
+\end{node}
+
+\begin{node}
+Let $\phi$ be a formula, $x$ be a variable, and $t$ be a term. Suppose
+$x$ and $t$ have the same sort. We say ``$t$ is free for $x$ in $\phi$''
+by recursively defining it on subformulas:
+\begin{enumerate}
+\item If $\phi=\bot$, then $t$ is free for $x$ in $\phi$
+\item If $\phi=P[t_{1},\dots,t_{n}]$, then $t$ is free for $x$ in $\phi$
+\item If $\phi=\neg A$, then we need to check $t$ is free for $x$ in $A$
+\item If $\phi$ is $A\land B$ or $A\lor B$ or $A\implies B$ or $A\iff B$,
+  then we need to check $t$ is free for $x$ in both $A$ and $B$
+\item If $\phi$ is $\exists y\ldotp A$ or $\forall y\ldotp A$ where
+  $y\neq x$, if
+  $y\in FV(t)$ and $x$ appears in $A$, then $t$ \textbf{is not} free
+  for $x$ in $\phi$ (because $y$ will become bound in $t$ after substitution);
+On the other hand, if $y\notin FV(t)$, then we recursively check on
+the subformula that $t$ is free for $x$ in $A$.
+\end{enumerate}
+Alternatively, we can perform the following algorithm: compute $V:=FV(t)$.
+\begin{enumerate}
+\item If $\phi=\bot$, then return true
+\item If $\phi=P[t_{1},\dots,t_{n}]$, then return true
+\item If $\phi=\neg A$, then perform the algorithm on $A$
+\item If $\phi=A\land B$ or $\phi=A\lor B$ or $\phi=A\implies B$ or
+  $\phi=A\iff B$, then perform the algorithm on $A$. If the result is
+  true, then perform the algorithm on $B$ and return this as the
+  result. On the other hand, if the result of the algorithm on $A$ is
+  false, then return false as the result.
+\item If $\phi=\exists y\ldotp A$ or $\phi=\forall y\ldotp A$ where
+  $y=x$, then return true.
+\item If $\phi=\exists y\ldotp A$ or $\phi=\forall y\ldotp A$ where
+  $y\neq x$,
+  \begin{enumerate}
+  \item If $y\in V$ and $x\in FV(A)$, then return false
+  \item If $x\notin FV(A)$, then return true
+  \item If $y\notin V$, then iterate on the subformula $A$ instead of $\phi$
+  \end{enumerate}
+\end{enumerate}
+\end{node}
+
+
+<<Specification for formulas>>=
+val free_for : Term.t -> Term.t -> t -> bool;
+@
+
+<<Test a term is free for a variable in a formula>>=
+fun member x [] = false
+  | member x (y::ys) = (x = y) orelse (member x ys);
+
+fun free_for_iter vars x (fm : t) =
+  if is_falsum fm then true
+  else if is_pred fm then true
+  else if is_not fm
+  then let val A = dest_not fm
+       in free_for_iter vars x A end
+  else if is_and fm
+  then let val (A,B) = dest_and fm
+       in (free_for_iter vars x A) andalso (free_for_iter vars x B) end
+  else if is_or fm
+  then let val (A,B) = dest_or fm
+       in (free_for_iter vars x A) andalso (free_for_iter vars x B) end
+  else if is_imp fm
+  then let val (A,B) = dest_imp fm
+       in (free_for_iter vars x A) andalso (free_for_iter vars x B) end
+  else if is_iff fm
+  then let val (A,B) = dest_iff fm
+       in (free_for_iter vars x A) andalso (free_for_iter vars x B) end
+  else if is_forall fm
+  then let val (y,A) = dest_forall fm
+       in (Term.eq x y) orelse
+          if member y vars
+          then not(member x (fv A))
+          else free_for_iter vars x A
+       end
+  else let val (y,A) = dest_exists fm
+       in (Term.eq x y) orelse
+          if member y vars
+          then not(member x (fv A))
+          else free_for_iter vars x A
+       end;
+
+fun free_for (tm : Term.t) (x : Term.t) fm =
+  free_for_iter (Term.fv tm) x fm;
+@ %def Formula.free_for
+
+\begin{node}
+Serializing a formula is useful for debugging purposes.
+\end{node}
+
+<<Specification for formulas>>=
+val serialize : t -> string;
+@
+
+<<Serialize a formula>>=
+fun serialize (False) = "False"
+  | serialize (Pred(P,args)) = "Pred("^
+                               P^
+                               "["^
+                               (String.concatWith ", " (map Term.serialize
+                                                            args))^
+                               "])"
+  | serialize (Not(A)) = "Not("^(serialize A)^")"
+  | serialize (Or(A, B)) = "Or("^(serialize A)^", "^(serialize B)^")"
+  | serialize (And(A, B)) = "And("^(serialize A)^", "^(serialize B)^")"
+  | serialize (Implies(A, B)) = "Implies("^(serialize A)^", "^(serialize B)^")"
+  | serialize (Iff(A, B)) = "Iff("^(serialize A)^", "^(serialize B)^")"
+  | serialize (Forall(x, A)) = "Forall("^(Term.serialize x)^", "^(serialize A)^")"
+  | serialize (Exists(x, A)) = "Exists("^(Term.serialize x)^", "^(serialize A)^")";
+@ %def Formula.serialize
+
+\begin{node}
+Feferman defines $E^{+}$-formulas as those whose atomic formulas are
+$t_{1}=t_{2}$, $t_{1}\neq t_{2}$, and $t\in C$, and the only
+connectives allowed are disjunction $\lor$ and conjunction $\land$,
+and the only possible quantifier is existentially quantified
+individual-sorted variables $\exists x\ldotp\phi$ provided $\phi$ is
+another $E^{+}$-formula. We will extend this to support $\top$ as an
+$E^{+}$-formula.
+
+These are particularly important in $FS_{0}$ because set comprehension
+only makes sense for expressions of the form $\{x\mid\phi[x]\}$ where
+$\phi$ is an $E^{+}$-formula.
+
+Why are we sticking this function into the [[Formula]] module? Well,
+the naming convention tells us the predicate fully: [[Formula.is_e_plus]]
+tests if a formula is an $E^{+}$-formula or not.
+\end{node}
+
+<<Specification for formulas>>=
+val is_e_plus : t -> bool;
+@
+
+<<Test for $E^{+}$-formula>>=
+fun is_e_plus (Not(False)) = true
+  | is_e_plus (Not(Pred("=",[lhs,rhs]))) = Term.is_ind lhs andalso
+                                           Term.is_ind rhs
+  | is_e_plus (Pred("=",[lhs,rhs])) = Term.is_ind lhs andalso
+                                      Term.is_ind rhs
+  | is_e_plus (Pred("in",[lhs,rhs])) = Term.is_ind lhs andalso
+                                       Term.is_class rhs
+  | is_e_plus (And(A,B)) = is_e_plus A andalso is_e_plus B
+  | is_e_plus (Or(A,B)) = is_e_plus A andalso is_e_plus B
+  | is_e_plus (Exists(x,A)) = Term.is_ind x andalso is_e_plus A
+  | is_e_plus _ = false; 
+@ %def Formula.is_e_plus
+
+\begin{node}
+We will also want to apply functions of the form $f\colon
+P[\vec{t}]\to \alpha~\mathrm{list}$ to predicates, and to just
+recursively work our way down subformulas, concatenating the results together.
+\end{node}
+
+<<Specification for formulas>>=
+val atom_union : (t -> 'a list) -> t -> 'a list;
+@ 
+
+<<Take the union of applying a function to atoms>>=
+(* atom_union : (t -> 'a list) -> 'a list *)
+fun atom_union f =
+  (fn (False) => []
+    | (fm as (Pred _)) => f fm
+    | (Not A) => atom_union f A
+    | (And(A,B)) => (atom_union f A) @ (atom_union f B)
+    | (Or(A,B)) => (atom_union f A) @ (atom_union f B)
+    | (Implies(A,B)) => (atom_union f A) @ (atom_union f B)
+    | (Iff(A,B)) => (atom_union f A) @ (atom_union f B)
+    | (Forall(_, A)) => atom_union f A
+    | (Exists(_, A)) => atom_union f A);
+@ %def Formula.atom_union

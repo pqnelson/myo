@@ -1,0 +1,335 @@
+\nwfilename{nw/many-sorted-term.nw}\nwbegindocs{0}% -*- mode: poly-noweb; noweb-code-mode: sml-mode; -*-% ===> this file was generated automatically by noweave --- better not edit it
+%%
+%% many-sorted-term.nw
+%% 
+%% Made by Alex Nelson <pqnelson@gmail.com>
+%% Login   <alex@lisp>
+%% 
+%% Started on  2026-04-04T18:09:28-0700
+%% Last update 2026-04-04T18:09:28-0700
+%% 
+
+\section{Syntax for terms}
+
+\begin{node}
+Since a proof assistant resembles an interpreter in many ways, it
+should not be surprising that we will first focus on implement
+abstract syntax trees for terms and formulas for three-sorted
+first-order logic. 
+\end{node}
+
+\begin{node}
+The grammar for a term in $FS_{0}$'s three-sorted logic is, more or
+less, the same as in single-sorted logic. Since we are working with
+\emph{three} sorts, we isolate it in is own module. We would have the
+BNF for such things be:
+\begin{center}
+\begin{tabular}{rcl}
+$\langle$\textit{sort}$\rangle$ & $::=$ & \texttt{Ind} $\mid$ \texttt{Fun} $\mid$ \texttt{Class}\\
+$\langle$\textit{term}$\rangle$ & $::=$ & $\langle$\textit{variable}$\rangle$ \\
+& $\mid$ & $\langle$\textit{function}$\rangle$
+\end{tabular}
+\end{center}
+Remember, a ``function'' here should be thought of as a ``term constructor''.
+
+We've abstracted away the ``concrete syntax'' for the sorted
+first-order logic, so we can treat variables as an ordered pair
+consisting of a lexeme (string representation of its identifier) and
+its sort. Similarly, we can treat a function as an ordered triple
+consisting of a lexeme, its sort, and a list of terms for its
+arguments.
+
+Before getting too far ahead of ourselves, let us implement a simple
+encoding for the sort. We will just make everything public, because
+there's not much to hide. There are three data constructors (one for
+each sort), a comparison function, and a function to get the string
+representation for the sort.
+
+Also we should bear in mind the user may have a ``mismatch'' between
+the sorts expected for arguments of predicates and functions, and the
+arguments supplied for them. This situation should raise an
+exception. We will create a {\Tt{}Sort.Mismatch\nwendquote} exception, with a string
+message for what went wrong.
+\end{node}
+
+\nwenddocs{}\nwbegincode{1}\sublabel{NW1rTmOJ-3ZqggC-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1rTmOJ-3ZqggC-1}}}\moddef{Sort.sml~{\nwtagstyle{}\subpageref{NW1rTmOJ-3ZqggC-1}}}\endmoddef\nwstartdeflinemarkup\nwenddeflinemarkup
+structure Sort = struct
+exception Mismatch of string;
+datatype t = IND | FUN | CLASS;
+
+(* compare : \nwlinkedidentc{Sort.t}{NW1rTmOJ-3ZqggC-1} * \nwlinkedidentc{Sort.t}{NW1rTmOJ-3ZqggC-1} -> order *)
+fun compare(IND,IND) = EQUAL
+  | compare(IND, _) = LESS
+  | compare(FUN,IND) = GREATER
+  | compare(FUN,FUN) = EQUAL
+  | compare(FUN, _) = LESS
+  | compare(CLASS, CLASS) = EQUAL
+  | compare(CLASS, _) = GREATER;
+
+(* to_string : \nwlinkedidentc{Sort.t}{NW1rTmOJ-3ZqggC-1} -> string *)
+fun to_string (IND) = "IND"
+  | to_string (FUN) = "FUN"
+  | to_string (CLASS) = "CLASS";
+end;
+\nwindexdefn{\nwixident{Sort.t}}{Sort.t}{NW1rTmOJ-3ZqggC-1}\nwindexdefn{\nwixident{Sort.compare}}{Sort.compare}{NW1rTmOJ-3ZqggC-1}\nwindexdefn{\nwixident{Sort.to{\_}string}}{Sort.to:unstring}{NW1rTmOJ-3ZqggC-1}\nwindexdefn{\nwixident{Sort.IND}}{Sort.IND}{NW1rTmOJ-3ZqggC-1}\nwindexdefn{\nwixident{Sort.FUN}}{Sort.FUN}{NW1rTmOJ-3ZqggC-1}\nwindexdefn{\nwixident{Sort.CLASS}}{Sort.CLASS}{NW1rTmOJ-3ZqggC-1}\eatline
+\nwnotused{Sort.sml}\nwidentdefs{\\{{\nwixident{Sort.CLASS}}{Sort.CLASS}}\\{{\nwixident{Sort.compare}}{Sort.compare}}\\{{\nwixident{Sort.FUN}}{Sort.FUN}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Sort.t}}{Sort.t}}\\{{\nwixident{Sort.to{\_}string}}{Sort.to:unstring}}}\nwendcode{}\nwbegindocs{2}\nwdocspar
+\begin{node}
+Now, a three-sorted term is either a variable (which is a string and a
+sort) or a function (which is a string, a sort, and a list of arguments).
+We do not ``hardcode'' any of the primitive notions from $FS_{0}$ in
+this representation. Instead, they will be ``initialized'' in the
+state of the kernel.
+\end{node}
+
+\nwenddocs{}\nwbegincode{3}\sublabel{NW1rTmOJ-4LsRWC-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1rTmOJ-4LsRWC-1}}}\moddef{Term.sml~{\nwtagstyle{}\subpageref{NW1rTmOJ-4LsRWC-1}}}\endmoddef\nwstartdeflinemarkup\nwenddeflinemarkup
+structure Term = struct
+datatype t = Var of string * \nwlinkedidentc{Sort.t}{NW1rTmOJ-3ZqggC-1}
+           | Fun of string * \nwlinkedidentc{Sort.t}{NW1rTmOJ-3ZqggC-1} * t list;
+
+\LA{}Test if two terms have the same sort~{\nwtagstyle{}\subpageref{NW1rTmOJ-1WQNps-1}}\RA{}
+
+\LA{}Predicates of terms about their sorts~{\nwtagstyle{}\subpageref{NW1rTmOJ-3FfXTO-1}}\RA{}
+
+\LA{}Free variables in a term~{\nwtagstyle{}\subpageref{NW1rTmOJ-2nRtky-1}}\RA{}
+
+\LA{}Substitution of a term for a variable in a term~{\nwtagstyle{}\subpageref{NW1rTmOJ-3OIyM5-1}}\RA{}
+
+\LA{}Comparing two terms~{\nwtagstyle{}\subpageref{NW1rTmOJ-2yJYsC-1}}\RA{}
+
+\LA{}Equality of two terms~{\nwtagstyle{}\subpageref{NW1rTmOJ-3810sY-1}}\RA{}
+
+\LA{}Test if term contains subterm~{\nwtagstyle{}\subpageref{NW1rTmOJ-Re21r-1}}\RA{}
+
+\LA{}Determine a fresh variable given some free variables~{\nwtagstyle{}\subpageref{NW1rTmOJ-4Ykq9M-1}}\RA{}
+
+\LA{}Serialize a term~{\nwtagstyle{}\subpageref{NW1rTmOJ-40h2U3-1}}\RA{}
+end;
+\nwindexdefn{\nwixident{Term.t}}{Term.t}{NW1rTmOJ-4LsRWC-1}\eatline
+\nwnotused{Term.sml}\nwidentdefs{\\{{\nwixident{Term.t}}{Term.t}}}\nwidentuses{\\{{\nwixident{Sort.t}}{Sort.t}}}\nwindexuse{\nwixident{Sort.t}}{Sort.t}{NW1rTmOJ-4LsRWC-1}\nwendcode{}\nwbegindocs{4}\nwdocspar
+\begin{node}
+We provide a minimal abstraction for terms. As it stands now, without
+any ``helper'' or ``uniform'' constructors, it is about 44 lines of
+code. If we ``hardcoded'' the $FS_{0}$ primitives, that would require
+about 412 lines of code --- about $9.36$ times as much code.
+\end{node}
+
+\begin{node}
+We provide a uniform way to access the sort of a term, and test if two
+terms have the same sort.
+\end{node}
+
+\nwenddocs{}\nwbegincode{5}\sublabel{NW1rTmOJ-1WQNps-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1rTmOJ-1WQNps-1}}}\moddef{Test if two terms have the same sort~{\nwtagstyle{}\subpageref{NW1rTmOJ-1WQNps-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1rTmOJ-4LsRWC-1}}\nwenddeflinemarkup
+(* sort : \nwlinkedidentc{Term.t}{NW1rTmOJ-4LsRWC-1} -> \nwlinkedidentc{Sort.t}{NW1rTmOJ-3ZqggC-1} *)
+fun sort (Var (_, s)) = s
+  | sort (Fun (_, s, _)) = s;
+
+(* have_same_sort : \nwlinkedidentc{Term.t}{NW1rTmOJ-4LsRWC-1} -> \nwlinkedidentc{Term.t}{NW1rTmOJ-4LsRWC-1} -> bool *)
+fun have_same_sort (lhs : t) (rhs : t) =
+  (sort lhs) = (sort rhs);
+\nwindexdefn{\nwixident{Term.sort}}{Term.sort}{NW1rTmOJ-1WQNps-1}\nwindexdefn{\nwixident{Term.have{\_}same{\_}sort}}{Term.have:unsame:unsort}{NW1rTmOJ-1WQNps-1}\eatline
+\nwused{\\{NW1rTmOJ-4LsRWC-1}}\nwidentdefs{\\{{\nwixident{Term.have{\_}same{\_}sort}}{Term.have:unsame:unsort}}\\{{\nwixident{Term.sort}}{Term.sort}}}\nwidentuses{\\{{\nwixident{Sort.t}}{Sort.t}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Sort.t}}{Sort.t}{NW1rTmOJ-1WQNps-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1rTmOJ-1WQNps-1}\nwendcode{}\nwbegindocs{6}\nwdocspar
+\begin{node}
+We have some helper functions for common predicates.
+\end{node}
+
+\nwenddocs{}\nwbegincode{7}\sublabel{NW1rTmOJ-3FfXTO-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1rTmOJ-3FfXTO-1}}}\moddef{Predicates of terms about their sorts~{\nwtagstyle{}\subpageref{NW1rTmOJ-3FfXTO-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1rTmOJ-4LsRWC-1}}\nwenddeflinemarkup
+(* is_var : \nwlinkedidentc{Term.t}{NW1rTmOJ-4LsRWC-1} -> bool *)
+fun is_var (Var _) = true
+  | is_var _ = false;
+
+(* is_ind : \nwlinkedidentc{Term.t}{NW1rTmOJ-4LsRWC-1} -> bool *)
+fun is_ind (tm : t) = (\nwlinkedidentc{Sort.IND}{NW1rTmOJ-3ZqggC-1} = sort tm);
+
+(* is_fun : \nwlinkedidentc{Term.t}{NW1rTmOJ-4LsRWC-1} -> bool *)
+fun is_fun (tm : t) = (\nwlinkedidentc{Sort.FUN}{NW1rTmOJ-3ZqggC-1} = sort tm);
+
+(* is_class : \nwlinkedidentc{Term.t}{NW1rTmOJ-4LsRWC-1} -> bool *)
+fun is_class (tm : t) = (\nwlinkedidentc{Sort.CLASS}{NW1rTmOJ-3ZqggC-1} = sort tm);
+\nwindexdefn{\nwixident{Term.is{\_}ind}}{Term.is:unind}{NW1rTmOJ-3FfXTO-1}\nwindexdefn{\nwixident{Term.is{\_}fun}}{Term.is:unfun}{NW1rTmOJ-3FfXTO-1}\nwindexdefn{\nwixident{Term.is{\_}class}}{Term.is:unclass}{NW1rTmOJ-3FfXTO-1}\eatline
+\nwused{\\{NW1rTmOJ-4LsRWC-1}}\nwidentdefs{\\{{\nwixident{Term.is{\_}class}}{Term.is:unclass}}\\{{\nwixident{Term.is{\_}fun}}{Term.is:unfun}}\\{{\nwixident{Term.is{\_}ind}}{Term.is:unind}}}\nwidentuses{\\{{\nwixident{Sort.CLASS}}{Sort.CLASS}}\\{{\nwixident{Sort.FUN}}{Sort.FUN}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Sort.CLASS}}{Sort.CLASS}{NW1rTmOJ-3FfXTO-1}\nwindexuse{\nwixident{Sort.FUN}}{Sort.FUN}{NW1rTmOJ-3FfXTO-1}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1rTmOJ-3FfXTO-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1rTmOJ-3FfXTO-1}\nwendcode{}\nwbegindocs{8}\nwdocspar
+\begin{node}
+The free variables of a term are just \emph{all} the variables
+appearing in the term. Later, formulas will remove the bound variables.
+\end{node}
+
+\nwenddocs{}\nwbegincode{9}\sublabel{NW1rTmOJ-2nRtky-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1rTmOJ-2nRtky-1}}}\moddef{Free variables in a term~{\nwtagstyle{}\subpageref{NW1rTmOJ-2nRtky-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1rTmOJ-4LsRWC-1}}\nwenddeflinemarkup
+(* fv : \nwlinkedidentc{Term.t}{NW1rTmOJ-4LsRWC-1} -> \nwlinkedidentc{Term.t}{NW1rTmOJ-4LsRWC-1} list *)
+fun fv (x as (Var _)) = [x]
+  | fv (Fun (_, _, args)) = List.foldr (fn (arg, fvs) => (fv arg) @ fvs)
+                                       []
+                                       args;
+\nwindexdefn{\nwixident{Term.fv}}{Term.fv}{NW1rTmOJ-2nRtky-1}\eatline
+\nwused{\\{NW1rTmOJ-4LsRWC-1}}\nwidentdefs{\\{{\nwixident{Term.fv}}{Term.fv}}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1rTmOJ-2nRtky-1}\nwendcode{}\nwbegindocs{10}\nwdocspar
+\begin{node}
+Substitution amounts to replacing a variable \emph{of a given sort}
+with a term \emph{of the same sort} in a term recursively by:
+\begin{enumerate}
+\item $x[t/x]=t$ 
+\item $y[t/x]=y$ if $y\neq x$
+\item $(f(t_{1},\dots,t_{n}))[t/x]=(f(t_{1}[t/x],\dots,t_{n}[t/x]))$
+\end{enumerate}
+Although we \emph{should} restrict our focus to the situation where
+$x$ is a variable, I suspect there might be situations where we want
+to replace \emph{entire subterms}.
+\end{node}
+
+\nwenddocs{}\nwbegincode{11}\sublabel{NW1rTmOJ-3OIyM5-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1rTmOJ-3OIyM5-1}}}\moddef{Substitution of a term for a variable in a term~{\nwtagstyle{}\subpageref{NW1rTmOJ-3OIyM5-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1rTmOJ-4LsRWC-1}}\nwenddeflinemarkup
+(* subst : \nwlinkedidentc{Term.t}{NW1rTmOJ-4LsRWC-1} -> \nwlinkedidentc{Term.t}{NW1rTmOJ-4LsRWC-1} -> \nwlinkedidentc{Term.t}{NW1rTmOJ-4LsRWC-1} -> \nwlinkedidentc{Term.t}{NW1rTmOJ-4LsRWC-1} *)
+fun subst (x : t) (replacement : t) (tm : t) =
+  if not (have_same_sort x replacement)
+  then raise Sort.Mismatch "\nwlinkedidentc{Term.subst}{NW1rTmOJ-3OIyM5-1}: variable and replacement have different sorts"
+  else if x = tm then replacement
+  else (case tm of
+         (Var _) => if x = tm then replacement else tm
+       | (Fun(f,s,args)) => Fun(f,s,map (subst x replacement) args));
+\nwindexdefn{\nwixident{Term.subst}}{Term.subst}{NW1rTmOJ-3OIyM5-1}\eatline
+\nwused{\\{NW1rTmOJ-4LsRWC-1}}\nwidentdefs{\\{{\nwixident{Term.subst}}{Term.subst}}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1rTmOJ-3OIyM5-1}\nwendcode{}\nwbegindocs{12}\nwdocspar
+\begin{node}
+Comparing two terms follows the following rules:
+\begin{enumerate}
+\item First compare the sort of both sides; if they differ, then this
+  is the result
+\item Variables are less than or equal to everything
+\item Functions are greater than or equal to everything
+\item Variables are compared by sort, then by name
+\item Functions are compared by sort, then by name, then
+  lexicographically on the arguments
+\end{enumerate}
+\end{node}
+
+
+\nwenddocs{}\nwbegincode{13}\sublabel{NW1rTmOJ-2yJYsC-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1rTmOJ-2yJYsC-1}}}\moddef{Comparing two terms~{\nwtagstyle{}\subpageref{NW1rTmOJ-2yJYsC-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1rTmOJ-4LsRWC-1}}\nwenddeflinemarkup
+(* compare : \nwlinkedidentc{Term.t}{NW1rTmOJ-4LsRWC-1} * \nwlinkedidentc{Term.t}{NW1rTmOJ-4LsRWC-1} -> order *)
+fun compare(Var(x1,s1), Var(x2,s2)) =
+    (case \nwlinkedidentc{Sort.compare}{NW1rTmOJ-3ZqggC-1}(s1, s2) of
+      EQUAL => String.compare(x1, x2)
+    | r => r)
+  | compare(Var _, _) = LESS
+  | compare(Fun _, Var _) = GREATER
+  | compare(Fun(f1,s1,args1), Fun(f2,s2,args2)) =
+    (case \nwlinkedidentc{Sort.compare}{NW1rTmOJ-3ZqggC-1}(s1,s2) of
+      EQUAL => (case String.compare(f1, f2) of
+                 EQUAL => compare_lists args1 args2
+               | r => r)
+    | r => r)
+(* compare_lists : \nwlinkedidentc{Term.t}{NW1rTmOJ-4LsRWC-1} list -> \nwlinkedidentc{Term.t}{NW1rTmOJ-4LsRWC-1} list -> order *)
+and compare_lists [] [] = EQUAL
+  | compare_lists [] ys = LESS
+  | compare_lists xs [] = GREATER
+  | compare_lists (x::xs) (y::ys) =
+     (case compare(x,y) of
+       EQUAL => compare_lists xs ys
+     | r => r);
+\nwindexdefn{\nwixident{Term.compare}}{Term.compare}{NW1rTmOJ-2yJYsC-1}\nwindexdefn{\nwixident{Term.compare{\_}lists}}{Term.compare:unlists}{NW1rTmOJ-2yJYsC-1}\eatline
+\nwused{\\{NW1rTmOJ-4LsRWC-1}}\nwidentdefs{\\{{\nwixident{Term.compare}}{Term.compare}}\\{{\nwixident{Term.compare{\_}lists}}{Term.compare:unlists}}}\nwidentuses{\\{{\nwixident{Sort.compare}}{Sort.compare}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Sort.compare}}{Sort.compare}{NW1rTmOJ-2yJYsC-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1rTmOJ-2yJYsC-1}\nwendcode{}\nwbegindocs{14}\nwdocspar
+\begin{node}
+The \emph{syntactic} equality of terms can be determined in a more
+performant manner. Two variables are equal if their payload are equal
+(i.e., they have the same sort and the same lexeme). Two functions are
+equal if they have the same name, same sort, and their arguments are
+syntactically equal (determined by recursively invoking {\Tt{}\nwlinkedidentq{Term.eq}{NW1rTmOJ-3810sY-1}\nwendquote}
+pairwise on the arguments).
+\end{node}
+
+\nwenddocs{}\nwbegincode{15}\sublabel{NW1rTmOJ-3810sY-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1rTmOJ-3810sY-1}}}\moddef{Equality of two terms~{\nwtagstyle{}\subpageref{NW1rTmOJ-3810sY-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1rTmOJ-4LsRWC-1}}\nwenddeflinemarkup
+(* eq : \nwlinkedidentc{Term.t}{NW1rTmOJ-4LsRWC-1} -> \nwlinkedidentc{Term.t}{NW1rTmOJ-4LsRWC-1} -> bool *)
+fun eq (Var(x1,s1)) (Var(x2,s2)) = (s1 = s2) andalso (x1 = x2)
+  | eq (Fun(f1,s1,args1)) (Fun(f2,s2,args2)) =
+      (s1 = s2) andalso (f1 = f2) andalso (eq_lists args1 args2)
+  | eq _ _ = false
+(* eq_lists : \nwlinkedidentc{Term.t}{NW1rTmOJ-4LsRWC-1} list -> \nwlinkedidentc{Term.t}{NW1rTmOJ-4LsRWC-1} list -> bool *)
+and eq_lists [] [] = true
+  | eq_lists (x::xs) (y::ys) = (eq x y) andalso (eq_lists xs ys)
+  | eq_lists _ _ = false;
+\nwindexdefn{\nwixident{Term.eq}}{Term.eq}{NW1rTmOJ-3810sY-1}\nwindexdefn{\nwixident{Term.eq{\_}lists}}{Term.eq:unlists}{NW1rTmOJ-3810sY-1}\eatline
+\nwused{\\{NW1rTmOJ-4LsRWC-1}}\nwidentdefs{\\{{\nwixident{Term.eq}}{Term.eq}}\\{{\nwixident{Term.eq{\_}lists}}{Term.eq:unlists}}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1rTmOJ-3810sY-1}\nwendcode{}\nwbegindocs{16}\nwdocspar
+\begin{node}
+We also want to check if a term contains a subterm. This is not a
+``strict'' comparison: any term occurs in itself.
+Our intuition should be thinking of $x\leq y$ rather than $x<y$. 
+\end{node}
+
+\nwenddocs{}\nwbegincode{17}\sublabel{NW1rTmOJ-Re21r-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1rTmOJ-Re21r-1}}}\moddef{Test if term contains subterm~{\nwtagstyle{}\subpageref{NW1rTmOJ-Re21r-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1rTmOJ-4LsRWC-1}}\nwenddeflinemarkup
+(* occurs_in : \nwlinkedidentc{Term.t}{NW1rTmOJ-4LsRWC-1} -> \nwlinkedidentc{Term.t}{NW1rTmOJ-4LsRWC-1} -> bool *)
+fun occurs_in (subtm : t) (tm : t) : bool =
+  (eq subtm tm) orelse
+  (case tm of
+    (Var _) => false
+  | (Fun(_,_,args)) => List.exists (occurs_in subtm) args);
+\nwindexdefn{\nwixident{Term.occurs{\_}in}}{Term.occurs:unin}{NW1rTmOJ-Re21r-1}\eatline
+\nwused{\\{NW1rTmOJ-4LsRWC-1}}\nwidentdefs{\\{{\nwixident{Term.occurs{\_}in}}{Term.occurs:unin}}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1rTmOJ-Re21r-1}\nwendcode{}\nwbegindocs{18}\nwdocspar
+\begin{node}
+We will want to find a fresh variable which does not appear in a list
+of variables.
+\end{node}
+
+\nwenddocs{}\nwbegincode{19}\sublabel{NW1rTmOJ-4Ykq9M-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1rTmOJ-4Ykq9M-1}}}\moddef{Determine a fresh variable given some free variables~{\nwtagstyle{}\subpageref{NW1rTmOJ-4Ykq9M-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1rTmOJ-4LsRWC-1}}\nwenddeflinemarkup
+local
+  fun fresh_var_iter (x : string) (s : \nwlinkedidentc{Sort.t}{NW1rTmOJ-3ZqggC-1}) (vars : t list) n = 
+    let val var = Var(x ^ (Int.toString n), s)
+    in if List.exists (eq var) vars
+       then fresh_var_iter x s vars (n + 1)
+       else var
+    end;
+in
+
+fun fresh_var (x : string) (s : \nwlinkedidentc{Sort.t}{NW1rTmOJ-3ZqggC-1}) (vars : t list) = 
+  let val var = Var(x, s)
+  in if List.exists (eq var) vars
+     then fresh_var_iter x s vars 0
+     else var
+  end;
+
+end;
+\nwindexdefn{\nwixident{Term.fresh{\_}var}}{Term.fresh:unvar}{NW1rTmOJ-4Ykq9M-1}\eatline
+\nwused{\\{NW1rTmOJ-4LsRWC-1}}\nwidentdefs{\\{{\nwixident{Term.fresh{\_}var}}{Term.fresh:unvar}}}\nwidentuses{\\{{\nwixident{Sort.t}}{Sort.t}}}\nwindexuse{\nwixident{Sort.t}}{Sort.t}{NW1rTmOJ-4Ykq9M-1}\nwendcode{}\nwbegindocs{20}\nwdocspar
+\begin{node}
+For debugging purposes, it will be useful to ``serialize'' a term (to
+produce a string representation of the code needed to construct it).
+\end{node}
+
+\nwenddocs{}\nwbegincode{21}\sublabel{NW1rTmOJ-40h2U3-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1rTmOJ-40h2U3-1}}}\moddef{Serialize a term~{\nwtagstyle{}\subpageref{NW1rTmOJ-40h2U3-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1rTmOJ-4LsRWC-1}}\nwenddeflinemarkup
+fun serialize (Var(x,s)) = "Var("^x^", "^(\nwlinkedidentc{Sort.to_string}{NW1rTmOJ-3ZqggC-1} s)^")"
+  | serialize (Fun(f, s, args)) = "Fun("^f^
+                                  ", "^
+                                  (\nwlinkedidentc{Sort.to_string}{NW1rTmOJ-3ZqggC-1} s)^
+                                  ", ["^
+                                  (String.concatWith ", " (map serialize args))^
+                                  "])";
+\nwindexdefn{\nwixident{Term.serialize}}{Term.serialize}{NW1rTmOJ-40h2U3-1}\eatline
+
+\nwused{\\{NW1rTmOJ-4LsRWC-1}}\nwidentdefs{\\{{\nwixident{Term.serialize}}{Term.serialize}}}\nwidentuses{\\{{\nwixident{Sort.to{\_}string}}{Sort.to:unstring}}}\nwindexuse{\nwixident{Sort.to{\_}string}}{Sort.to:unstring}{NW1rTmOJ-40h2U3-1}\nwendcode{}
+
+\nwixlogsorted{c}{{Comparing two terms}{NW1rTmOJ-2yJYsC-1}{\nwixu{NW1rTmOJ-4LsRWC-1}\nwixd{NW1rTmOJ-2yJYsC-1}}}%
+\nwixlogsorted{c}{{Determine a fresh variable given some free variables}{NW1rTmOJ-4Ykq9M-1}{\nwixu{NW1rTmOJ-4LsRWC-1}\nwixd{NW1rTmOJ-4Ykq9M-1}}}%
+\nwixlogsorted{c}{{Equality of two terms}{NW1rTmOJ-3810sY-1}{\nwixu{NW1rTmOJ-4LsRWC-1}\nwixd{NW1rTmOJ-3810sY-1}}}%
+\nwixlogsorted{c}{{Free variables in a term}{NW1rTmOJ-2nRtky-1}{\nwixu{NW1rTmOJ-4LsRWC-1}\nwixd{NW1rTmOJ-2nRtky-1}}}%
+\nwixlogsorted{c}{{Predicates of terms about their sorts}{NW1rTmOJ-3FfXTO-1}{\nwixu{NW1rTmOJ-4LsRWC-1}\nwixd{NW1rTmOJ-3FfXTO-1}}}%
+\nwixlogsorted{c}{{Serialize a term}{NW1rTmOJ-40h2U3-1}{\nwixu{NW1rTmOJ-4LsRWC-1}\nwixd{NW1rTmOJ-40h2U3-1}}}%
+\nwixlogsorted{c}{{Sort.sml}{NW1rTmOJ-3ZqggC-1}{\nwixd{NW1rTmOJ-3ZqggC-1}}}%
+\nwixlogsorted{c}{{Substitution of a term for a variable in a term}{NW1rTmOJ-3OIyM5-1}{\nwixu{NW1rTmOJ-4LsRWC-1}\nwixd{NW1rTmOJ-3OIyM5-1}}}%
+\nwixlogsorted{c}{{Term.sml}{NW1rTmOJ-4LsRWC-1}{\nwixd{NW1rTmOJ-4LsRWC-1}}}%
+\nwixlogsorted{c}{{Test if term contains subterm}{NW1rTmOJ-Re21r-1}{\nwixu{NW1rTmOJ-4LsRWC-1}\nwixd{NW1rTmOJ-Re21r-1}}}%
+\nwixlogsorted{c}{{Test if two terms have the same sort}{NW1rTmOJ-1WQNps-1}{\nwixu{NW1rTmOJ-4LsRWC-1}\nwixd{NW1rTmOJ-1WQNps-1}}}%
+\nwixlogsorted{i}{{\nwixident{Sort.CLASS}}{Sort.CLASS}}%
+\nwixlogsorted{i}{{\nwixident{Sort.compare}}{Sort.compare}}%
+\nwixlogsorted{i}{{\nwixident{Sort.FUN}}{Sort.FUN}}%
+\nwixlogsorted{i}{{\nwixident{Sort.IND}}{Sort.IND}}%
+\nwixlogsorted{i}{{\nwixident{Sort.t}}{Sort.t}}%
+\nwixlogsorted{i}{{\nwixident{Sort.to{\_}string}}{Sort.to:unstring}}%
+\nwixlogsorted{i}{{\nwixident{Term.compare}}{Term.compare}}%
+\nwixlogsorted{i}{{\nwixident{Term.compare{\_}lists}}{Term.compare:unlists}}%
+\nwixlogsorted{i}{{\nwixident{Term.eq}}{Term.eq}}%
+\nwixlogsorted{i}{{\nwixident{Term.eq{\_}lists}}{Term.eq:unlists}}%
+\nwixlogsorted{i}{{\nwixident{Term.fresh{\_}var}}{Term.fresh:unvar}}%
+\nwixlogsorted{i}{{\nwixident{Term.fv}}{Term.fv}}%
+\nwixlogsorted{i}{{\nwixident{Term.have{\_}same{\_}sort}}{Term.have:unsame:unsort}}%
+\nwixlogsorted{i}{{\nwixident{Term.is{\_}class}}{Term.is:unclass}}%
+\nwixlogsorted{i}{{\nwixident{Term.is{\_}fun}}{Term.is:unfun}}%
+\nwixlogsorted{i}{{\nwixident{Term.is{\_}ind}}{Term.is:unind}}%
+\nwixlogsorted{i}{{\nwixident{Term.occurs{\_}in}}{Term.occurs:unin}}%
+\nwixlogsorted{i}{{\nwixident{Term.serialize}}{Term.serialize}}%
+\nwixlogsorted{i}{{\nwixident{Term.sort}}{Term.sort}}%
+\nwixlogsorted{i}{{\nwixident{Term.subst}}{Term.subst}}%
+\nwixlogsorted{i}{{\nwixident{Term.t}}{Term.t}}%
+

@@ -1,0 +1,823 @@
+\nwfilename{nw/fs0-syntax.nw}\nwbegindocs{0}% -*- mode: poly-noweb; noweb-code-mode: sml-mode; -*-% ===> this file was generated automatically by noweave --- better not edit it
+%%
+%% fs0-syntax.nw
+%% 
+%% Made by Alex Nelson <pqnelson@gmail.com>
+%% Login   <alex@lisp>
+%% 
+%% Started on  2026-04-06T18:37:15-0700
+%% Last update 2026-04-06T18:37:15-0700
+%% 
+
+\section{Syntactic constructors for $FS_{0}$ primitives}
+
+\begin{node}
+I have decided to collect the constructors for all the primitive
+notions for $FS_{0}$ in one location. The situation we wish to avoid
+is to change conventions later on (e.g., instead of use ``P1'' for the
+name of the projection function we might want to use ``car'', ``fst'',
+or something else entirely, so we should have one line of code which we
+need to change as opposed to dozens).
+\end{node}
+
+\nwenddocs{}\nwbegincode{1}\sublabel{NW2DqMzY-3R3yGC-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-3R3yGC-1}}}\moddef{FS0.sig~{\nwtagstyle{}\subpageref{NW2DqMzY-3R3yGC-1}}}\endmoddef\nwstartdeflinemarkup\nwenddeflinemarkup
+signature FS0 = sig
+  exception Dest of string;
+  (* individuals *)
+  \LA{}Specification for $FS_{0}$ individuals~{\nwtagstyle{}\subpageref{NW2DqMzY-24mg92-1}}\RA{}
+
+  (* functions *)
+  \LA{}Specification for $FS_{0}$ functions~{\nwtagstyle{}\subpageref{NW2DqMzY-1uF0T3-1}}\RA{}
+
+  (* classes *)
+  \LA{}Specification for $FS_{0}$ classes~{\nwtagstyle{}\subpageref{NW2DqMzY-33zuOn-1}}\RA{}
+
+  (* predicates *)
+  \LA{}Specification for $FS_{0}$ predicates~{\nwtagstyle{}\subpageref{NW2DqMzY-194t0N-1}}\RA{}
+end;
+\nwnotused{FS0.sig}\nwendcode{}\nwbegindocs{2}\nwdocspar
+
+\nwenddocs{}\nwbegincode{3}\sublabel{NW2DqMzY-mVmU8-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-mVmU8-1}}}\moddef{FS0.sml~{\nwtagstyle{}\subpageref{NW2DqMzY-mVmU8-1}}}\endmoddef\nwstartdeflinemarkup\nwenddeflinemarkup
+structure FS0 : FS0 = struct
+exception Dest of string;
+
+\LA{}Constructors for $FS_{0}$ individuals~{\nwtagstyle{}\subpageref{NW2DqMzY-1NUSQs-1}}\RA{}
+
+\LA{}Constructors for $FS_{0}$ functions~{\nwtagstyle{}\subpageref{NW2DqMzY-3aj0iq-1}}\RA{}
+
+\LA{}Constructors for $FS_{0}$ classes~{\nwtagstyle{}\subpageref{NW2DqMzY-TSvER-1}}\RA{}
+
+\LA{}Constructors for $FS_{0}$ predicates~{\nwtagstyle{}\subpageref{NW2DqMzY-4OjF2N-1}}\RA{}
+end;
+\nwnotused{FS0.sml}\nwendcode{}\nwbegindocs{4}\nwdocspar
+
+\section*{Constructors for individuals}
+
+\begin{node}
+The syntax for individual-sorted terms in $FS_{0}$ is the smallest
+inductively-defined set such that
+\begin{enumerate}
+\item Individual-sorted variables are individual-sorted terms;
+\item The constant term $0$ is individual-sorted;
+\item If $f$ is a function-sorted term and $t$ is an individual-sorted
+  term, then the application $ft$ is an individual-sorted term;
+\item If $t_{1}$ and $t_{2}$ are individual-sorted terms, then their
+  ordered pair $(t_{1},t_{2})$ is an individual-sorted term;
+\item And nothing else.
+\end{enumerate}
+We provide {\Tt{}zero\nwendquote} as a constant term, as well as constructors and
+destructors for ordered {\Tt{}pair\nwendquote}s and function {\Tt{}app\nwendquote}lications.
+\end{node}
+
+\nwenddocs{}\nwbegincode{5}\sublabel{NW2DqMzY-24mg92-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-24mg92-1}}}\moddef{Specification for $FS_{0}$ individuals~{\nwtagstyle{}\subpageref{NW2DqMzY-24mg92-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3R3yGC-1}}\nwenddeflinemarkup
+val zero : Term.t;
+val pair : Term.t -> Term.t -> Term.t;
+val app : Term.t -> Term.t -> Term.t;
+
+val dest_app : Term.t -> Term.t * Term.t;
+val dest_pair : Term.t -> Term.t * Term.t;
+\nwused{\\{NW2DqMzY-3R3yGC-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-24mg92-1}\nwendcode{}\nwbegindocs{6}\nwdocspar
+
+\nwenddocs{}\nwbegincode{7}\sublabel{NW2DqMzY-1NUSQs-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-1NUSQs-1}}}\moddef{Constructors for $FS_{0}$ individuals~{\nwtagstyle{}\subpageref{NW2DqMzY-1NUSQs-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-mVmU8-1}}\nwenddeflinemarkup
+val zero = Term.Fun("0", Sort.IND, []);
+
+\LA{}Construct an ordered pair from $FS_{0}$ individuals~{\nwtagstyle{}\subpageref{NW2DqMzY-4SkDla-1}}\RA{}
+
+\LA{}Destructuring \code{}cons\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-21ZNyJ-1}}\RA{}
+
+\LA{}Primitive \code{}apply\edoc{} constructor for functions to individuals~{\nwtagstyle{}\subpageref{NW2DqMzY-2oGoBx-1}}\RA{}
+
+\LA{}Destructuring \code{}apply\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-1VpWgD-1}}\RA{}
+\nwindexdefn{\nwixident{FS0.zero}}{FS0.zero}{NW2DqMzY-1NUSQs-1}\eatline
+\nwused{\\{NW2DqMzY-mVmU8-1}}\nwidentdefs{\\{{\nwixident{FS0.zero}}{FS0.zero}}}\nwidentuses{\\{{\nwixident{Sort.IND}}{Sort.IND}}}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW2DqMzY-1NUSQs-1}\nwendcode{}\nwbegindocs{8}\nwdocspar
+\begin{node}
+We should be aware and cogniscent that function application is a major
+source of bad performance for $FS_{0}$ as an axiomatic system. Some
+functions can be ``optimized away''. We have done this for {\Tt{}proj1\nwendquote}
+and {\Tt{}proj2\nwendquote} and {\Tt{}id\nwendquote}. But {\Tt{}const\nwendquote}, {\Tt{}comp\nwendquote}, {\Tt{}juxt\nwendquote}, {\Tt{}recur\nwendquote}
+have not been optimized in any sense. The {\Tt{}\nwlinkedidentq{FS0.app}{NW2DqMzY-2oGoBx-1}\nwendquote} function can be
+used to perform these optimizations.
+
+If we want to perform these optimizations, then we should replace the
+default branch with a {\Tt{}case\nwendquote} expression which dispatches based on
+the function {\Tt{}f\nwendquote} and argument {\Tt{}tm\nwendquote} supplied.
+\end{node}
+
+\nwenddocs{}\nwbegincode{9}\sublabel{NW2DqMzY-2oGoBx-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-2oGoBx-1}}}\moddef{Primitive \code{}apply\edoc{} constructor for functions to individuals~{\nwtagstyle{}\subpageref{NW2DqMzY-2oGoBx-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-1NUSQs-1}}\nwenddeflinemarkup
+(* \nwlinkedidentc{FS0.app}{NW2DqMzY-2oGoBx-1} : Term.t -> Term.t -> Term.t *)
+fun app f tm =
+  if not(Term.is_fun f)
+  then raise Sort.Mismatch "FS0.apply: first argument is not a function"
+  else if not(Term.is_ind tm)
+  then raise Sort.Mismatch "FS0.apply: second argument is not an individual"
+  else Term.Fun("apply", Sort.IND, [f, tm]);
+\nwindexdefn{\nwixident{FS0.app}}{FS0.app}{NW2DqMzY-2oGoBx-1}\eatline
+\nwused{\\{NW2DqMzY-1NUSQs-1}}\nwidentdefs{\\{{\nwixident{FS0.app}}{FS0.app}}}\nwidentuses{\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Term.is{\_}fun}}{Term.is:unfun}}\\{{\nwixident{Term.is{\_}ind}}{Term.is:unind}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW2DqMzY-2oGoBx-1}\nwindexuse{\nwixident{Term.is{\_}fun}}{Term.is:unfun}{NW2DqMzY-2oGoBx-1}\nwindexuse{\nwixident{Term.is{\_}ind}}{Term.is:unind}{NW2DqMzY-2oGoBx-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-2oGoBx-1}\nwendcode{}\nwbegindocs{10}\nwdocspar
+\nwenddocs{}\nwbegincode{11}\sublabel{NW2DqMzY-1VpWgD-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-1VpWgD-1}}}\moddef{Destructuring \code{}apply\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-1VpWgD-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-1NUSQs-1}}\nwenddeflinemarkup
+fun dest_app (Term.Fun("apply", Sort.IND, [f, tm])) = (f, tm)
+  | dest_app tm = raise Dest "\nwlinkedidentc{FS0.dest_app}{NW2DqMzY-1VpWgD-1}";
+\nwindexdefn{\nwixident{FS0.dest{\_}app}}{FS0.dest:unapp}{NW2DqMzY-1VpWgD-1}\eatline
+\nwused{\\{NW2DqMzY-1NUSQs-1}}\nwidentdefs{\\{{\nwixident{FS0.dest{\_}app}}{FS0.dest:unapp}}}\nwidentuses{\\{{\nwixident{Sort.IND}}{Sort.IND}}}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW2DqMzY-1VpWgD-1}\nwendcode{}\nwbegindocs{12}\nwdocspar
+\begin{node}
+Constructing an ordered pair is a primitive operation for individuals
+in $FS_{0}$. We need to raise an exception if the arguments supplied
+are not {\Tt{}IND\nwendquote} sorts.
+\end{node}
+
+\nwenddocs{}\nwbegincode{13}\sublabel{NW2DqMzY-4SkDla-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-4SkDla-1}}}\moddef{Construct an ordered pair from $FS_{0}$ individuals~{\nwtagstyle{}\subpageref{NW2DqMzY-4SkDla-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-1NUSQs-1}}\nwenddeflinemarkup
+(* pair : Term.t -> Term.t -> Term.t *)
+fun pair t1 t2 =
+  if not(Term.is_ind t1)
+  then raise Sort.Mismatch "\nwlinkedidentc{FS0.pair}{NW2DqMzY-4SkDla-1}: first term expected to be an individual"
+  else if not(Term.is_ind t2)
+  then raise Sort.Mismatch "\nwlinkedidentc{FS0.pair}{NW2DqMzY-4SkDla-1}: first term expected to be an individual"
+  else Term.Fun("cons", Sort.IND, [t1, t2]);
+\nwindexdefn{\nwixident{FS0.pair}}{FS0.pair}{NW2DqMzY-4SkDla-1}\eatline
+\nwused{\\{NW2DqMzY-1NUSQs-1}}\nwidentdefs{\\{{\nwixident{FS0.pair}}{FS0.pair}}}\nwidentuses{\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Term.is{\_}ind}}{Term.is:unind}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW2DqMzY-4SkDla-1}\nwindexuse{\nwixident{Term.is{\_}ind}}{Term.is:unind}{NW2DqMzY-4SkDla-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-4SkDla-1}\nwendcode{}\nwbegindocs{14}\nwdocspar
+\nwenddocs{}\nwbegincode{15}\sublabel{NW2DqMzY-21ZNyJ-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-21ZNyJ-1}}}\moddef{Destructuring \code{}cons\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-21ZNyJ-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-1NUSQs-1}}\nwenddeflinemarkup
+fun dest_pair (Term.Fun("cons", Sort.IND, [t1, t2])) = (t1, t2)
+  | dest_pair _ = raise Dest "\nwlinkedidentc{FS0.dest_pair}{NW2DqMzY-21ZNyJ-1}";
+\nwindexdefn{\nwixident{FS0.dest{\_}pair}}{FS0.dest:unpair}{NW2DqMzY-21ZNyJ-1}\eatline
+\nwused{\\{NW2DqMzY-1NUSQs-1}}\nwidentdefs{\\{{\nwixident{FS0.dest{\_}pair}}{FS0.dest:unpair}}}\nwidentuses{\\{{\nwixident{Sort.IND}}{Sort.IND}}}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW2DqMzY-21ZNyJ-1}\nwendcode{}\nwbegindocs{16}\nwdocspar
+\section*{Constructors for functions}
+
+\begin{node}
+The set $V_{0}$ of all individual-sorted terms of $FS_{0}$ constitutes
+one of the domains of discourse. The next are primitive recursive functions $f\colon V_{0}\to V_{0}$
+which are given by the primitive function-sorted term constructors:
+\begin{enumerate}
+\item The identity function $\id(x)=x$
+\item The constant function $k_{a}(x)=a$
+\item Projection functions $P_{1}(x,y)=x$ and $P_{2}(x,y)=y$
+\item Deciding if two terms are equal
+  \begin{equation*}
+D(x_{1},x_{2},y_{1},y_{2})=\begin{cases}y_{1} & \mbox{if }x_{1}=x_{2}\\
+y_{2} & \mbox{otherwise}
+\end{cases}
+\end{equation*}
+\item For any two function-sorted terms $f$ and $g$, their composition
+  $f\circ g$ is another function-sorted term;
+\item For any two function-sorted terms $f$ and $g$, their ``product''
+  or ``juxtaposition'' $(f,g)$ which behaves intuitively like
+  $(f,g)(x,y)=(fx,gy)$ is another function-sorted term;
+\item For any two function-sorted terms $f$ and $g$, we can use them
+  to construct a new function by primitive recursion, which is the
+  function-sorted term denoted $\mathcal{R}(f,g)$.
+\end{enumerate}
+\end{node}
+
+\nwenddocs{}\nwbegincode{17}\sublabel{NW2DqMzY-3aj0iq-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-3aj0iq-1}}}\moddef{Constructors for $FS_{0}$ functions~{\nwtagstyle{}\subpageref{NW2DqMzY-3aj0iq-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-mVmU8-1}}\nwenddeflinemarkup
+\LA{}Identity function $FS_{0}$ primitive function constant~{\nwtagstyle{}\subpageref{NW2DqMzY-D9caK-1}}\RA{}
+
+\LA{}Decide if two individuals are equal~{\nwtagstyle{}\subpageref{NW2DqMzY-2vOgWm-1}}\RA{}
+
+\LA{}Project out the first component of an $FS_{0}$ ordered pair~{\nwtagstyle{}\subpageref{NW2DqMzY-ilITB-1}}\RA{}
+
+\LA{}Project out the second component of an $FS_{0}$ ordered pair~{\nwtagstyle{}\subpageref{NW2DqMzY-HQiIh-1}}\RA{}
+
+\LA{}Constant function constructor~{\nwtagstyle{}\subpageref{NW2DqMzY-22MFug-1}}\RA{}
+
+\LA{}Compose two $FS_{0}$ functions together~{\nwtagstyle{}\subpageref{NW2DqMzY-1dWhhL-1}}\RA{}
+
+\LA{}Apply two functions componentwise to an $FS_{0}$ pair~{\nwtagstyle{}\subpageref{NW2DqMzY-1lMRH2-1}}\RA{}
+
+\LA{}Recursor constructor for primitive recursion~{\nwtagstyle{}\subpageref{NW2DqMzY-2fxlqE-1}}\RA{}
+\nwused{\\{NW2DqMzY-mVmU8-1}}\nwendcode{}\nwbegindocs{18}\nwdocspar
+
+\begin{node}
+The identity function is always a critical primitive notion. We
+provide the lazy and eager applications of the identity function to a
+term. Exceptions are raised if the argument is not an {\Tt{}IND\nwendquote} sorted term.
+\end{node}
+
+\nwenddocs{}\nwbegincode{19}\sublabel{NW2DqMzY-1uF0T3-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-1uF0T3-1}}}\moddef{Specification for $FS_{0}$ functions~{\nwtagstyle{}\subpageref{NW2DqMzY-1uF0T3-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3R3yGC-1}}\nwprevnextdefs{\relax}{NW2DqMzY-1uF0T3-2}\nwenddeflinemarkup
+val id_const : Term.t;
+val id : Term.t -> Term.t;
+val mk_id : Term.t -> Term.t;
+\nwalsodefined{\\{NW2DqMzY-1uF0T3-2}\\{NW2DqMzY-1uF0T3-3}\\{NW2DqMzY-1uF0T3-4}\\{NW2DqMzY-1uF0T3-5}\\{NW2DqMzY-1uF0T3-6}\\{NW2DqMzY-1uF0T3-7}\\{NW2DqMzY-1uF0T3-8}}\nwused{\\{NW2DqMzY-3R3yGC-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-1uF0T3-1}\nwendcode{}\nwbegindocs{20}\nwdocspar
+
+\nwenddocs{}\nwbegincode{21}\sublabel{NW2DqMzY-D9caK-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-D9caK-1}}}\moddef{Identity function $FS_{0}$ primitive function constant~{\nwtagstyle{}\subpageref{NW2DqMzY-D9caK-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3aj0iq-1}}\nwenddeflinemarkup
+(* id : Term.t -> Term.t
+
+Just returns the argument (i.e., 'eagerly applies' the
+identity function and returns the result). *)
+fun id tm = tm;
+
+val id_const = (Term.Fun("id", Sort.FUN, []));
+
+(* mk_id tm : Term.t -> Term.t
+
+Applies the `id_const` to the argument, and returns the
+result. *)
+fun mk_id tm = app id_const tm;
+\nwindexdefn{\nwixident{FS0.id}}{FS0.id}{NW2DqMzY-D9caK-1}\nwindexdefn{\nwixident{FS0.mk{\_}id}}{FS0.mk:unid}{NW2DqMzY-D9caK-1}\eatline
+\nwused{\\{NW2DqMzY-3aj0iq-1}}\nwidentdefs{\\{{\nwixident{FS0.id}}{FS0.id}}\\{{\nwixident{FS0.mk{\_}id}}{FS0.mk:unid}}}\nwidentuses{\\{{\nwixident{Sort.FUN}}{Sort.FUN}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Sort.FUN}}{Sort.FUN}{NW2DqMzY-D9caK-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-D9caK-1}\nwendcode{}\nwbegindocs{22}\nwdocspar
+\begin{node}
+There is also the ``conditional'' primitive function $D$ which acts on
+4-tuples of individuals. If the first two components are equal to each
+other, then it returns the third component. Otherwise it returns the
+fourth component. And if anything else is given, then it returns the
+{\Tt{}nil\nwendquote} or {\Tt{}zero\nwendquote} individual constant.
+
+We have provided two functions for this situation:
+\begin{enumerate}
+\item {\Tt{}mk{\_}if{\_}eq\nwendquote} will lazily apply $D$ to a term, and raise an
+  exception if applied to something which is not an individual;
+\item {\Tt{}if{\_}eq\nwendquote} will try to destructure the term to test immediately
+  if the two arguments are syntactically identical to each other, and
+  if so return the third component. But if they are not syntactically
+  identical, they could still turn out to be equal, so we just
+  delegate to {\Tt{}mk{\_}if{\_}eq\nwendquote}.
+\end{enumerate}
+\textsc{Note}: we are assuming, contrary to Feferman, that we are
+using Lisp conventions with lists writing
+$(a,b,c,d)=(a,(b,(c,d)))$. If the reader wants to follow Feferman,
+than just change the destructuring to $(t_{123},t_{4})$,
+$(t_{12},t_{3})$, and $(t_{1},t_{2})$ instead.
+
+In his PhD thesis, Sean Matthews (Chapter 3, \S2.1) refers to this $D$
+as the ``decide'' function.
+\end{node}
+
+\nwenddocs{}\nwbegincode{23}\sublabel{NW2DqMzY-1uF0T3-2}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-1uF0T3-2}}}\moddef{Specification for $FS_{0}$ functions~{\nwtagstyle{}\subpageref{NW2DqMzY-1uF0T3-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3R3yGC-1}}\nwprevnextdefs{NW2DqMzY-1uF0T3-1}{NW2DqMzY-1uF0T3-3}\nwenddeflinemarkup
+val if_eq_const : Term.t;
+val mk_if_eq : Term.t -> Term.t;
+val if_eq : Term.t -> Term.t;
+\nwused{\\{NW2DqMzY-3R3yGC-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-1uF0T3-2}\nwendcode{}\nwbegindocs{24}\nwdocspar
+
+\nwenddocs{}\nwbegincode{25}\sublabel{NW2DqMzY-2vOgWm-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-2vOgWm-1}}}\moddef{Decide if two individuals are equal~{\nwtagstyle{}\subpageref{NW2DqMzY-2vOgWm-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3aj0iq-1}}\nwenddeflinemarkup
+val if_eq_const = (Term.Fun("if-equal", Sort.FUN, [])); 
+
+(* mk_if_eq : Term.t -> Term.t *)
+fun mk_if_eq tm = app if_eq_const tm;
+
+(* if_eq : Term.t -> Term.t *)
+local
+  fun dest_cons (tm : Term.t) =
+   (case tm of
+     (Term.Fun("cons", Sort.IND, [t1,t2])) => (t1,t2)
+   | _ => raise Match);
+in
+fun if_eq tm =
+  if not(Term.is_ind tm)
+  then raise Sort.Mismatch "\nwlinkedidentc{FS0.if_eq}{NW2DqMzY-2vOgWm-1}: expects IND"
+  else
+    let
+      val (t1, t234) = dest_cons tm;
+      val (t2, t34) = dest_cons t234;
+      val (t3, t4) = dest_cons t34;
+    in
+      if Term.eq t1 t2 then t3
+      else mk_if_eq tm
+    end
+    handle Match => mk_if_eq tm;
+end;
+\nwindexdefn{\nwixident{FS0.mk{\_}if{\_}eq}}{FS0.mk:unif:uneq}{NW2DqMzY-2vOgWm-1}\nwindexdefn{\nwixident{FS0.if{\_}eq}}{FS0.if:uneq}{NW2DqMzY-2vOgWm-1}\eatline
+\nwused{\\{NW2DqMzY-3aj0iq-1}}\nwidentdefs{\\{{\nwixident{FS0.if{\_}eq}}{FS0.if:uneq}}\\{{\nwixident{FS0.mk{\_}if{\_}eq}}{FS0.mk:unif:uneq}}}\nwidentuses{\\{{\nwixident{Sort.FUN}}{Sort.FUN}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Term.eq}}{Term.eq}}\\{{\nwixident{Term.is{\_}ind}}{Term.is:unind}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Sort.FUN}}{Sort.FUN}{NW2DqMzY-2vOgWm-1}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW2DqMzY-2vOgWm-1}\nwindexuse{\nwixident{Term.eq}}{Term.eq}{NW2DqMzY-2vOgWm-1}\nwindexuse{\nwixident{Term.is{\_}ind}}{Term.is:unind}{NW2DqMzY-2vOgWm-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-2vOgWm-1}\nwendcode{}\nwbegindocs{26}\nwdocspar
+
+\begin{node}
+We have the projection operations be primitive functions in
+$FS_{0}$. But we optimize applying {\Tt{}proj1\nwendquote} to a term by returning
+the result according to the axioms of $FS_{0}$, namely {\Tt{}P1\ (x,\ y)\ =\ x\nwendquote}.
+
+However, there may be times when the user wants a \emph{lazy}
+application of the function, rather than \emph{eagerly} returning the
+result. For this situation, we provide the {\Tt{}mk{\_}proj1\nwendquote} to return the
+{\Tt{}app\ P1\ x\nwendquote} individual term.
+\end{node}
+
+\nwenddocs{}\nwbegincode{27}\sublabel{NW2DqMzY-1uF0T3-3}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-1uF0T3-3}}}\moddef{Specification for $FS_{0}$ functions~{\nwtagstyle{}\subpageref{NW2DqMzY-1uF0T3-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3R3yGC-1}}\nwprevnextdefs{NW2DqMzY-1uF0T3-2}{NW2DqMzY-1uF0T3-4}\nwenddeflinemarkup
+val proj1_const : Term.t;
+val mk_proj1 : Term.t -> Term.t;
+val proj1 : Term.t -> Term.t;
+\nwused{\\{NW2DqMzY-3R3yGC-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-1uF0T3-3}\nwendcode{}\nwbegindocs{28}\nwdocspar
+\nwenddocs{}\nwbegincode{29}\sublabel{NW2DqMzY-ilITB-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-ilITB-1}}}\moddef{Project out the first component of an $FS_{0}$ ordered pair~{\nwtagstyle{}\subpageref{NW2DqMzY-ilITB-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3aj0iq-1}}\nwenddeflinemarkup
+(* proj1_const : Term.t *)
+val proj1_const = Term.Fun("P1", Sort.FUN, []);
+
+(* mk_proj1 : Term.t -> Term.t
+
+Lazily apply proj1 to a term. *)
+fun mk_proj1 tm = app proj1_const tm;
+
+(* proj1 : Term.t -> Term.t
+
+Automatically extracts the first component of a pair,
+otherwise just applies the "P1" constant. *)
+fun proj1 tm =
+ (case tm of
+   (Term.Fun("cons", Sort.IND, [tm', _])) => tm'
+   | _ => mk_proj1 tm);
+\nwindexdefn{\nwixident{FS0.mk{\_}proj1}}{FS0.mk:unproj1}{NW2DqMzY-ilITB-1}\nwindexdefn{\nwixident{FS0.proj1}}{FS0.proj1}{NW2DqMzY-ilITB-1}\eatline
+\nwused{\\{NW2DqMzY-3aj0iq-1}}\nwidentdefs{\\{{\nwixident{FS0.mk{\_}proj1}}{FS0.mk:unproj1}}\\{{\nwixident{FS0.proj1}}{FS0.proj1}}}\nwidentuses{\\{{\nwixident{Sort.FUN}}{Sort.FUN}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Sort.FUN}}{Sort.FUN}{NW2DqMzY-ilITB-1}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW2DqMzY-ilITB-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-ilITB-1}\nwendcode{}\nwbegindocs{30}\nwdocspar
+\begin{node}
+Similarly, we have the same concerns for projecting out the second
+component of an ordered pair.
+\end{node}
+
+\nwenddocs{}\nwbegincode{31}\sublabel{NW2DqMzY-1uF0T3-4}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-1uF0T3-4}}}\moddef{Specification for $FS_{0}$ functions~{\nwtagstyle{}\subpageref{NW2DqMzY-1uF0T3-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3R3yGC-1}}\nwprevnextdefs{NW2DqMzY-1uF0T3-3}{NW2DqMzY-1uF0T3-5}\nwenddeflinemarkup
+val proj2_const : Term.t;
+val mk_proj2 : Term.t -> Term.t;
+val proj2 : Term.t -> Term.t;
+\nwused{\\{NW2DqMzY-3R3yGC-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-1uF0T3-4}\nwendcode{}\nwbegindocs{32}\nwdocspar
+
+\nwenddocs{}\nwbegincode{33}\sublabel{NW2DqMzY-HQiIh-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-HQiIh-1}}}\moddef{Project out the second component of an $FS_{0}$ ordered pair~{\nwtagstyle{}\subpageref{NW2DqMzY-HQiIh-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3aj0iq-1}}\nwenddeflinemarkup
+(* proj2_const : Term.t *)
+val proj2_const = Term.Fun("P2", Sort.FUN, []);
+
+(* mk_proj2 : Term.t -> Term.t
+
+Lazily apply proj2 to a term. *)
+fun mk_proj2 tm = app proj2_const tm;
+
+(* proj2 : Term.t -> Term.t
+
+Automatically extracts the second component of a pair,
+otherwise just applies the "P2" constant. *)
+fun proj2 tm =
+ (case tm of
+   (Term.Fun("cons", Sort.IND, [_, tm'])) => tm'
+   | _ => mk_proj2 tm);
+\nwindexdefn{\nwixident{FS0.proj2}}{FS0.proj2}{NW2DqMzY-HQiIh-1}\nwindexdefn{\nwixident{FS0.mk{\_}proj2}}{FS0.mk:unproj2}{NW2DqMzY-HQiIh-1}\eatline
+\nwused{\\{NW2DqMzY-3aj0iq-1}}\nwidentdefs{\\{{\nwixident{FS0.mk{\_}proj2}}{FS0.mk:unproj2}}\\{{\nwixident{FS0.proj2}}{FS0.proj2}}}\nwidentuses{\\{{\nwixident{Sort.FUN}}{Sort.FUN}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Sort.FUN}}{Sort.FUN}{NW2DqMzY-HQiIh-1}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW2DqMzY-HQiIh-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-HQiIh-1}\nwendcode{}\nwbegindocs{34}\nwdocspar
+\begin{node}
+The constant function $K(a)$ will always return $a$ regardless of what
+argument it is given: $\forall x\ldotp (K(a))x=a$. We provide a
+``constructor'' for the constant function, in contrast to what we did
+for the previous function primitives. This may be a source of
+performance penalty, depending on whether it is used heavily.
+\end{node}
+
+\nwenddocs{}\nwbegincode{35}\sublabel{NW2DqMzY-1uF0T3-5}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-1uF0T3-5}}}\moddef{Specification for $FS_{0}$ functions~{\nwtagstyle{}\subpageref{NW2DqMzY-1uF0T3-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3R3yGC-1}}\nwprevnextdefs{NW2DqMzY-1uF0T3-4}{NW2DqMzY-1uF0T3-6}\nwenddeflinemarkup
+val const : Term.t -> Term.t;
+val dest_const : Term.t -> Term.t;
+\nwused{\\{NW2DqMzY-3R3yGC-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-1uF0T3-5}\nwendcode{}\nwbegindocs{36}\nwdocspar
+\nwenddocs{}\nwbegincode{37}\sublabel{NW2DqMzY-22MFug-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-22MFug-1}}}\moddef{Constant function constructor~{\nwtagstyle{}\subpageref{NW2DqMzY-22MFug-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3aj0iq-1}}\nwenddeflinemarkup
+(* const : Term.t -> Term.t *)
+fun const tm =
+  if not(Term.is_ind tm)
+  then raise Sort.Mismatch "\nwlinkedidentc{FS0.const}{NW2DqMzY-22MFug-1}: expects an individual"
+  else Term.Fun("const", Sort.FUN, [tm]);
+
+\LA{}Destructure \code{}const\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-1qEma8-1}}\RA{}
+\nwindexdefn{\nwixident{FS0.const}}{FS0.const}{NW2DqMzY-22MFug-1}\eatline
+\nwused{\\{NW2DqMzY-3aj0iq-1}}\nwidentdefs{\\{{\nwixident{FS0.const}}{FS0.const}}}\nwidentuses{\\{{\nwixident{Sort.FUN}}{Sort.FUN}}\\{{\nwixident{Term.is{\_}ind}}{Term.is:unind}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Sort.FUN}}{Sort.FUN}{NW2DqMzY-22MFug-1}\nwindexuse{\nwixident{Term.is{\_}ind}}{Term.is:unind}{NW2DqMzY-22MFug-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-22MFug-1}\nwendcode{}\nwbegindocs{38}\nwdocspar
+\nwenddocs{}\nwbegincode{39}\sublabel{NW2DqMzY-1qEma8-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-1qEma8-1}}}\moddef{Destructure \code{}const\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-1qEma8-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-22MFug-1}}\nwenddeflinemarkup
+fun dest_const (Term.Fun("const", Sort.FUN, [tm])) = tm
+  | dest_const _ = raise Dest "\nwlinkedidentc{FS0.dest_const}{NW2DqMzY-1qEma8-1}";
+\nwindexdefn{\nwixident{FS0.dest{\_}const}}{FS0.dest:unconst}{NW2DqMzY-1qEma8-1}\eatline
+\nwused{\\{NW2DqMzY-22MFug-1}}\nwidentdefs{\\{{\nwixident{FS0.dest{\_}const}}{FS0.dest:unconst}}}\nwidentuses{\\{{\nwixident{Sort.FUN}}{Sort.FUN}}}\nwindexuse{\nwixident{Sort.FUN}}{Sort.FUN}{NW2DqMzY-1qEma8-1}\nwendcode{}\nwbegindocs{40}\nwdocspar
+\begin{node}
+We provide the constructor for composing two functions together. We
+follow the usual Mathematical convention that $(f\circ g)(x)=f(g(x))$.
+Again, this is a constructor, not the ``unfolded'' application.
+
+Although, after thinking about it for some time, it might also be wise
+to take advantage of associativity of composition to allow \emph{an
+arbitrary number} of functions to be composed together. So
+$(f\circ(g\circ h))$ would be stored in a flat list $[f,g,h]$. The
+when applied, we just need to invoke {\Tt{}List.foldr\ app\ arg\ funs\nwendquote}.
+\end{node}
+\nwenddocs{}\nwbegincode{41}\sublabel{NW2DqMzY-1uF0T3-6}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-1uF0T3-6}}}\moddef{Specification for $FS_{0}$ functions~{\nwtagstyle{}\subpageref{NW2DqMzY-1uF0T3-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3R3yGC-1}}\nwprevnextdefs{NW2DqMzY-1uF0T3-5}{NW2DqMzY-1uF0T3-7}\nwenddeflinemarkup
+val comp : Term.t -> Term.t -> Term.t;
+val dest_comp : Term.t -> Term.t * Term.t;
+\nwused{\\{NW2DqMzY-3R3yGC-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-1uF0T3-6}\nwendcode{}\nwbegindocs{42}\nwdocspar
+
+\nwenddocs{}\nwbegincode{43}\sublabel{NW2DqMzY-1dWhhL-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-1dWhhL-1}}}\moddef{Compose two $FS_{0}$ functions together~{\nwtagstyle{}\subpageref{NW2DqMzY-1dWhhL-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3aj0iq-1}}\nwenddeflinemarkup
+(* comp : Term.t -> Term.t -> Term.t
+
+Compose two functions *)
+fun comp f g =
+  if not(Term.is_fun f)
+  then raise Sort.Mismatch "\nwlinkedidentc{FS0.comp}{NW2DqMzY-1dWhhL-1}: first argument is not a fun"
+  else if not(Term.is_fun g)
+  then raise Sort.Mismatch "\nwlinkedidentc{FS0.comp}{NW2DqMzY-1dWhhL-1}: second argument is not a fun"
+  else Term.Fun("comp", Sort.FUN, [f, g]);
+
+\LA{}Destructuring \code{}comp\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-22XS9g-1}}\RA{}
+\nwindexdefn{\nwixident{FS0.comp}}{FS0.comp}{NW2DqMzY-1dWhhL-1}\eatline
+\nwused{\\{NW2DqMzY-3aj0iq-1}}\nwidentdefs{\\{{\nwixident{FS0.comp}}{FS0.comp}}}\nwidentuses{\\{{\nwixident{Sort.FUN}}{Sort.FUN}}\\{{\nwixident{Term.is{\_}fun}}{Term.is:unfun}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Sort.FUN}}{Sort.FUN}{NW2DqMzY-1dWhhL-1}\nwindexuse{\nwixident{Term.is{\_}fun}}{Term.is:unfun}{NW2DqMzY-1dWhhL-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-1dWhhL-1}\nwendcode{}\nwbegindocs{44}\nwdocspar
+\nwenddocs{}\nwbegincode{45}\sublabel{NW2DqMzY-22XS9g-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-22XS9g-1}}}\moddef{Destructuring \code{}comp\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-22XS9g-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-1dWhhL-1}}\nwenddeflinemarkup
+fun dest_comp (Term.Fun("comp", Sort.FUN, [f, g])) = (f,g)
+  | dest_comp _ = raise Dest "\nwlinkedidentc{FS0.dest_comp}{NW2DqMzY-22XS9g-1}";
+\nwindexdefn{\nwixident{FS0.dest{\_}comp}}{FS0.dest:uncomp}{NW2DqMzY-22XS9g-1}\eatline
+\nwused{\\{NW2DqMzY-1dWhhL-1}}\nwidentdefs{\\{{\nwixident{FS0.dest{\_}comp}}{FS0.dest:uncomp}}}\nwidentuses{\\{{\nwixident{Sort.FUN}}{Sort.FUN}}}\nwindexuse{\nwixident{Sort.FUN}}{Sort.FUN}{NW2DqMzY-22XS9g-1}\nwendcode{}\nwbegindocs{46}\nwdocspar
+\begin{node}
+We have the constructor for a {\Tt{}juxt\nwendquote}. Where did the name ``juxt''
+come from? Clojure. Again, this is defined to be such that $(f,g)x=(fx,gx)$.
+The {\Tt{}\nwlinkedidentq{FS0.app}{NW2DqMzY-2oGoBx-1}\nwendquote} function should expand this out.
+\end{node}
+
+\nwenddocs{}\nwbegincode{47}\sublabel{NW2DqMzY-1uF0T3-7}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-1uF0T3-7}}}\moddef{Specification for $FS_{0}$ functions~{\nwtagstyle{}\subpageref{NW2DqMzY-1uF0T3-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3R3yGC-1}}\nwprevnextdefs{NW2DqMzY-1uF0T3-6}{NW2DqMzY-1uF0T3-8}\nwenddeflinemarkup
+val juxt : Term.t -> Term.t -> Term.t;
+val dest_juxt : Term.t -> Term.t * Term.t;
+\nwused{\\{NW2DqMzY-3R3yGC-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-1uF0T3-7}\nwendcode{}\nwbegindocs{48}\nwdocspar
+
+\nwenddocs{}\nwbegincode{49}\sublabel{NW2DqMzY-1lMRH2-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-1lMRH2-1}}}\moddef{Apply two functions componentwise to an $FS_{0}$ pair~{\nwtagstyle{}\subpageref{NW2DqMzY-1lMRH2-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3aj0iq-1}}\nwenddeflinemarkup
+(* juxt : Term.t -> Term.t -> Term.t
+
+Given two functions, applies them componentwise to a `cons`
+pair. *)
+fun juxt f g =
+  if not(Term.is_fun f)
+  then raise Sort.Mismatch "\nwlinkedidentc{FS0.juxt}{NW2DqMzY-1lMRH2-1}: first argument is not a fun"
+  else if not(Term.is_fun g)
+  then raise Sort.Mismatch "\nwlinkedidentc{FS0.juxt}{NW2DqMzY-1lMRH2-1}: second argument is not a fun"
+  else Term.Fun("juxt", Sort.FUN, [f, g]);
+
+\LA{}Destructure \code{}juxt\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-hvApp-1}}\RA{}
+\nwindexdefn{\nwixident{FS0.juxt}}{FS0.juxt}{NW2DqMzY-1lMRH2-1}\eatline
+\nwused{\\{NW2DqMzY-3aj0iq-1}}\nwidentdefs{\\{{\nwixident{FS0.juxt}}{FS0.juxt}}}\nwidentuses{\\{{\nwixident{Sort.FUN}}{Sort.FUN}}\\{{\nwixident{Term.is{\_}fun}}{Term.is:unfun}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Sort.FUN}}{Sort.FUN}{NW2DqMzY-1lMRH2-1}\nwindexuse{\nwixident{Term.is{\_}fun}}{Term.is:unfun}{NW2DqMzY-1lMRH2-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-1lMRH2-1}\nwendcode{}\nwbegindocs{50}\nwdocspar
+\nwenddocs{}\nwbegincode{51}\sublabel{NW2DqMzY-hvApp-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-hvApp-1}}}\moddef{Destructure \code{}juxt\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-hvApp-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-1lMRH2-1}}\nwenddeflinemarkup
+fun dest_juxt (Term.Fun("juxt", Sort.FUN, [f, g])) = (f,g)
+  | dest_juxt _ = raise Dest "dest_juxt";
+\nwindexdefn{\nwixident{FS0.dest{\_}juxt}}{FS0.dest:unjuxt}{NW2DqMzY-hvApp-1}\eatline
+\nwused{\\{NW2DqMzY-1lMRH2-1}}\nwidentdefs{\\{{\nwixident{FS0.dest{\_}juxt}}{FS0.dest:unjuxt}}}\nwidentuses{\\{{\nwixident{Sort.FUN}}{Sort.FUN}}}\nwindexuse{\nwixident{Sort.FUN}}{Sort.FUN}{NW2DqMzY-hvApp-1}\nwendcode{}\nwbegindocs{52}\nwdocspar
+\begin{node}
+The recursor constructor $\mathcal{R}(f,g)$ is needed for primitive
+recursion in $FS_{0}$. I don't pretend to optimize it in any way,
+shape, or form.
+\end{node}
+\nwenddocs{}\nwbegincode{53}\sublabel{NW2DqMzY-1uF0T3-8}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-1uF0T3-8}}}\moddef{Specification for $FS_{0}$ functions~{\nwtagstyle{}\subpageref{NW2DqMzY-1uF0T3-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3R3yGC-1}}\nwprevnextdefs{NW2DqMzY-1uF0T3-7}{\relax}\nwenddeflinemarkup
+val recur : Term.t -> Term.t -> Term.t;
+val dest_recur : Term.t -> Term.t * Term.t;
+\nwused{\\{NW2DqMzY-3R3yGC-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-1uF0T3-8}\nwendcode{}\nwbegindocs{54}\nwdocspar
+
+\nwenddocs{}\nwbegincode{55}\sublabel{NW2DqMzY-2fxlqE-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-2fxlqE-1}}}\moddef{Recursor constructor for primitive recursion~{\nwtagstyle{}\subpageref{NW2DqMzY-2fxlqE-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3aj0iq-1}}\nwenddeflinemarkup
+(* recur : Term.t -> Term.t -> Term.t
+
+Constructs the recursor given two functions. *)
+fun recur f g =
+  if not(Term.is_fun f)
+  then raise Sort.Mismatch "\nwlinkedidentc{FS0.recur}{NW2DqMzY-2fxlqE-1}: first argument is not a fun"
+  else if not(Term.is_fun g)
+  then raise Sort.Mismatch "\nwlinkedidentc{FS0.recur}{NW2DqMzY-2fxlqE-1}: second argument is not a fun"
+  else Term.Fun("recur", Sort.FUN, [f, g]);
+
+\LA{}Destructure \code{}recur\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-Ir9cb-1}}\RA{}
+\nwindexdefn{\nwixident{FS0.recur}}{FS0.recur}{NW2DqMzY-2fxlqE-1}\eatline
+\nwused{\\{NW2DqMzY-3aj0iq-1}}\nwidentdefs{\\{{\nwixident{FS0.recur}}{FS0.recur}}}\nwidentuses{\\{{\nwixident{Sort.FUN}}{Sort.FUN}}\\{{\nwixident{Term.is{\_}fun}}{Term.is:unfun}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Sort.FUN}}{Sort.FUN}{NW2DqMzY-2fxlqE-1}\nwindexuse{\nwixident{Term.is{\_}fun}}{Term.is:unfun}{NW2DqMzY-2fxlqE-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-2fxlqE-1}\nwendcode{}\nwbegindocs{56}\nwdocspar
+\nwenddocs{}\nwbegincode{57}\sublabel{NW2DqMzY-Ir9cb-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-Ir9cb-1}}}\moddef{Destructure \code{}recur\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-Ir9cb-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-2fxlqE-1}}\nwenddeflinemarkup
+fun dest_recur (Term.Fun("recur", Sort.FUN, [f, g])) = (f,g)
+  | dest_recur _ = raise Dest "\nwlinkedidentc{FS0.dest_recur}{NW2DqMzY-Ir9cb-1}";
+\nwindexdefn{\nwixident{FS0.dest{\_}recur}}{FS0.dest:unrecur}{NW2DqMzY-Ir9cb-1}\eatline
+\nwused{\\{NW2DqMzY-2fxlqE-1}}\nwidentdefs{\\{{\nwixident{FS0.dest{\_}recur}}{FS0.dest:unrecur}}}\nwidentuses{\\{{\nwixident{Sort.FUN}}{Sort.FUN}}}\nwindexuse{\nwixident{Sort.FUN}}{Sort.FUN}{NW2DqMzY-Ir9cb-1}\nwendcode{}\nwbegindocs{58}\nwdocspar
+\section*{Constructors for classes}
+
+\begin{node}
+We have our set $V_{0}$ of individual-sorted terms, and we have
+discussed function-sorted terms as primitive recursive functions
+$f\colon V_{0}\to V_{0}$. Now we can also discuss subclasses of
+$V_{0}$. These give us class-sorted terms. They are:
+\begin{enumerate}
+\item If $t$ is an individual-sorted term, then the singleton $\{t\}$
+  is a class-sorted term;\footnote{Originally this was just $\{0\}$ is
+  a class-sorted term, but we will see that $\{t\}$ is equally valid.}
+\item If $f$ is a function-sorted term and $C$ is a class-sorted term,
+  then the preimage $f^{-1}C$ of $C$ under $f$ is a class-sorted term;
+\item If $S$ and $T$ are class-sorted terms, then so are their union
+  $S\cup T$ and intersection $S\cap T$;
+\item If $S$ and $T$ are class-sorted terms (where $T$ is viewed as a
+  ternary relation), then they inductively define a set
+  $\mathcal{I}_{2}(S,T)$ which intuitively corresponds to saying
+  $S\subset \mathcal{I}_{2}(S,T)$ and for any individual-sorted terms
+  $x$, $y$, $z$, if $y\in\mathcal{I}_{2}(S,T)$ and $z\in\mathcal{I}_{2}(S,T)$
+  and $(x,y,z)\in T$, then $x\in\mathcal{I}_{2}(S,T)$.
+\end{enumerate}
+\end{node}
+
+\nwenddocs{}\nwbegincode{59}\sublabel{NW2DqMzY-TSvER-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-TSvER-1}}}\moddef{Constructors for $FS_{0}$ classes~{\nwtagstyle{}\subpageref{NW2DqMzY-TSvER-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-mVmU8-1}}\nwenddeflinemarkup
+\LA{}Singleton $FS_{0}$ class~{\nwtagstyle{}\subpageref{NW2DqMzY-14kolG-1}}\RA{}
+
+\LA{}Preimage of an $FS_{0}$ class under an $FS_{0}$ function~{\nwtagstyle{}\subpageref{NW2DqMzY-31WKtJ-1}}\RA{}
+
+\LA{}Unions of two $FS_{0}$ classes~{\nwtagstyle{}\subpageref{NW2DqMzY-22W7o7-1}}\RA{}
+
+\LA{}Intersection of two $FS_{0}$ classes~{\nwtagstyle{}\subpageref{NW2DqMzY-19bkPi-1}}\RA{}
+
+\LA{}Constructor for inductively defined $FS_{0}$ class~{\nwtagstyle{}\subpageref{NW2DqMzY-1mMvkv-1}}\RA{}
+\nwused{\\{NW2DqMzY-mVmU8-1}}\nwendcode{}\nwbegindocs{60}\nwdocspar
+
+\begin{node}
+The singleton class $\{x\}$ (for any individual term $x$) could
+probably be optimized. Well, we are being a bit more generous than
+Feferman, since he's axioms only discuss $\{0\}$.
+\end{node}
+
+\nwenddocs{}\nwbegincode{61}\sublabel{NW2DqMzY-33zuOn-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-33zuOn-1}}}\moddef{Specification for $FS_{0}$ classes~{\nwtagstyle{}\subpageref{NW2DqMzY-33zuOn-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3R3yGC-1}}\nwprevnextdefs{\relax}{NW2DqMzY-33zuOn-2}\nwenddeflinemarkup
+val singleton : Term.t -> Term.t;
+val dest_singleton : Term.t -> Term.t;
+\nwalsodefined{\\{NW2DqMzY-33zuOn-2}\\{NW2DqMzY-33zuOn-3}\\{NW2DqMzY-33zuOn-4}\\{NW2DqMzY-33zuOn-5}}\nwused{\\{NW2DqMzY-3R3yGC-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-33zuOn-1}\nwendcode{}\nwbegindocs{62}\nwdocspar
+
+\nwenddocs{}\nwbegincode{63}\sublabel{NW2DqMzY-14kolG-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-14kolG-1}}}\moddef{Singleton $FS_{0}$ class~{\nwtagstyle{}\subpageref{NW2DqMzY-14kolG-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-TSvER-1}}\nwenddeflinemarkup
+(* singleton : Term.t -> Term.t *)
+fun singleton x =
+  if not(Term.is_ind x)
+  then raise Sort.Mismatch "\nwlinkedidentc{FS0.singleton}{NW2DqMzY-14kolG-1}: expects an individual"
+  else Term.Fun("singleton", Sort.CLASS, [x]);
+
+\LA{}Destructure \code{}singleton\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-Qd4qS-1}}\RA{}
+\nwindexdefn{\nwixident{FS0.singleton}}{FS0.singleton}{NW2DqMzY-14kolG-1}\eatline
+\nwused{\\{NW2DqMzY-TSvER-1}}\nwidentdefs{\\{{\nwixident{FS0.singleton}}{FS0.singleton}}}\nwidentuses{\\{{\nwixident{Sort.CLASS}}{Sort.CLASS}}\\{{\nwixident{Term.is{\_}ind}}{Term.is:unind}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Sort.CLASS}}{Sort.CLASS}{NW2DqMzY-14kolG-1}\nwindexuse{\nwixident{Term.is{\_}ind}}{Term.is:unind}{NW2DqMzY-14kolG-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-14kolG-1}\nwendcode{}\nwbegindocs{64}\nwdocspar
+\nwenddocs{}\nwbegincode{65}\sublabel{NW2DqMzY-Qd4qS-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-Qd4qS-1}}}\moddef{Destructure \code{}singleton\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-Qd4qS-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-14kolG-1}}\nwenddeflinemarkup
+fun dest_singleton (Term.Fun("singleton", Sort.CLASS, [x])) = x
+  | dest_singleton _ = raise Dest "\nwlinkedidentc{FS0.dest_singleton}{NW2DqMzY-Qd4qS-1}";
+\nwindexdefn{\nwixident{FS0.dest{\_}singleton}}{FS0.dest:unsingleton}{NW2DqMzY-Qd4qS-1}\eatline
+\nwused{\\{NW2DqMzY-14kolG-1}}\nwidentdefs{\\{{\nwixident{FS0.dest{\_}singleton}}{FS0.dest:unsingleton}}}\nwidentuses{\\{{\nwixident{Sort.CLASS}}{Sort.CLASS}}}\nwindexuse{\nwixident{Sort.CLASS}}{Sort.CLASS}{NW2DqMzY-Qd4qS-1}\nwendcode{}\nwbegindocs{66}\nwdocspar
+\begin{node}
+The preimage of a class $C$ under a function $f$ is another class
+$f^{-1}C$. We do not optimize the construction of this class. In fact,
+the class constructors are just treated as primitives.
+\end{node}
+
+\nwenddocs{}\nwbegincode{67}\sublabel{NW2DqMzY-33zuOn-2}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-33zuOn-2}}}\moddef{Specification for $FS_{0}$ classes~{\nwtagstyle{}\subpageref{NW2DqMzY-33zuOn-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3R3yGC-1}}\nwprevnextdefs{NW2DqMzY-33zuOn-1}{NW2DqMzY-33zuOn-3}\nwenddeflinemarkup
+val preimage : Term.t -> Term.t -> Term.t;
+val dest_preimage : Term.t -> Term.t * Term.t;
+\nwused{\\{NW2DqMzY-3R3yGC-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-33zuOn-2}\nwendcode{}\nwbegindocs{68}\nwdocspar
+
+\nwenddocs{}\nwbegincode{69}\sublabel{NW2DqMzY-31WKtJ-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-31WKtJ-1}}}\moddef{Preimage of an $FS_{0}$ class under an $FS_{0}$ function~{\nwtagstyle{}\subpageref{NW2DqMzY-31WKtJ-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-TSvER-1}}\nwenddeflinemarkup
+(* preimage : Term.t -> Term.t -> Term.t *)
+fun preimage f S =
+  if not(Term.is_fun f)
+  then raise Sort.Mismatch "\nwlinkedidentc{FS0.preimage}{NW2DqMzY-31WKtJ-1}: first argument is not a fun"
+  else if not(Term.is_class S)
+  then raise Sort.Mismatch "\nwlinkedidentc{FS0.preimage}{NW2DqMzY-31WKtJ-1}: second argument is not a class"
+  else Term.Fun("preimage", Sort.CLASS, [f, S]);
+
+\LA{}Destructure \code{}preimage\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-LSOi5-1}}\RA{}
+\nwindexdefn{\nwixident{FS0.preimage}}{FS0.preimage}{NW2DqMzY-31WKtJ-1}\eatline
+\nwused{\\{NW2DqMzY-TSvER-1}}\nwidentdefs{\\{{\nwixident{FS0.preimage}}{FS0.preimage}}}\nwidentuses{\\{{\nwixident{Sort.CLASS}}{Sort.CLASS}}\\{{\nwixident{Term.is{\_}class}}{Term.is:unclass}}\\{{\nwixident{Term.is{\_}fun}}{Term.is:unfun}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Sort.CLASS}}{Sort.CLASS}{NW2DqMzY-31WKtJ-1}\nwindexuse{\nwixident{Term.is{\_}class}}{Term.is:unclass}{NW2DqMzY-31WKtJ-1}\nwindexuse{\nwixident{Term.is{\_}fun}}{Term.is:unfun}{NW2DqMzY-31WKtJ-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-31WKtJ-1}\nwendcode{}\nwbegindocs{70}\nwdocspar
+\nwenddocs{}\nwbegincode{71}\sublabel{NW2DqMzY-LSOi5-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-LSOi5-1}}}\moddef{Destructure \code{}preimage\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-LSOi5-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-31WKtJ-1}}\nwenddeflinemarkup
+fun dest_preimage (Term.Fun("preimage", Sort.CLASS, [f, S])) = (f,S)
+  | dest_preimage _ = raise Dest "\nwlinkedidentc{FS0.dest_preimage}{NW2DqMzY-LSOi5-1}";
+\nwindexdefn{\nwixident{FS0.dest{\_}preimage}}{FS0.dest:unpreimage}{NW2DqMzY-LSOi5-1}\eatline
+\nwused{\\{NW2DqMzY-31WKtJ-1}}\nwidentdefs{\\{{\nwixident{FS0.dest{\_}preimage}}{FS0.dest:unpreimage}}}\nwidentuses{\\{{\nwixident{Sort.CLASS}}{Sort.CLASS}}}\nwindexuse{\nwixident{Sort.CLASS}}{Sort.CLASS}{NW2DqMzY-LSOi5-1}\nwendcode{}\nwbegindocs{72}\nwdocspar
+\begin{node}
+The union of two $FS_{0}$ classes $S\cup T$ cannot be optimized away,
+so we leave it as a constructor.
+\end{node}
+
+\nwenddocs{}\nwbegincode{73}\sublabel{NW2DqMzY-33zuOn-3}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-33zuOn-3}}}\moddef{Specification for $FS_{0}$ classes~{\nwtagstyle{}\subpageref{NW2DqMzY-33zuOn-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3R3yGC-1}}\nwprevnextdefs{NW2DqMzY-33zuOn-2}{NW2DqMzY-33zuOn-4}\nwenddeflinemarkup
+val union : Term.t -> Term.t -> Term.t;
+val dest_union : Term.t -> Term.t * Term.t;
+\nwused{\\{NW2DqMzY-3R3yGC-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-33zuOn-3}\nwendcode{}\nwbegindocs{74}\nwdocspar
+\nwenddocs{}\nwbegincode{75}\sublabel{NW2DqMzY-22W7o7-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-22W7o7-1}}}\moddef{Unions of two $FS_{0}$ classes~{\nwtagstyle{}\subpageref{NW2DqMzY-22W7o7-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-TSvER-1}}\nwenddeflinemarkup
+(* union : Term.t -> Term.t -> Term.t *)
+fun union S T =
+  if not(Term.is_class S)
+  then raise Sort.Mismatch "\nwlinkedidentc{FS0.union}{NW2DqMzY-22W7o7-1}: first argument is not a class"
+  else if not(Term.is_class T)
+  then raise Sort.Mismatch "\nwlinkedidentc{FS0.union}{NW2DqMzY-22W7o7-1}: second argument is not a class"
+  else Term.Fun("union", Sort.CLASS, [S, T]);
+
+\LA{}Destructure \code{}union\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-27dSmE-1}}\RA{}
+\nwindexdefn{\nwixident{FS0.union}}{FS0.union}{NW2DqMzY-22W7o7-1}\eatline
+\nwused{\\{NW2DqMzY-TSvER-1}}\nwidentdefs{\\{{\nwixident{FS0.union}}{FS0.union}}}\nwidentuses{\\{{\nwixident{Sort.CLASS}}{Sort.CLASS}}\\{{\nwixident{Term.is{\_}class}}{Term.is:unclass}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Sort.CLASS}}{Sort.CLASS}{NW2DqMzY-22W7o7-1}\nwindexuse{\nwixident{Term.is{\_}class}}{Term.is:unclass}{NW2DqMzY-22W7o7-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-22W7o7-1}\nwendcode{}\nwbegindocs{76}\nwdocspar
+\nwenddocs{}\nwbegincode{77}\sublabel{NW2DqMzY-27dSmE-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-27dSmE-1}}}\moddef{Destructure \code{}union\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-27dSmE-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-22W7o7-1}}\nwenddeflinemarkup
+fun dest_union (Term.Fun("union", Sort.CLASS, [S, T])) = (S,T)
+  | dest_union _ = raise Dest "\nwlinkedidentc{FS0.dest_union}{NW2DqMzY-27dSmE-1}";
+\nwindexdefn{\nwixident{FS0.dest{\_}union}}{FS0.dest:ununion}{NW2DqMzY-27dSmE-1}\eatline
+\nwused{\\{NW2DqMzY-22W7o7-1}}\nwidentdefs{\\{{\nwixident{FS0.dest{\_}union}}{FS0.dest:ununion}}}\nwidentuses{\\{{\nwixident{Sort.CLASS}}{Sort.CLASS}}}\nwindexuse{\nwixident{Sort.CLASS}}{Sort.CLASS}{NW2DqMzY-27dSmE-1}\nwendcode{}\nwbegindocs{78}\nwdocspar
+\begin{node}
+The intersection of two $FS_{0}$ classes $S\cap T$ cannot be optimized away.
+\end{node}
+
+\nwenddocs{}\nwbegincode{79}\sublabel{NW2DqMzY-33zuOn-4}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-33zuOn-4}}}\moddef{Specification for $FS_{0}$ classes~{\nwtagstyle{}\subpageref{NW2DqMzY-33zuOn-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3R3yGC-1}}\nwprevnextdefs{NW2DqMzY-33zuOn-3}{NW2DqMzY-33zuOn-5}\nwenddeflinemarkup
+val intersection : Term.t -> Term.t -> Term.t;
+val dest_intersection : Term.t -> Term.t * Term.t;
+\nwused{\\{NW2DqMzY-3R3yGC-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-33zuOn-4}\nwendcode{}\nwbegindocs{80}\nwdocspar
+\nwenddocs{}\nwbegincode{81}\sublabel{NW2DqMzY-19bkPi-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-19bkPi-1}}}\moddef{Intersection of two $FS_{0}$ classes~{\nwtagstyle{}\subpageref{NW2DqMzY-19bkPi-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-TSvER-1}}\nwenddeflinemarkup
+(* intersection : Term.t -> Term.t -> Term.t *)
+fun intersection S T =
+  if not(Term.is_class S)
+  then raise Sort.Mismatch "\nwlinkedidentc{FS0.intersection}{NW2DqMzY-19bkPi-1}: first argument is not a class"
+  else if not(Term.is_class T)
+  then raise Sort.Mismatch "\nwlinkedidentc{FS0.intersection}{NW2DqMzY-19bkPi-1}: second argument is not a class"
+  else Term.Fun("intersection", Sort.CLASS, [S, T]);
+
+\LA{}Destructure \code{}intersection\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-4EzxyM-1}}\RA{}
+\nwindexdefn{\nwixident{FS0.intersection}}{FS0.intersection}{NW2DqMzY-19bkPi-1}\eatline
+\nwused{\\{NW2DqMzY-TSvER-1}}\nwidentdefs{\\{{\nwixident{FS0.intersection}}{FS0.intersection}}}\nwidentuses{\\{{\nwixident{Sort.CLASS}}{Sort.CLASS}}\\{{\nwixident{Term.is{\_}class}}{Term.is:unclass}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Sort.CLASS}}{Sort.CLASS}{NW2DqMzY-19bkPi-1}\nwindexuse{\nwixident{Term.is{\_}class}}{Term.is:unclass}{NW2DqMzY-19bkPi-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-19bkPi-1}\nwendcode{}\nwbegindocs{82}\nwdocspar
+\nwenddocs{}\nwbegincode{83}\sublabel{NW2DqMzY-4EzxyM-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-4EzxyM-1}}}\moddef{Destructure \code{}intersection\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-4EzxyM-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-19bkPi-1}}\nwenddeflinemarkup
+fun dest_intersection (Term.Fun("intersection", Sort.CLASS, [S, T])) = (S,T)
+  | dest_intersection _ = raise Dest "\nwlinkedidentc{FS0.dest_intersection}{NW2DqMzY-4EzxyM-1}";
+\nwindexdefn{\nwixident{FS0.dest{\_}intersection}}{FS0.dest:unintersection}{NW2DqMzY-4EzxyM-1}\eatline
+\nwused{\\{NW2DqMzY-19bkPi-1}}\nwidentdefs{\\{{\nwixident{FS0.dest{\_}intersection}}{FS0.dest:unintersection}}}\nwidentuses{\\{{\nwixident{Sort.CLASS}}{Sort.CLASS}}}\nwindexuse{\nwixident{Sort.CLASS}}{Sort.CLASS}{NW2DqMzY-4EzxyM-1}\nwendcode{}\nwbegindocs{84}\nwdocspar
+\begin{node}
+The inductively defined $FS_{0}$ class $\mathcal{I}(S,T)$ from the
+``base class'' $S$ and the ``inductive generating class'' $T$ may be
+optimized away, but there is no obvious way I can see.
+\end{node}
+
+\nwenddocs{}\nwbegincode{85}\sublabel{NW2DqMzY-33zuOn-5}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-33zuOn-5}}}\moddef{Specification for $FS_{0}$ classes~{\nwtagstyle{}\subpageref{NW2DqMzY-33zuOn-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3R3yGC-1}}\nwprevnextdefs{NW2DqMzY-33zuOn-4}{\relax}\nwenddeflinemarkup
+val induct : Term.t -> Term.t -> Term.t;
+val dest_induct : Term.t -> Term.t * Term.t;
+\nwused{\\{NW2DqMzY-3R3yGC-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-33zuOn-5}\nwendcode{}\nwbegindocs{86}\nwdocspar
+
+\nwenddocs{}\nwbegincode{87}\sublabel{NW2DqMzY-1mMvkv-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-1mMvkv-1}}}\moddef{Constructor for inductively defined $FS_{0}$ class~{\nwtagstyle{}\subpageref{NW2DqMzY-1mMvkv-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-TSvER-1}}\nwenddeflinemarkup
+(* induct : Term.t -> Term.t -> Term.t *)
+fun induct S T =
+  if not(Term.is_class S)
+  then raise Sort.Mismatch "FS0.induction: first argument is not a class"
+  else if not(Term.is_class T)
+  then raise Sort.Mismatch "FS0.induction: second argument is not a class"
+  else Term.Fun("induction", Sort.CLASS, [S, T]);
+
+\LA{}Destructure \code{}induct\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-4ToA2q-1}}\RA{}
+\nwindexdefn{\nwixident{FS0.induct}}{FS0.induct}{NW2DqMzY-1mMvkv-1}\eatline
+\nwused{\\{NW2DqMzY-TSvER-1}}\nwidentdefs{\\{{\nwixident{FS0.induct}}{FS0.induct}}}\nwidentuses{\\{{\nwixident{Sort.CLASS}}{Sort.CLASS}}\\{{\nwixident{Term.is{\_}class}}{Term.is:unclass}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Sort.CLASS}}{Sort.CLASS}{NW2DqMzY-1mMvkv-1}\nwindexuse{\nwixident{Term.is{\_}class}}{Term.is:unclass}{NW2DqMzY-1mMvkv-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-1mMvkv-1}\nwendcode{}\nwbegindocs{88}\nwdocspar
+\nwenddocs{}\nwbegincode{89}\sublabel{NW2DqMzY-4ToA2q-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-4ToA2q-1}}}\moddef{Destructure \code{}induct\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-4ToA2q-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-1mMvkv-1}}\nwenddeflinemarkup
+fun dest_induct (Term.Fun("induction", Sort.CLASS, [S, T])) = (S,T)
+  | dest_induct _ = raise Dest "\nwlinkedidentc{FS0.dest_induct}{NW2DqMzY-4ToA2q-1}";
+\nwindexdefn{\nwixident{FS0.dest{\_}induct}}{FS0.dest:uninduct}{NW2DqMzY-4ToA2q-1}\eatline
+\nwused{\\{NW2DqMzY-1mMvkv-1}}\nwidentdefs{\\{{\nwixident{FS0.dest{\_}induct}}{FS0.dest:uninduct}}}\nwidentuses{\\{{\nwixident{Sort.CLASS}}{Sort.CLASS}}}\nwindexuse{\nwixident{Sort.CLASS}}{Sort.CLASS}{NW2DqMzY-4ToA2q-1}\nwendcode{}\nwbegindocs{90}\nwdocspar
+\section*{Constructors for predicates}
+
+\begin{node}
+The three predicate constructors for $FS_{0}$ are for: 
+\begin{enumerate}
+\item set membership $\in$
+\item equality of terms $=$
+\item inequality of terms $\neq$ (which is just an abbreviation $x\neq y$
+for $\neg(x=y)$).
+\end{enumerate}
+\end{node}
+
+\nwenddocs{}\nwbegincode{91}\sublabel{NW2DqMzY-194t0N-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-194t0N-1}}}\moddef{Specification for $FS_{0}$ predicates~{\nwtagstyle{}\subpageref{NW2DqMzY-194t0N-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3R3yGC-1}}\nwprevnextdefs{\relax}{NW2DqMzY-194t0N-2}\nwenddeflinemarkup
+val not_equal : Term.t -> Term.t -> Formula.t;
+\nwalsodefined{\\{NW2DqMzY-194t0N-2}\\{NW2DqMzY-194t0N-3}}\nwused{\\{NW2DqMzY-3R3yGC-1}}\nwidentuses{\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW2DqMzY-194t0N-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-194t0N-1}\nwendcode{}\nwbegindocs{92}\nwdocspar
+\nwenddocs{}\nwbegincode{93}\sublabel{NW2DqMzY-4OjF2N-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-4OjF2N-1}}}\moddef{Constructors for $FS_{0}$ predicates~{\nwtagstyle{}\subpageref{NW2DqMzY-4OjF2N-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-mVmU8-1}}\nwenddeflinemarkup
+\LA{}Set membership constructor for $FS_{0}$~{\nwtagstyle{}\subpageref{NW2DqMzY-eTij6-1}}\RA{}
+
+\LA{}Equality constructor for $FS_{0}$ terms~{\nwtagstyle{}\subpageref{NW2DqMzY-ocj48-1}}\RA{}
+
+(* not_equal : Term.t -> Term.t -> Formula.t *)
+fun not_equal lhs rhs =
+  Formula.mk_not(equal lhs rhs);
+\nwindexdefn{\nwixident{FS0.not{\_}equal}}{FS0.not:unequal}{NW2DqMzY-4OjF2N-1}\eatline
+\nwused{\\{NW2DqMzY-mVmU8-1}}\nwidentdefs{\\{{\nwixident{FS0.not{\_}equal}}{FS0.not:unequal}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW2DqMzY-4OjF2N-1}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW2DqMzY-4OjF2N-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-4OjF2N-1}\nwendcode{}\nwbegindocs{94}\nwdocspar
+\begin{node}
+The only primitive predicate for $FS_{0}$ is the set membership $\in$
+which has the generic form $x\in C$ for any $FS_{0}$ individual-sorted
+term $x$ and any class-sorted term $C$. 
+\end{node}
+
+\nwenddocs{}\nwbegincode{95}\sublabel{NW2DqMzY-194t0N-2}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-194t0N-2}}}\moddef{Specification for $FS_{0}$ predicates~{\nwtagstyle{}\subpageref{NW2DqMzY-194t0N-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3R3yGC-1}}\nwprevnextdefs{NW2DqMzY-194t0N-1}{NW2DqMzY-194t0N-3}\nwenddeflinemarkup
+val In : Term.t -> Term.t -> Formula.t;
+val dest_in : Formula.t -> Term.t * Term.t;
+\nwused{\\{NW2DqMzY-3R3yGC-1}}\nwidentuses{\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW2DqMzY-194t0N-2}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-194t0N-2}\nwendcode{}\nwbegindocs{96}\nwdocspar
+
+\nwenddocs{}\nwbegincode{97}\sublabel{NW2DqMzY-eTij6-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-eTij6-1}}}\moddef{Set membership constructor for $FS_{0}$~{\nwtagstyle{}\subpageref{NW2DqMzY-eTij6-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-4OjF2N-1}}\nwenddeflinemarkup
+(* In : Term.t -> Term.t -> Formula.t *)
+fun In x C =
+  if not(Term.is_ind x)
+  then raise Sort.Mismatch "\nwlinkedidentc{FS0.In}{NW2DqMzY-eTij6-1}: first argument is not an ind"
+  else if not(Term.is_class C)
+  then raise Sort.Mismatch "\nwlinkedidentc{FS0.In}{NW2DqMzY-eTij6-1}: second argument is not a class"
+  else Formula.mk_pred("in", [x, C]);
+
+\LA{}Destructuring \code{}in\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-4I0O5b-1}}\RA{}
+\nwindexdefn{\nwixident{FS0.In}}{FS0.In}{NW2DqMzY-eTij6-1}\eatline
+\nwused{\\{NW2DqMzY-4OjF2N-1}}\nwidentdefs{\\{{\nwixident{FS0.In}}{FS0.In}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Term.is{\_}class}}{Term.is:unclass}}\\{{\nwixident{Term.is{\_}ind}}{Term.is:unind}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW2DqMzY-eTij6-1}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW2DqMzY-eTij6-1}\nwindexuse{\nwixident{Term.is{\_}class}}{Term.is:unclass}{NW2DqMzY-eTij6-1}\nwindexuse{\nwixident{Term.is{\_}ind}}{Term.is:unind}{NW2DqMzY-eTij6-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-eTij6-1}\nwendcode{}\nwbegindocs{98}\nwdocspar
+\nwenddocs{}\nwbegincode{99}\sublabel{NW2DqMzY-4I0O5b-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-4I0O5b-1}}}\moddef{Destructuring \code{}in\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-4I0O5b-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-eTij6-1}}\nwenddeflinemarkup
+fun dest_in fm =
+  if not(Formula.is_pred fm)
+  then raise Dest "\nwlinkedidentc{FS0.dest_in}{NW2DqMzY-4I0O5b-1}"
+  else (case Formula.dest_pred fm of
+         ("in", [x, C]) => (x, C)
+       | _ => raise Dest "\nwlinkedidentc{FS0.dest_in}{NW2DqMzY-4I0O5b-1}");
+\nwindexdefn{\nwixident{FS0.dest{\_}in}}{FS0.dest:unin}{NW2DqMzY-4I0O5b-1}\eatline
+\nwused{\\{NW2DqMzY-eTij6-1}}\nwidentdefs{\\{{\nwixident{FS0.dest{\_}in}}{FS0.dest:unin}}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}pred}}{Formula.dest:unpred}}\\{{\nwixident{Formula.is{\_}pred}}{Formula.is:unpred}}}\nwindexuse{\nwixident{Formula.dest{\_}pred}}{Formula.dest:unpred}{NW2DqMzY-4I0O5b-1}\nwindexuse{\nwixident{Formula.is{\_}pred}}{Formula.is:unpred}{NW2DqMzY-4I0O5b-1}\nwendcode{}\nwbegindocs{100}\nwdocspar
+\begin{node}
+There is also equality, but this is primitive for individual-sorted
+terms. Equality of functions $f=g$ is an abbreviation for
+\begin{equation}
+\forall x\ldotp(fx=gx).
+\end{equation}
+Equality of sets $S=T$ is an abbreviation for
+\begin{equation}
+\forall x\ldotp(x\in S\iff x\in T).
+\end{equation}
+We just treat them as primitives, with these two abbreviations being
+additional axioms for $FS_{0}$.
+\end{node}
+
+\nwenddocs{}\nwbegincode{101}\sublabel{NW2DqMzY-194t0N-3}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-194t0N-3}}}\moddef{Specification for $FS_{0}$ predicates~{\nwtagstyle{}\subpageref{NW2DqMzY-194t0N-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-3R3yGC-1}}\nwprevnextdefs{NW2DqMzY-194t0N-2}{\relax}\nwenddeflinemarkup
+val equal : Term.t -> Term.t -> Formula.t;
+val dest_equal : Formula.t -> Term.t * Term.t;
+\nwused{\\{NW2DqMzY-3R3yGC-1}}\nwidentuses{\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW2DqMzY-194t0N-3}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-194t0N-3}\nwendcode{}\nwbegindocs{102}\nwdocspar
+\nwenddocs{}\nwbegincode{103}\sublabel{NW2DqMzY-ocj48-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-ocj48-1}}}\moddef{Equality constructor for $FS_{0}$ terms~{\nwtagstyle{}\subpageref{NW2DqMzY-ocj48-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-4OjF2N-1}}\nwenddeflinemarkup
+(* equal : Term.t -> Term.t -> Formula.t
+
+TODO: consider 'expanding' this out for functions
+ (f = g iff forall x. f x = g x) and for classes
+ (S = T iff forall x.(x in S iff x in T)). *)
+fun equal lhs rhs =
+  if not(Term.have_same_sort lhs rhs)
+  then raise Sort.Mismatch "\nwlinkedidentc{FS0.equal}{NW2DqMzY-ocj48-1}: expects arguments to have same sort"
+  else (Formula.mk_pred("=", [lhs, rhs]));
+
+\LA{}Destructuring \code{}equal\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-2FxXJs-1}}\RA{}
+\nwindexdefn{\nwixident{FS0.equal}}{FS0.equal}{NW2DqMzY-ocj48-1}\eatline
+\nwused{\\{NW2DqMzY-4OjF2N-1}}\nwidentdefs{\\{{\nwixident{FS0.equal}}{FS0.equal}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Term.have{\_}same{\_}sort}}{Term.have:unsame:unsort}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW2DqMzY-ocj48-1}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW2DqMzY-ocj48-1}\nwindexuse{\nwixident{Term.have{\_}same{\_}sort}}{Term.have:unsame:unsort}{NW2DqMzY-ocj48-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW2DqMzY-ocj48-1}\nwendcode{}\nwbegindocs{104}\nwdocspar
+\nwenddocs{}\nwbegincode{105}\sublabel{NW2DqMzY-2FxXJs-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW2DqMzY-2FxXJs-1}}}\moddef{Destructuring \code{}equal\edoc{}~{\nwtagstyle{}\subpageref{NW2DqMzY-2FxXJs-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW2DqMzY-ocj48-1}}\nwenddeflinemarkup
+fun dest_equal fm =
+  if not(Formula.is_pred fm)
+  then raise Dest "\nwlinkedidentc{FS0.dest_equal}{NW2DqMzY-2FxXJs-1}"
+  else (case Formula.dest_pred fm of
+         ("equal", [lhs, rhs]) => (lhs, rhs)
+       | _ => raise Dest "\nwlinkedidentc{FS0.dest_equal}{NW2DqMzY-2FxXJs-1}");
+\nwindexdefn{\nwixident{FS0.dest{\_}equal}}{FS0.dest:unequal}{NW2DqMzY-2FxXJs-1}\eatline
+\nwused{\\{NW2DqMzY-ocj48-1}}\nwidentdefs{\\{{\nwixident{FS0.dest{\_}equal}}{FS0.dest:unequal}}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}pred}}{Formula.dest:unpred}}\\{{\nwixident{Formula.is{\_}pred}}{Formula.is:unpred}}}\nwindexuse{\nwixident{Formula.dest{\_}pred}}{Formula.dest:unpred}{NW2DqMzY-2FxXJs-1}\nwindexuse{\nwixident{Formula.is{\_}pred}}{Formula.is:unpred}{NW2DqMzY-2FxXJs-1}\nwendcode{}
+
+\nwixlogsorted{c}{{Apply two functions componentwise to an $FS_{0}$ pair}{NW2DqMzY-1lMRH2-1}{\nwixu{NW2DqMzY-3aj0iq-1}\nwixd{NW2DqMzY-1lMRH2-1}}}%
+\nwixlogsorted{c}{{Compose two $FS_{0}$ functions together}{NW2DqMzY-1dWhhL-1}{\nwixu{NW2DqMzY-3aj0iq-1}\nwixd{NW2DqMzY-1dWhhL-1}}}%
+\nwixlogsorted{c}{{Constant function constructor}{NW2DqMzY-22MFug-1}{\nwixu{NW2DqMzY-3aj0iq-1}\nwixd{NW2DqMzY-22MFug-1}}}%
+\nwixlogsorted{c}{{Construct an ordered pair from $FS_{0}$ individuals}{NW2DqMzY-4SkDla-1}{\nwixu{NW2DqMzY-1NUSQs-1}\nwixd{NW2DqMzY-4SkDla-1}}}%
+\nwixlogsorted{c}{{Constructor for inductively defined $FS_{0}$ class}{NW2DqMzY-1mMvkv-1}{\nwixu{NW2DqMzY-TSvER-1}\nwixd{NW2DqMzY-1mMvkv-1}}}%
+\nwixlogsorted{c}{{Constructors for $FS_{0}$ classes}{NW2DqMzY-TSvER-1}{\nwixu{NW2DqMzY-mVmU8-1}\nwixd{NW2DqMzY-TSvER-1}}}%
+\nwixlogsorted{c}{{Constructors for $FS_{0}$ functions}{NW2DqMzY-3aj0iq-1}{\nwixu{NW2DqMzY-mVmU8-1}\nwixd{NW2DqMzY-3aj0iq-1}}}%
+\nwixlogsorted{c}{{Constructors for $FS_{0}$ individuals}{NW2DqMzY-1NUSQs-1}{\nwixu{NW2DqMzY-mVmU8-1}\nwixd{NW2DqMzY-1NUSQs-1}}}%
+\nwixlogsorted{c}{{Constructors for $FS_{0}$ predicates}{NW2DqMzY-4OjF2N-1}{\nwixu{NW2DqMzY-mVmU8-1}\nwixd{NW2DqMzY-4OjF2N-1}}}%
+\nwixlogsorted{c}{{Decide if two individuals are equal}{NW2DqMzY-2vOgWm-1}{\nwixu{NW2DqMzY-3aj0iq-1}\nwixd{NW2DqMzY-2vOgWm-1}}}%
+\nwixlogsorted{c}{{Destructure \code{}const\edoc{}}{NW2DqMzY-1qEma8-1}{\nwixu{NW2DqMzY-22MFug-1}\nwixd{NW2DqMzY-1qEma8-1}}}%
+\nwixlogsorted{c}{{Destructure \code{}induct\edoc{}}{NW2DqMzY-4ToA2q-1}{\nwixu{NW2DqMzY-1mMvkv-1}\nwixd{NW2DqMzY-4ToA2q-1}}}%
+\nwixlogsorted{c}{{Destructure \code{}intersection\edoc{}}{NW2DqMzY-4EzxyM-1}{\nwixu{NW2DqMzY-19bkPi-1}\nwixd{NW2DqMzY-4EzxyM-1}}}%
+\nwixlogsorted{c}{{Destructure \code{}juxt\edoc{}}{NW2DqMzY-hvApp-1}{\nwixu{NW2DqMzY-1lMRH2-1}\nwixd{NW2DqMzY-hvApp-1}}}%
+\nwixlogsorted{c}{{Destructure \code{}preimage\edoc{}}{NW2DqMzY-LSOi5-1}{\nwixu{NW2DqMzY-31WKtJ-1}\nwixd{NW2DqMzY-LSOi5-1}}}%
+\nwixlogsorted{c}{{Destructure \code{}recur\edoc{}}{NW2DqMzY-Ir9cb-1}{\nwixu{NW2DqMzY-2fxlqE-1}\nwixd{NW2DqMzY-Ir9cb-1}}}%
+\nwixlogsorted{c}{{Destructure \code{}singleton\edoc{}}{NW2DqMzY-Qd4qS-1}{\nwixu{NW2DqMzY-14kolG-1}\nwixd{NW2DqMzY-Qd4qS-1}}}%
+\nwixlogsorted{c}{{Destructure \code{}union\edoc{}}{NW2DqMzY-27dSmE-1}{\nwixu{NW2DqMzY-22W7o7-1}\nwixd{NW2DqMzY-27dSmE-1}}}%
+\nwixlogsorted{c}{{Destructuring \code{}apply\edoc{}}{NW2DqMzY-1VpWgD-1}{\nwixu{NW2DqMzY-1NUSQs-1}\nwixd{NW2DqMzY-1VpWgD-1}}}%
+\nwixlogsorted{c}{{Destructuring \code{}comp\edoc{}}{NW2DqMzY-22XS9g-1}{\nwixu{NW2DqMzY-1dWhhL-1}\nwixd{NW2DqMzY-22XS9g-1}}}%
+\nwixlogsorted{c}{{Destructuring \code{}cons\edoc{}}{NW2DqMzY-21ZNyJ-1}{\nwixu{NW2DqMzY-1NUSQs-1}\nwixd{NW2DqMzY-21ZNyJ-1}}}%
+\nwixlogsorted{c}{{Destructuring \code{}equal\edoc{}}{NW2DqMzY-2FxXJs-1}{\nwixu{NW2DqMzY-ocj48-1}\nwixd{NW2DqMzY-2FxXJs-1}}}%
+\nwixlogsorted{c}{{Destructuring \code{}in\edoc{}}{NW2DqMzY-4I0O5b-1}{\nwixu{NW2DqMzY-eTij6-1}\nwixd{NW2DqMzY-4I0O5b-1}}}%
+\nwixlogsorted{c}{{Equality constructor for $FS_{0}$ terms}{NW2DqMzY-ocj48-1}{\nwixu{NW2DqMzY-4OjF2N-1}\nwixd{NW2DqMzY-ocj48-1}}}%
+\nwixlogsorted{c}{{FS0.sig}{NW2DqMzY-3R3yGC-1}{\nwixd{NW2DqMzY-3R3yGC-1}}}%
+\nwixlogsorted{c}{{FS0.sml}{NW2DqMzY-mVmU8-1}{\nwixd{NW2DqMzY-mVmU8-1}}}%
+\nwixlogsorted{c}{{Identity function $FS_{0}$ primitive function constant}{NW2DqMzY-D9caK-1}{\nwixu{NW2DqMzY-3aj0iq-1}\nwixd{NW2DqMzY-D9caK-1}}}%
+\nwixlogsorted{c}{{Intersection of two $FS_{0}$ classes}{NW2DqMzY-19bkPi-1}{\nwixu{NW2DqMzY-TSvER-1}\nwixd{NW2DqMzY-19bkPi-1}}}%
+\nwixlogsorted{c}{{Preimage of an $FS_{0}$ class under an $FS_{0}$ function}{NW2DqMzY-31WKtJ-1}{\nwixu{NW2DqMzY-TSvER-1}\nwixd{NW2DqMzY-31WKtJ-1}}}%
+\nwixlogsorted{c}{{Primitive \code{}apply\edoc{} constructor for functions to individuals}{NW2DqMzY-2oGoBx-1}{\nwixu{NW2DqMzY-1NUSQs-1}\nwixd{NW2DqMzY-2oGoBx-1}}}%
+\nwixlogsorted{c}{{Project out the first component of an $FS_{0}$ ordered pair}{NW2DqMzY-ilITB-1}{\nwixu{NW2DqMzY-3aj0iq-1}\nwixd{NW2DqMzY-ilITB-1}}}%
+\nwixlogsorted{c}{{Project out the second component of an $FS_{0}$ ordered pair}{NW2DqMzY-HQiIh-1}{\nwixu{NW2DqMzY-3aj0iq-1}\nwixd{NW2DqMzY-HQiIh-1}}}%
+\nwixlogsorted{c}{{Recursor constructor for primitive recursion}{NW2DqMzY-2fxlqE-1}{\nwixu{NW2DqMzY-3aj0iq-1}\nwixd{NW2DqMzY-2fxlqE-1}}}%
+\nwixlogsorted{c}{{Set membership constructor for $FS_{0}$}{NW2DqMzY-eTij6-1}{\nwixu{NW2DqMzY-4OjF2N-1}\nwixd{NW2DqMzY-eTij6-1}}}%
+\nwixlogsorted{c}{{Singleton $FS_{0}$ class}{NW2DqMzY-14kolG-1}{\nwixu{NW2DqMzY-TSvER-1}\nwixd{NW2DqMzY-14kolG-1}}}%
+\nwixlogsorted{c}{{Specification for $FS_{0}$ classes}{NW2DqMzY-33zuOn-1}{\nwixu{NW2DqMzY-3R3yGC-1}\nwixd{NW2DqMzY-33zuOn-1}\nwixd{NW2DqMzY-33zuOn-2}\nwixd{NW2DqMzY-33zuOn-3}\nwixd{NW2DqMzY-33zuOn-4}\nwixd{NW2DqMzY-33zuOn-5}}}%
+\nwixlogsorted{c}{{Specification for $FS_{0}$ functions}{NW2DqMzY-1uF0T3-1}{\nwixu{NW2DqMzY-3R3yGC-1}\nwixd{NW2DqMzY-1uF0T3-1}\nwixd{NW2DqMzY-1uF0T3-2}\nwixd{NW2DqMzY-1uF0T3-3}\nwixd{NW2DqMzY-1uF0T3-4}\nwixd{NW2DqMzY-1uF0T3-5}\nwixd{NW2DqMzY-1uF0T3-6}\nwixd{NW2DqMzY-1uF0T3-7}\nwixd{NW2DqMzY-1uF0T3-8}}}%
+\nwixlogsorted{c}{{Specification for $FS_{0}$ individuals}{NW2DqMzY-24mg92-1}{\nwixu{NW2DqMzY-3R3yGC-1}\nwixd{NW2DqMzY-24mg92-1}}}%
+\nwixlogsorted{c}{{Specification for $FS_{0}$ predicates}{NW2DqMzY-194t0N-1}{\nwixu{NW2DqMzY-3R3yGC-1}\nwixd{NW2DqMzY-194t0N-1}\nwixd{NW2DqMzY-194t0N-2}\nwixd{NW2DqMzY-194t0N-3}}}%
+\nwixlogsorted{c}{{Unions of two $FS_{0}$ classes}{NW2DqMzY-22W7o7-1}{\nwixu{NW2DqMzY-TSvER-1}\nwixd{NW2DqMzY-22W7o7-1}}}%
+\nwixlogsorted{i}{{\nwixident{Formula.dest{\_}pred}}{Formula.dest:unpred}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}pred}}{Formula.is:unpred}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}%
+\nwixlogsorted{i}{{\nwixident{Formula.t}}{Formula.t}}%
+\nwixlogsorted{i}{{\nwixident{FS0.app}}{FS0.app}}%
+\nwixlogsorted{i}{{\nwixident{FS0.comp}}{FS0.comp}}%
+\nwixlogsorted{i}{{\nwixident{FS0.const}}{FS0.const}}%
+\nwixlogsorted{i}{{\nwixident{FS0.dest{\_}app}}{FS0.dest:unapp}}%
+\nwixlogsorted{i}{{\nwixident{FS0.dest{\_}comp}}{FS0.dest:uncomp}}%
+\nwixlogsorted{i}{{\nwixident{FS0.dest{\_}const}}{FS0.dest:unconst}}%
+\nwixlogsorted{i}{{\nwixident{FS0.dest{\_}equal}}{FS0.dest:unequal}}%
+\nwixlogsorted{i}{{\nwixident{FS0.dest{\_}in}}{FS0.dest:unin}}%
+\nwixlogsorted{i}{{\nwixident{FS0.dest{\_}induct}}{FS0.dest:uninduct}}%
+\nwixlogsorted{i}{{\nwixident{FS0.dest{\_}intersection}}{FS0.dest:unintersection}}%
+\nwixlogsorted{i}{{\nwixident{FS0.dest{\_}juxt}}{FS0.dest:unjuxt}}%
+\nwixlogsorted{i}{{\nwixident{FS0.dest{\_}pair}}{FS0.dest:unpair}}%
+\nwixlogsorted{i}{{\nwixident{FS0.dest{\_}preimage}}{FS0.dest:unpreimage}}%
+\nwixlogsorted{i}{{\nwixident{FS0.dest{\_}recur}}{FS0.dest:unrecur}}%
+\nwixlogsorted{i}{{\nwixident{FS0.dest{\_}singleton}}{FS0.dest:unsingleton}}%
+\nwixlogsorted{i}{{\nwixident{FS0.dest{\_}union}}{FS0.dest:ununion}}%
+\nwixlogsorted{i}{{\nwixident{FS0.equal}}{FS0.equal}}%
+\nwixlogsorted{i}{{\nwixident{FS0.id}}{FS0.id}}%
+\nwixlogsorted{i}{{\nwixident{FS0.if{\_}eq}}{FS0.if:uneq}}%
+\nwixlogsorted{i}{{\nwixident{FS0.In}}{FS0.In}}%
+\nwixlogsorted{i}{{\nwixident{FS0.induct}}{FS0.induct}}%
+\nwixlogsorted{i}{{\nwixident{FS0.intersection}}{FS0.intersection}}%
+\nwixlogsorted{i}{{\nwixident{FS0.juxt}}{FS0.juxt}}%
+\nwixlogsorted{i}{{\nwixident{FS0.mk{\_}id}}{FS0.mk:unid}}%
+\nwixlogsorted{i}{{\nwixident{FS0.mk{\_}if{\_}eq}}{FS0.mk:unif:uneq}}%
+\nwixlogsorted{i}{{\nwixident{FS0.mk{\_}proj1}}{FS0.mk:unproj1}}%
+\nwixlogsorted{i}{{\nwixident{FS0.mk{\_}proj2}}{FS0.mk:unproj2}}%
+\nwixlogsorted{i}{{\nwixident{FS0.not{\_}equal}}{FS0.not:unequal}}%
+\nwixlogsorted{i}{{\nwixident{FS0.pair}}{FS0.pair}}%
+\nwixlogsorted{i}{{\nwixident{FS0.preimage}}{FS0.preimage}}%
+\nwixlogsorted{i}{{\nwixident{FS0.proj1}}{FS0.proj1}}%
+\nwixlogsorted{i}{{\nwixident{FS0.proj2}}{FS0.proj2}}%
+\nwixlogsorted{i}{{\nwixident{FS0.recur}}{FS0.recur}}%
+\nwixlogsorted{i}{{\nwixident{FS0.singleton}}{FS0.singleton}}%
+\nwixlogsorted{i}{{\nwixident{FS0.union}}{FS0.union}}%
+\nwixlogsorted{i}{{\nwixident{FS0.zero}}{FS0.zero}}%
+\nwixlogsorted{i}{{\nwixident{Sort.CLASS}}{Sort.CLASS}}%
+\nwixlogsorted{i}{{\nwixident{Sort.FUN}}{Sort.FUN}}%
+\nwixlogsorted{i}{{\nwixident{Sort.IND}}{Sort.IND}}%
+\nwixlogsorted{i}{{\nwixident{Term.eq}}{Term.eq}}%
+\nwixlogsorted{i}{{\nwixident{Term.have{\_}same{\_}sort}}{Term.have:unsame:unsort}}%
+\nwixlogsorted{i}{{\nwixident{Term.is{\_}class}}{Term.is:unclass}}%
+\nwixlogsorted{i}{{\nwixident{Term.is{\_}fun}}{Term.is:unfun}}%
+\nwixlogsorted{i}{{\nwixident{Term.is{\_}ind}}{Term.is:unind}}%
+\nwixlogsorted{i}{{\nwixident{Term.t}}{Term.t}}%
+

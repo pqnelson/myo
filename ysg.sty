@@ -1,0 +1,171 @@
+%%
+%% This is file `ysg.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% ysg.dtx  (with options: `package')
+%% -------:| -----------------------------------------------------------------
+%%     ysg:| A new LaTeX package
+%%  Author:| Alex Nelson
+%%  E-mail:| pqnelson@gmail.com
+%% License:| Released under the LaTeX Project Public License v1.3c or later
+%%     See:| http://www.latex-project.org/lppl.txt
+%% 
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+\ProvidesPackage{ysg}
+    [2026/01/21 v0.1.0 Yak Shavers' Guild macros]
+\let\ysg@error\error
+\@ifundefined{ifHTML}{%
+  \let\ifHTML\iffalse%
+  \let\HTMLtrue\relax%
+  \let\HTMLfalse\relax%
+}{}
+\newif\iftagtheorems\tagtheoremsfalse
+\DeclareOption{tagtheorems}{\tagtheoremstrue}
+\newif\iftagequations\tagequationsfalse
+\DeclareOption{tagequations}{\tagequationstrue}
+
+\ProcessOptions\relax
+
+\RequirePackage{marginnote}
+\RequirePackage{ifpdf}
+\RequirePackage[\ifpdf\else dvipdfmx\fi]{hyperref}
+%% Barbara Beeton's hack https://tex.stackexchange.com/a/331608/14751
+\def\patch@ams@spacing{\AtBeginDocument{%
+  \labelsep=5pt\relax
+  \setcounter{enumi}{13}\setcounter{enumii}{13}%
+  \setcounter{enumiii}{13}\setcounter{enumiv}{13}%
+  \settowidth\leftmargini{\labelenumi\hskip\labelsep}%
+  \settowidth\leftmarginii{\labelenumii\hskip\labelsep}%
+  \settowidth\leftmarginiii{\labelenumiii\hskip\labelsep}%
+  \settowidth\leftmarginiv{\labelenumiv\hskip\labelsep}%
+  \setcounter{enumi}{0}\setcounter{enumii}{0}%
+  \setcounter{enumiii}{0}\setcounter{enumiv}{0}%
+  \leftmarginv=10pt \leftmarginvi=\leftmarginv
+  \leftmargin=\leftmargini
+  \labelwidth=\leftmargini \advance\labelwidth-\labelsep
+  \@listi}}
+\@ifclassloaded{amsart}{\patch@ams@spacing}{}
+\@ifclassloaded{amsbook}{\patch@ams@spacing}{}
+
+\def\lastupdatename{\textit{Last Updated}:}
+\def\lastupdate#1{\gdef\last@update{#1}}
+\let\last@update\@empty%
+\@ifclassloaded{amsart}{%
+  %% egreg's \lastupdate https://tex.stackexchange.com/a/267451/14751
+  \def\@setdate{%
+    \datename\ \@date
+    \ifx\last@update\@empty\else
+      .\ \lastupdatename\ \last@update
+    \fi
+    \@addpunct.%
+  }
+}%
+{%
+  \@ifclassloaded{amsbook}{%
+    \def\@setdate{\datename\ \@date\@addpunct.} % show the date
+    \def\lastupdatename{\textit{Last Updated}:} % support \lastupdate
+    \def\lastupdate#1{\thanks{\bigbreak
+        \ifx\@date\@empty%
+        \else%
+          \@setdate\ %
+        \fi%
+        \lastupdatename\ #1\@addpunct.%
+        \bigskip}}%
+  }%
+  {%
+    \def\lastupdatename{\textit{Last Updated}:}
+    \def\lastupdate#1{\thanks{\lastupdatename\ #1\@addpunct.}}%
+  }
+}
+\providecommand\subjclass[2][]{}
+\providecommand\email[1]{}
+\def\ysg@tag@format#1{\textup{\footnotesize\texttt{[#1]}}}
+\@ifundefined{default@tag}{%
+  \@ifundefined{tag}%
+               {\gdef\og@tag#1{}}% silently gobble tags
+               {\global\let\og@tag\tag}%
+}{\global\let\og@tag\dft@tag}
+
+\def\default@tag{\let\tag\og@tag}
+\newskip\ysg@tagskip
+\ysg@tagskip\z@
+\let\og@xsect\@xsect
+
+\def\@xsect#1{\ysg@tagskip#1\relax% update \ysg@tagskip
+  \ifdim\ysg@tagskip>\z@%            if there is any vertical skip
+  \advance\ysg@tagskip\baselineskip% then add a baselineskip to ysg@tagskip
+  \fi%
+  \og@xsect{#1}} % do the original \@xsect{...} command
+
+\@ifclassloaded{amsbook}{
+  \newcommand\ysg@enable@chapter@tags{%
+    \ysg@tagskip\skip@\relax% update \ysg@tagskip
+    \ifdim\ysg@tagskip>\z@%
+    \advance\ysg@tagskip\normalbaselineskip%
+    \fi%
+    \providetags%
+  }
+  \AddToHook{cmd/@makechapterhead/after}{\ysg@enable@chapter@tags}
+}{}
+\newcommand\providetags{%
+  \gdef\tag##1{%
+    \label{##1}%
+    \ifHTML%
+      \ysg@error{\tag is unimplemented for HTML output}%
+    \else%
+      \marginnote{\ysg@tag@format{##1}}[\ifdim\ysg@tagskip>\z@-\ysg@tagskip\else\z@\fi]%
+    \fi%
+    \default@tag    % reset the tag value to be its default
+    \ysg@tagskip\z@ % reset the ysg@tagskip value
+    \ignorespaces%
+  }%
+}
+\AddToHook{cmd/@sect/after}{\providetags}
+\newcommand\ysg@equation@tag{
+  \let\og@tag\tag
+  \providetags
+}
+\newcommand\tagequations{
+  \AddToHook{cmd/equation/after}{\ysg@equation@tag}
+}
+\iftagequations% if the user wants us to have equations provide tags
+  \tagequations% then we do it here and now
+\fi
+
+\newcommand\tagtheorems{
+  \let\og@xnthm\@xnthm
+  \gdef\@xnthm##1##2{%
+    \AddToHook{env/##2/begin}{\providetags}%
+    \og@xnthm{##1}{##2}%
+  }
+}
+\iftagtheorems% if the user wants us to have theorems provide tags
+  \tagtheorems% then we do it here and now
+\fi
+
+\newenvironment{dummyEnv}{%
+}{%
+}
+\newcommand\define[1]{\textbf{``#1''}}
+%% 
+%% Copyright (C) 2026 by Alex Nelson <pqnelson@gmail.com>
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL), either
+%% version 1.3c of this license or (at your option) any later
+%% version.  The latest version of this license is in the file:
+%% 
+%% http://www.latex-project.org/lppl.txt
+%% 
+%% This work is "maintained" (as per LPPL maintenance status) by
+%% Alex Nelson.
+%% 
+%% This work consists of the file ysg.dtx and a Makefile.
+%% Running "make" generates the derived files README, ysg.pdf and ysg.sty.
+%% Running "make inst" installs the files in the user's TeX tree.
+%% Running "make install" installs the files in the local TeX tree.
+%% 
+%%
+%% End of file `ysg.sty'.

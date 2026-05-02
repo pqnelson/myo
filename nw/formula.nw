@@ -1,0 +1,478 @@
+% -*- mode: poly-noweb; noweb-code-mode: sml-mode; -*-
+%%
+%% formula.nw
+%% 
+%% Made by Alex Nelson <pqnelson@gmail.com>
+%% Login   <alex@lisp>
+%% 
+%% Started on  2026-04-02T13:26:39-0700
+%% Last update 2026-04-02T13:26:39-0700
+%% 
+
+\section{Syntax for formulas}
+
+TODO: add [[Formula.is_atom : Formula.t -> bool]] predicate
+
+TODO: add [[Formula.contains_var : Term.t -> Formula.t -> bool]]
+predicate
+
+TODO: add [[Formula.eq : Formula.t -> Formula.t -> bool]] predicate
+
+\begin{node}
+The grammar for formulas is, well, what we would expect. We should
+probably keep formulas as an abstract data type, following our design
+decision for terms. The advantage is that constructors for quantifiers
+can check it is given a variable.
+\end{node}
+
+<<Formula.sig>>=
+signature Formula = sig
+  type t;
+
+  val mk_falsum : unit -> t;
+  val mk_pred : string * (Term.t list) -> t;
+  val mk_eq : Term.t * Term.t -> t;
+  val mk_in : Term.t * Term.t -> t;
+  val mk_not : t -> t;
+  val mk_and : t * t -> t;
+  val mk_or  : t * t -> t;
+  val mk_imp : t * t -> t;
+  val mk_iff : t * t -> t;
+  val mk_forall : Term.t * t -> t;
+  val mk_exists : Term.t * t -> t;
+
+  val is_falsum : t -> bool;
+  val is_pred : t -> bool;
+  val is_eq : t -> bool;
+  val is_in : t -> bool;
+  val is_not : t -> bool;
+  val is_and : t -> bool;
+  val is_or : t -> bool;
+  val is_imp : t -> bool;
+  val is_iff : t -> bool;
+  val is_forall : t -> bool;
+  val is_exists : t -> bool;
+
+  val dest_pred : t -> string * (Term.t list);
+  val dest_eq : t -> Term.t * Term.t;
+  val dest_in : t -> Term.t * Term.t;
+  val dest_not : t -> t;
+  val dest_and : t -> t * t;
+  val dest_or  : t -> t * t;
+  val dest_imp : t -> t * t;
+  val dest_iff : t -> t * t;
+  val dest_forall : t -> Term.t * t;
+  val dest_exists : t -> Term.t * t;
+
+  val subst : Term.t -> Term.t -> t -> t;
+  val fv : t -> Term.t list;
+  val bv : t -> Term.t list;
+
+  val precedence : t -> t -> order;
+  val compare : t * t -> order;
+end;
+@
+
+<<Formula.sml>>=
+structure Formula :> Formula = struct
+<<Formula data type>>;
+
+<<Constructors for formulas>>
+
+<<Predicates on formulas>>
+
+<<Destructuring formulas>>
+
+<<Substitution in a formula>>
+
+<<Free variables in a formula>>
+
+<<Bound variables in a formula>>
+
+<<Precedence of connectives>>
+
+<<Comparing formulas>>
+end
+@
+
+<<Formula data type>>=
+datatype t = False
+           | Eq of Term.t * Term.t
+           | In of Term.t * Term.t
+           | Pred of string * Term.t list
+           | Not of t
+           | And of t * t
+           | Or of t * t
+           | Implies of t * t
+           | Iff of t * t
+           | Forall of Term.t * t
+           | Exists of Term.t * t
+@ %def Formula.t
+
+\begin{node}
+We have the canonical contradiction \textit{falsum} $\bot$.
+\end{node}
+
+<<Constructors for formulas>>=
+fun mk_falsum () = False;
+@ %def Formula.mk_falsum
+
+<<Predicates on formulas>>=
+fun is_falsum (False) = true
+  | is_falsum _ = false;
+@ %def Formula.is_falsum
+
+\begin{node}
+Equality between two terms. We should check they are the same sort
+when constructing the equality.
+\end{node}
+
+<<Constructors for formulas>>=
+fun mk_eq(lhs, rhs) =
+  if not(Term.are_same_sort lhs rhs)
+  then raise Fail "Formula.mk_eq: terms are different sorts"
+  else Eq(lhs, rhs);
+@ %def Formula.mk_eq
+
+<<Predicates on formulas>>=
+fun is_eq (Eq _) = true
+  | is_eq _ = false;
+@ %def Formula.is_eq
+
+<<Destructuring formulas>>=
+fun dest_eq (Eq tms) = tms
+  | dest_eq _ = raise Fail "dest_eq"
+@ %def Formula.dest_eq
+
+\begin{node}
+Set membership is a primitive expecting an individual and a class.
+\end{node}
+
+<<Constructors for formulas>>=
+fun mk_in (ind, cl) =
+  if not(Term.is_ind ind)
+  then raise Fail "mk_in: first argument must be an individual"
+  else if not(Term.is_class cl)
+  then raise Fail "mk_in: second argument must be a class"
+  else In(ind, cl);
+@ %def Formula.mk_in
+
+<<Predicates on formulas>>=
+fun is_in (In _) = true
+  | is_in _ = false;
+@ %def Formula.is_in
+
+<<Destructuring formulas>>=
+fun dest_in(In tms) = tms
+  | dest_in _ = raise Fail "dest_in";
+@ %def Formula.dest_in
+
+\begin{node}
+Predicates are actually a little more tricky than I think people want
+to give credit, but they're also irrelevant because $FS_{0}$ uses
+classes to encode relations.
+
+There are some predicates we could
+define, like $A\subset B$ or something similar. In this case, we
+should really be using a database to track the predicates, and then
+check the sorts of the arguments matches what the database has recorded.
+\end{node}
+
+<<Constructors for formulas>>=
+fun mk_pred args = Pred args;
+@ %def Formula.mk_pred
+
+<<Predicates on formulas>>=
+fun is_pred (Pred _) = true
+  | is_pred _ = false;
+@ %def Formula.is_pred
+
+<<Destructuring formulas>>=
+fun dest_pred (Pred args) = args
+  | dest_pred _ = raise Fail "dest_pred"
+@ %def Formula.dest_pred
+
+\begin{node}
+Negation is straightforward.
+\end{node}
+
+<<Constructors for formulas>>=
+fun mk_not fm = Not fm;
+@ %def Formula.mk_not
+
+<<Predicates on formulas>>=
+fun is_not (Not _) = true
+  | is_not _ = false;
+@ %def Formula.is_not
+
+<<Destructuring formulas>>=
+fun dest_not (Not fm) = fm
+  | dest_not _ = raise Fail "dest_not" 
+@ %def Formula.dest_not
+
+
+\begin{node}
+Disjunction, conjunction, implications, and biconditional formulas are
+all so similar, we just lump them together.
+\end{node}
+
+<<Constructors for formulas>>=
+fun mk_and args = And args;
+
+fun mk_or args = Or args;
+
+fun mk_imp args = Implies args;
+
+fun mk_iff args = Iff args;
+@ %def Formula.mk_and Formula.mk_or Formula.mk_imp Formula.mk_iff
+
+<<Predicates on formulas>>=
+fun is_and (And _) = true
+  | is_and _ = false;
+
+fun is_or (Or _) = true
+  | is_or _ = false;
+
+fun is_imp (Implies _) = true
+  | is_imp _ = false;
+
+fun is_iff (Iff _) = true
+  | is_iff _ = false;
+@ %def Formula.is_and Formula.is_or Formula.is_imp Formula.is_iff
+
+<<Destructuring formulas>>=
+fun dest_and (And args) = args
+  | dest_and _ = raise Fail "dest_and";
+
+fun dest_or (Or args) = args
+  | dest_or _ = raise Fail "dest_or";
+
+fun dest_imp (Implies args) = args
+  | dest_imp _ = raise Fail "dest_imp";
+
+fun dest_iff (Iff args) = args
+  | dest_iff _ = raise Fail "dest_iff";
+@ %def Formula.dest_and Formula.dest_or Formula.dest_imp Formula.dest_iff
+
+\begin{node}
+The code governing constructing quantified formulas (and destructuring
+them, and testing for them) are remarkably similar. An exception is
+raised if the user tries to create a quantified formula using
+something other than a variable as its first argument. And the usual
+destructuring error is raised for mismatched applications of [[dest_...]].
+\end{node}
+
+<<Constructors for formulas>>=
+fun mk_forall (var, fm) =
+  if not(Term.is_var var)
+  then raise Fail "mk_forall: first argument must be a variable"
+  else Forall(var, fm);
+fun mk_exists (var, fm) =
+  if not(Term.is_var var)
+  then raise Fail "mk_exists: first argument must be a variable"
+  else Exists(var, fm);
+@ %def Formula.mk_forall Formula.mk_exists
+
+<<Predicates on formulas>>=
+fun is_forall (Forall _) = true
+  | is_forall _ = false;
+
+fun is_exists (Exists _) = true
+  | is_exists _ = false;
+@ %def Formula.is_forall Formula.is_exists
+
+<<Destructuring formulas>>=
+fun dest_forall (Forall args) = args
+  | dest_forall _ = raise Fail "dest_forall";
+
+fun dest_exists (Exists args) = args
+  | dest_exists _ = raise Fail "dest_exists";
+@ %def Formula.dest_forall Formula.dest_exists
+
+\begin{node}
+Substitution is basically as we would expect.
+\end{node}
+
+<<Substitution in a formula>>=
+fun subst var tm fm =
+  if not(Term.is_var var)
+  then raise Fail "Formula.subst: first argument must be a variable"
+  else if not(Term.are_same_sort var tm)
+  then raise Fail "Formula.subst: variable and replacement must be same sort"
+  else (case fm of
+    False => fm
+  | (Eq(lhs,rhs)) => Eq(Term.subst var tm lhs, Term.subst var tm rhs)
+  | (In(x,cl)) => In(Term.subst var tm x, Term.subst var tm cl)
+  | (Pred(P,args)) => Pred(P, map (Term.subst var tm) args)
+  | (Not(fm')) => Not(subst var tm fm')
+  | (And(A, B)) => And(subst var tm A, subst var tm B)
+  | (Or(A, B)) => Or (subst var tm A, subst var tm B)
+  | (Implies(A,B)) => Implies(subst var tm A, subst var tm B)
+  | (Iff(A,B)) => Iff(subst var tm A, subst var tm B)
+  | (Forall(x, fm')) => if Term.eq x var
+                        then fm
+                        else Forall(x, subst var tm fm')
+  | (Exists(x, fm')) => if Term.eq x var
+                        then fm
+                        else Exists(x, subst var tm fm'));
+@ %def Formula.subst
+
+<<Free variables in a formula>>=
+fun fv (False) = []
+  | fv (Eq(lhs,rhs)) = (Term.fv(lhs)) @ (Term.fv(rhs))
+  | fv (In(x, cl)) = (Term.fv(x)) @ (Term.fv(cl))
+  | fv (Pred(_, args)) = List.foldr (fn (tm, fvs) => (Term.fv tm)@fvs)
+                                    []
+                                    args 
+  | fv (Not fm) = fv fm
+  | fv (And(A,B)) = (fv A) @ (fv B)
+  | fv (Or(A,B)) = (fv A) @ (fv B)
+  | fv (Implies(A,B)) = (fv A) @ (fv B)
+  | fv (Iff(A,B)) = (fv A) @ (fv B)
+  | fv (Forall(x,A)) = List.filter (fn y => not (Term.eq x y))
+                                   (fv A)
+  | fv (Exists(x,A)) = List.filter (fn y => not (Term.eq x y))
+                                   (fv A);
+@ %def Formula.fv
+
+<<Bound variables in a formula>>=
+fun bv (False) = []
+  | bv (Eq _) = []
+  | bv (In _) = []
+  | bv (Pred _) = []
+  | bv (Not fm) = bv fm
+  | bv (And(A,B)) = (bv A) @ (bv B)
+  | bv (Or(A,B)) = (bv A) @ (bv B)
+  | bv (Implies(A,B)) = (bv A) @ (bv B)
+  | bv (Iff(A,B)) = (bv A) @ (bv B)
+  | bv (Forall(x,A)) = x::(bv A)
+  | bv (Exists(x,A)) = x::(bv A);
+@ %def Formula.bv
+
+<<Precedence of connectives>>=
+fun precedence (False) (False) = EQUAL
+  | precedence (False) _ = GREATER
+  | precedence (Eq _) (False) = LESS
+  | precedence (Eq _) (Eq _) = EQUAL
+  | precedence (Eq _) _ =  GREATER
+  | precedence (In _) (False) = LESS
+  | precedence (In _) (Eq _) = LESS
+  | precedence (In _) (In _) = EQUAL
+  | precedence (In _) _ = GREATER
+  | precedence (Pred _) (False) = LESS
+  | precedence (Pred _) (Eq _) = LESS
+  | precedence (Pred _) (In _) = LESS
+  | precedence (Pred _) (Pred _) = EQUAL
+  | precedence (Pred _) _ = GREATER
+  | precedence (Not _) (False) = LESS
+  | precedence (Not _) (Eq _) = LESS
+  | precedence (Not _) (In _) = LESS
+  | precedence (Not _) (Pred _) = LESS
+  | precedence (Not _) (Not _) = EQUAL
+  | precedence (Not _) _ = GREATER
+  | precedence (And _) (False) = LESS
+  | precedence (And _) (Eq _) = LESS
+  | precedence (And _) (In _) = LESS
+  | precedence (And _) (Pred _) = LESS
+  | precedence (And _) (Not _) = LESS
+  | precedence (And _) (And _) = EQUAL
+  | precedence (And _) _ = GREATER
+  | precedence (Or _) (False) = LESS
+  | precedence (Or _) (Eq _) = LESS
+  | precedence (Or _) (In _) = LESS
+  | precedence (Or _) (Pred _) = LESS
+  | precedence (Or _) (Not _) = LESS
+  | precedence (Or _) (And _) = LESS
+  | precedence (Or _) (Or _) =  EQUAL
+  | precedence (Or _) _ = GREATER
+  | precedence (Implies _) (Implies _) = EQUAL
+  | precedence (Implies _) (Iff _) = GREATER
+  | precedence (Implies _) (Forall _) = GREATER
+  | precedence (Implies _) (Exists _) = GREATER
+  | precedence (Implies _) _ = LESS
+  | precedence (Iff _) (Iff _) = EQUAL
+  | precedence (Iff _) (Forall _) = GREATER
+  | precedence (Iff _) (Exists _) = GREATER
+  | precedence (Iff _) _ = LESS
+  | precedence (Forall _) (Forall _) = EQUAL
+  | precedence (Forall _) (Exists _) = GREATER
+  | precedence (Forall _) _ = LESS
+  | precedence (Exists _) (Exists _) = EQUAL
+  | precedence (Exists _) _ = LESS;
+@ %def Formula.precedence
+
+<<Comparing formulas>>=
+fun compare(False, False) = EQUAL
+  | compare(False, _) = LESS
+  | compare(Eq _, False) = GREATER
+  | compare(Eq(a,b), Eq(x,y)) =
+     (case Term.compare(a,x) of
+       EQUAL => Term.compare(b,y)
+     | r => r)
+  | compare(Eq _, _) = LESS
+  | compare(In _, False) = GREATER
+  | compare(In _, Eq _) = GREATER
+  | compare(In(x,S), In(y, T)) =
+     (case Term.compare(x, y) of
+       EQUAL => Term.compare(S, T)
+     | r => r)
+  | compare(In _, _) = LESS
+  | compare(Pred _, False) = GREATER
+  | compare(Pred _, Eq _) = GREATER
+  | compare(Pred (f,args1), Pred(g, args2)) =
+      (case String.compare(f, g) of
+        EQUAL => Term.compare_list args1 args2
+        | r => r)
+  | compare(Pred _, _) = LESS
+  | compare(Not _, False) = GREATER
+  | compare(Not _, Eq _) = GREATER
+  | compare(Not _, Pred _) = GREATER
+  | compare(Not A, Not B) = compare(A, B)
+  | compare(Not _, _) = LESS
+  | compare(And _, False) = GREATER
+  | compare(And _, Eq _) = GREATER
+  | compare(And _, Pred _) = GREATER
+  | compare(And _, Not _) = GREATER
+  | compare(And(A1,B1), And(A2,B2)) =
+     (case compare(A1, A2) of
+       EQUAL => compare(B1, B2)
+     | r => r)
+  | compare(And _, _) = LESS
+  | compare(Or _, False) = GREATER
+  | compare(Or _, Eq _) = GREATER
+  | compare(Or _, Pred _) = GREATER
+  | compare(Or _, Not _) = GREATER
+  | compare(Or _, And _) = GREATER
+  | compare(Or(A1,B1), Or(A2,B2)) =
+     (case compare(A1, A2) of
+       EQUAL => compare(B1, B2)
+     | r => r)
+  | compare(Or _, _) = LESS
+  | compare(Implies _, Forall _) = LESS
+  | compare(Implies _, Exists _) = LESS
+  | compare(Implies _, Iff _) = LESS
+  | compare(Implies(A1,B1), Implies(A2,B2)) =
+     (case compare(A1, A2) of
+       EQUAL => compare(B1, B2)
+     | r => r)
+  | compare(Implies _, _) = GREATER
+  | compare(Iff _, Forall _) = LESS
+  | compare(Iff _, Exists _) = LESS
+  | compare(Iff(A1,B1), Iff(A2,B2)) =
+     (case compare(A1, A2) of
+       EQUAL => compare(B1, B2)
+     | r => r)
+  | compare(Iff _, _) = GREATER
+  | compare(Forall _, Exists _) = LESS
+  | compare(Forall(x,A), Forall(y,B)) =
+     (case Term.compare(x,y) of
+       EQUAL => compare(A, B)
+     | r => r)
+  | compare(Forall _, _) = GREATER
+  | compare(Exists(x,A), Exists(y,B)) =
+     (case Term.compare(x,y) of
+       EQUAL => compare(A, B)
+     | r => r)
+  | compare(Exists _, _) = GREATER;
+@ %def Formula.compare
+

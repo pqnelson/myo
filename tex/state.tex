@@ -1,0 +1,125 @@
+\nwfilename{nw/state.nw}\nwbegindocs{0}% -*- mode: poly-noweb; noweb-code-mode: sml-mode; -*-% ===> this file was generated automatically by noweave --- better not edit it
+%%
+%% state.nw
+%% 
+%% Made by Alex Nelson <pqnelson@gmail.com>
+%% Login   <alex@lisp>
+%% 
+%% Started on  2026-04-05T11:00:55-0700
+%% Last update 2026-04-05T11:00:55-0700
+%%
+
+\section{State}
+
+\begin{node}
+The ``big picture'' is that we are going to build something which
+looks like a Lisp interpreter, but instead of the full power of a
+Turing-complete Lisp, we will be using $FS_{0}$. This ``$FS_{0}$ Lisp''
+can be used as a REPL, which then acts like a logical framework. In
+other words, we can use it like a ``syntax-less'' proof assistant with
+a fixed foundations of interest. We just ``extend'' the ``Lisp world''
+with new block statements as ``just another command'', and instruct
+``$FS_{0}$ Lisp'' what to do when processing them.
+
+Or we can use $FS_{0}$ to prove properties about proof
+assistants. That is to say, given a ``Lisp engine'', we can prove
+theorems about it.
+
+But just as Lisps have a notion of ``environment'' (for binding
+identifiers to their values), we need a comparable notion for
+$FS_{0}$. Unlike Lisp, there will be two notions of ``environment'':
+one for $FS_{0}$ as the metalanguage, and another defined ``within''
+the ``Lisp world'' for describing the object logic's
+bindings\footnote{After all, when telling $FS_{0}$ how an object logic
+handles a new definition, we add bindings to a data structure
+manipulatable within the REPL itself.}.
+
+We'll discuss more about implementing a foundations in $FS_{0}$ as a
+logical framework when appropriate.
+\end{node}
+
+\begin{node}
+We can add axioms to the proof assistant, we can define new terms, or
+we can define new predicates. Predicates are always well-defined, so
+they do not need any proof they are well-defined. We also have the
+``initial'' state, corresponding to a ``fresh'' situation where we
+only have loaded the primitive notions and axioms for $FS_{0}$.
+
+However, terms need to be proven to be well-defined. This requires an
+existence and uniqueness proof, which are the two theorems
+required. There are two ways to define a term:
+\begin{enumerate}
+\item A new term $t$ equals some expression involving existing terms,
+  which is an abbreviation (hence does not require any
+  well-definedness proofs)
+\item A new term $t$ satisfies some condition $P[t]$. This requires
+  well-definedness conditions $\exists t\ldotp P[t]$ and
+  $\forall t_{1},t_{2}\ldotp P[t_{1}]\implies(P[t_{2}]\implies t_{1}=t_{2})$.
+\end{enumerate}
+The only free variables which can appear in the definiens (right-hand side) are those
+which appear in the definiendum (left-hand side --- remember:
+definiendum := definiens).
+
+The ``definitional theorem'' associated with abbreviations is ``lhs = rhs'',
+for definitions it's just the defining condition (universally
+quantified over free variables), and for predicates it's
+``$\mbox{defiendum}\iff\mbox{definiens}$'' (again, universally
+quantified over free variables).
+\end{node}
+
+\begin{node}
+We will use some sort of symbol table to track the terms and
+predicates defined. The keys in the table will be strings (the
+``lexemes'' for the terms and predicates), the values will be the
+record {\Tt{}{\nwlbrace}ind\ :\ Thm.t\ option,\ fun\ :\ Thm.t\ option,\ class\ :\ Thm.t\ option,\ pred\ :\ Thm.t\ option{\nwrbrace}\nwendquote}
+storing the ``definitional theorem'' for each of these.
+\end{node}
+
+\begin{node}
+We should think a bit about how to handle theories as
+``packages''. For example, the ``provided'' primitives (like
+{\Tt{}fs0.in\nwendquote}, {\Tt{}fs0.subset\nwendquote}) are prefixed with {\Tt{}fs0.\nwendquote} (the theory
+name, with period as a separator). One way to handle this would be to
+have a {\Tt{}string\ ->\ SymTable\nwendquote} dictionary. Another way would be to have
+the basic type be:
+\begin{verbatim}
+structure Table = MkRedBlackTree(String);
+datatype t = Theory of t Table.t
+           | PrimitiveNotion
+           | Entry of { ind   : Thm.t option, 
+                        fun   : Thm.t option,
+                        class : Thm.t option,
+                        pred  : Thm.t option };
+\end{verbatim}
+Then looking up an entry requires ``splitting'' the string by periods,
+and recursively looking through theories as needed.
+\end{node}
+
+\nwenddocs{}\nwbegincode{1}\sublabel{NWU4iYe-1UXQzr-1}\nwmargintag{{\nwtagstyle{}\subpageref{NWU4iYe-1UXQzr-1}}}\moddef{State.sig~{\nwtagstyle{}\subpageref{NWU4iYe-1UXQzr-1}}}\endmoddef\nwstartdeflinemarkup\nwenddeflinemarkup
+signature State = sig
+  type t;
+
+  val initial : unit -> t;
+
+  (* expects first Term.t to be Fun(..,..,[Var, Var, ..., Var]) *)
+  val abbrev_term : t -> Term.t -> Term.t -> t;
+  val def_term : t -> Term.t -> Formula.t -> \{ existence : Thm.t,
+                                              uniqueness : Thm.t\} -> t;
+  val get_term : t -> string -> Sort.t -> Term.t option * t;
+  val get_term_defthm : t -> string -> Sort.t -> Thm.t option * t;
+  
+  (* expects first Formula.t to be Pred(..,..,[Var, Var, ..., Var]) *)
+  val def_pred : t -> Formula.t -> Formula.t -> t;
+  val get_pred : t -> string -> Thm.t option * t;
+end;
+\nwnotused{State.sig}\nwidentuses{\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Pred}}{Pred}}\\{{\nwixident{Sort.t}}{Sort.t}}\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NWU4iYe-1UXQzr-1}\nwindexuse{\nwixident{Pred}}{Pred}{NWU4iYe-1UXQzr-1}\nwindexuse{\nwixident{Sort.t}}{Sort.t}{NWU4iYe-1UXQzr-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NWU4iYe-1UXQzr-1}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NWU4iYe-1UXQzr-1}\nwendcode{}\nwbegindocs{2}\nwdocspar
+
+\nwenddocs{}
+
+\nwixlogsorted{c}{{State.sig}{NWU4iYe-1UXQzr-1}{\nwixd{NWU4iYe-1UXQzr-1}}}%
+\nwixlogsorted{i}{{\nwixident{Formula.t}}{Formula.t}}%
+\nwixlogsorted{i}{{\nwixident{Pred}}{Pred}}%
+\nwixlogsorted{i}{{\nwixident{Sort.t}}{Sort.t}}%
+\nwixlogsorted{i}{{\nwixident{Term.t}}{Term.t}}%
+\nwixlogsorted{i}{{\nwixident{Thm.t}}{Thm.t}}%
+

@@ -1,0 +1,2424 @@
+\nwfilename{nw/derived.nw}\nwbegindocs{0}% -*- mode: poly-noweb; noweb-code-mode: sml-mode; -*-% ===> this file was generated automatically by noweave --- better not edit it
+%%
+%% derived.nw
+%% 
+%% Made by Alex Nelson <pqnelson@gmail.com>
+%% Login   <alex@lisp>
+%% 
+%% Started on  2026-04-07T10:00:55-0700
+%% Last update 2026-04-07T10:00:55-0700
+%% 
+
+\section{Derived inference rules}
+
+\epigraph{This is a dull and grueling hell. Everything is bitter and
+  leaden, cold and hot, hard and cruel, indistinct and stark, loud and
+  random. There is no story to follow, just a succession of impacts, a
+  sustained terror, a catalog of pain and exertions\dots}{Dan Abnett,\\
+  ``Fragments (All We Have Left)''}% (2025)}
+
+\begin{node}
+While natural deduction is more friendly than Hilbert systems, there
+are still quite a few theorems needed for making life easier. Further,
+there are a few derived inference rules which are useful (which are
+\SML/ functions eating in theorems and producing a theorem).
+
+There's no way to present this material in a friendly way. Logic is
+not a place to find friends. We will present a ``table of contents''
+for results in Intuitionistic propositional logic (\S\ref{node:fs0:derived.nw:toc:propositional-logic})
+and another for Intuitionistic first-order logic (\S\ref{node:fs0:derived.nw:toc:predicate-logic}).
+\end{node}
+
+\nwenddocs{}\nwbegincode{1}\sublabel{NW1NjfzY-4dPl0p-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-4dPl0p-1}}}\moddef{Derived.sml~{\nwtagstyle{}\subpageref{NW1NjfzY-4dPl0p-1}}}\endmoddef\nwstartdeflinemarkup\nwenddeflinemarkup
+structure Derived = struct
+\LA{}Derived results for Intuitionistic propositional logic~{\nwtagstyle{}\subpageref{NW1NjfzY-4CUt2L-1}}\RA{}
+
+\LA{}Derived results for Intuitionistic predicate logic~{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}\RA{}
+end;
+\nwnotused{Derived.sml}\nwendcode{}\nwbegindocs{2}\nwdocspar
+
+\begin{node}\label{node:fs0:derived.nw:toc:propositional-logic}
+There are a lot of useful theorems to prove, but I have not done so
+yet. So I am keeping a list.
+\begin{enumerate}\setcounter{enumi}{\value{node}}
+\item Given some list of formulas $\Gamma_{1}$ and a theorem
+  $\Gamma_{2}\vdash A$, infer $\Gamma_{1}\cup\Gamma_{2}\vdash A$
+\item Given $\Gamma_{1}\vdash A\implies B$ and $\Gamma_{2}\vdash B\implies C$,
+infer $(\Gamma_{1}\cup\Gamma_{2})\setminus\{A\}\vdash A\implies C$.
+\item \checkbox{1} Weak $\neg$-elimination: $\vdash A\implies(\neg A\implies B)$
+\item \checkbox{1} Absurdum: $\vdash(A\implies B)\implies((A\implies\neg B)\implies\neg A)$
+
+\nwenddocs{}\nwbegincode{3}\sublabel{NW1NjfzY-4CUt2L-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-4CUt2L-1}}}\moddef{Derived results for Intuitionistic propositional logic~{\nwtagstyle{}\subpageref{NW1NjfzY-4CUt2L-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{\relax}{NW1NjfzY-4CUt2L-2}\nwenddeflinemarkup
+\LA{}Weakening inference rule~{\nwtagstyle{}\subpageref{NW1NjfzY-2n5HPL-1}}\RA{}
+
+\LA{}Hypothetical syllogism derived inference rule~{\nwtagstyle{}\subpageref{NW1NjfzY-2CxI45-1}}\RA{}
+
+\LA{}Weak negation elimination~{\nwtagstyle{}\subpageref{NW1NjfzY-16XbWD-1}}\RA{}
+
+\LA{}Prove $\vdash(A\implies B)\implies((A\implies\neg B)\implies\neg A)$~{\nwtagstyle{}\subpageref{NW1NjfzY-4ZKGAh-1}}\RA{}
+\nwalsodefined{\\{NW1NjfzY-4CUt2L-2}\\{NW1NjfzY-4CUt2L-3}\\{NW1NjfzY-4CUt2L-4}\\{NW1NjfzY-4CUt2L-5}\\{NW1NjfzY-4CUt2L-6}\\{NW1NjfzY-4CUt2L-7}}\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwendcode{}\nwbegindocs{4}\nwdocspar
+% OR
+\item \checkbox{1} $\vdash(A\lor A)\implies A$
+\item \checkbox{1} $\vdash(A\lor B)\implies(B\lor A)$
+\item \checkbox{1} Associativity: $\vdash(A\lor(B\lor C))\iff((A\lor B)\lor C)$
+\item \checkbox{1} Left congruence: $\vdash(A\implies A')\implies(A\lor B\implies A'\lor B)$
+\item \checkbox{1} Right congruence: $\vdash(B\implies B')\implies(A\lor B\implies A\lor B')$
+\nwenddocs{}\nwbegincode{5}\sublabel{NW1NjfzY-4CUt2L-2}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-4CUt2L-2}}}\moddef{Derived results for Intuitionistic propositional logic~{\nwtagstyle{}\subpageref{NW1NjfzY-4CUt2L-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{NW1NjfzY-4CUt2L-1}{NW1NjfzY-4CUt2L-3}\nwenddeflinemarkup
+\LA{}$\vdash A\lor A\implies A$~{\nwtagstyle{}\subpageref{NW1NjfzY-3wJoEd-1}}\RA{}
+
+\LA{}Disjunction is commutative~{\nwtagstyle{}\subpageref{NW1NjfzY-3WoMbH-1}}\RA{}
+
+\LA{}Disjunction is associative~{\nwtagstyle{}\subpageref{NW1NjfzY-J2rA5-1}}\RA{}
+
+\LA{}Congruence of left disjunct~{\nwtagstyle{}\subpageref{NW1NjfzY-4VDMqe-1}}\RA{}
+
+\LA{}Congruence of right disjunct~{\nwtagstyle{}\subpageref{NW1NjfzY-lrWvY-1}}\RA{}
+\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwendcode{}\nwbegindocs{6}\nwdocspar
+%\bigbreak% AND
+\item \checkbox{1} $\vdash A\implies(B\implies A\land B)$
+\item \checkbox{1} $\vdash(A\land B)\implies(B\land A)$
+\item \checkbox{1} Associativity: $\vdash(A\land(B\land C))\iff((A\land B)\land C)$
+\item \checkbox{1} Left congruence: $\vdash(A\implies A')\implies(A\land B\implies A'\land B)$
+\item \checkbox{1} Right congruence: $\vdash(B\implies B')\implies(A\land B\implies A\land B')$
+
+\nwenddocs{}\nwbegincode{7}\sublabel{NW1NjfzY-4CUt2L-3}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-4CUt2L-3}}}\moddef{Derived results for Intuitionistic propositional logic~{\nwtagstyle{}\subpageref{NW1NjfzY-4CUt2L-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{NW1NjfzY-4CUt2L-2}{NW1NjfzY-4CUt2L-4}\nwenddeflinemarkup
+\LA{}Conjunction tautology $\vdash A\implies(B\implies A\land B)$~{\nwtagstyle{}\subpageref{NW1NjfzY-1I5AY8-1}}\RA{}
+
+\LA{}Conjunction is commutative~{\nwtagstyle{}\subpageref{NW1NjfzY-29ie6N-1}}\RA{}
+
+\LA{}Conjunction is associative~{\nwtagstyle{}\subpageref{NW1NjfzY-328uZt-1}}\RA{}
+
+\LA{}Conjunction left congruence~{\nwtagstyle{}\subpageref{NW1NjfzY-4YXcw4-1}}\RA{}
+
+\LA{}Conjunction right congruence~{\nwtagstyle{}\subpageref{NW1NjfzY-TrI6l-1}}\RA{}
+\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwendcode{}\nwbegindocs{8}\nwdocspar
+%\bigbreak% DISTRIBUTIVITY
+\item \checkbox{1} $\vdash A\lor B\implies((A\implies C)\implies((B\implies D)\implies(C\lor D)))$
+\item \checkbox{1} $\vdash A\land(B\lor C)\iff((A\land B)\lor(A\land C))$
+\item \checkbox{1} $\vdash (A\lor B)\land C\iff((A\land C)\lor(B\land C))$
+\item \checkbox{1} $\vdash A\lor(B\land C)\iff((A\lor B)\land(A\lor C))$
+\item \checkbox{1} $\vdash (A\land B)\lor C\iff((A\lor C)\land(B\lor C))$
+\nwenddocs{}\nwbegincode{9}\sublabel{NW1NjfzY-4CUt2L-4}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-4CUt2L-4}}}\moddef{Derived results for Intuitionistic propositional logic~{\nwtagstyle{}\subpageref{NW1NjfzY-4CUt2L-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{NW1NjfzY-4CUt2L-3}{NW1NjfzY-4CUt2L-5}\nwenddeflinemarkup
+\LA{}Disjunction two-sided congruence~{\nwtagstyle{}\subpageref{NW1NjfzY-h4O6T-1}}\RA{}
+
+\LA{}$\vdash A\land(B\lor C)\iff((A\land B)\lor(A\land C))$~{\nwtagstyle{}\subpageref{NW1NjfzY-efA9w-1}}\RA{}
+
+\LA{}Right distributivity of conjunction over disjunction~{\nwtagstyle{}\subpageref{NW1NjfzY-8du9Q-1}}\RA{}
+\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwendcode{}\nwbegindocs{10}\nwdocspar
+%\bigbreak% IMPLIES
+\item \checkbox{1} Reflexivity: $\vdash A\implies A$
+\item \checkbox{1} Frege: $\vdash(A\implies(B\implies C))\implies((A\implies B)\implies(A\implies C))$
+\item \checkbox{1} Currying: $\vdash(A\land B\implies C)\implies(A\implies(B\implies C))$
+\item \checkbox{1} Uncurrying: $\vdash(A\implies(B\implies C))\implies(A\land B\implies C)$
+\item \checkbox{1} Transitivity: $\vdash(A\implies B)\land(B\implies C)\implies(A\implies C)$
+\item \checkbox{1} Hypothetical syllogism tautology: $\vdash(A\implies B)\implies((B\implies C)\implies(A\implies C))$
+\item \checkbox{1} Contrapositive $\vdash(A\implies B)\implies(\neg B\implies\neg A)$
+\item \checkbox{1} Contrapositive 2 $\vdash(A\implies\neg B)\implies(B\implies\neg A)$
+\nwenddocs{}\nwbegincode{11}\sublabel{NW1NjfzY-4CUt2L-5}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-4CUt2L-5}}}\moddef{Derived results for Intuitionistic propositional logic~{\nwtagstyle{}\subpageref{NW1NjfzY-4CUt2L-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{NW1NjfzY-4CUt2L-4}{NW1NjfzY-4CUt2L-6}\nwenddeflinemarkup
+\LA{}Theorem: implications is reflexive~{\nwtagstyle{}\subpageref{NW1NjfzY-2PXiqP-1}}\RA{}
+
+\LA{}Frege's tautology (propositional logic)~{\nwtagstyle{}\subpageref{NW1NjfzY-bcGD8-1}}\RA{}
+
+\LA{}Curry implication~{\nwtagstyle{}\subpageref{NW1NjfzY-1iptma-1}}\RA{}
+
+\LA{}Uncurrying implication~{\nwtagstyle{}\subpageref{NW1NjfzY-1JZnQr-1}}\RA{}
+
+\LA{}Hypothetical syllogism~{\nwtagstyle{}\subpageref{NW1NjfzY-1KT69U-1}}\RA{}
+
+\LA{}Transitivity of implies~{\nwtagstyle{}\subpageref{NW1NjfzY-1sm2GN-1}}\RA{}
+
+\LA{}Contrapositive derived rules~{\nwtagstyle{}\subpageref{NW1NjfzY-4KFbFg-1}}\RA{}
+\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwendcode{}\nwbegindocs{12}\nwdocspar
+\item \checkbox{1} $\vdash\neg(A\lor B)\iff((\neg A)\land(\neg B))$
+\item \checkbox{1} $\vdash((\neg A)\lor(\neg B))\implies\neg(A\land B)$
+\item \checkbox{1} $\vdash((\neg A)\lor B)\implies(A\implies B)$
+\item \checkbox{1} $\vdash(A\implies B)\implies\neg(A\land\neg B)$
+\nwenddocs{}\nwbegincode{13}\sublabel{NW1NjfzY-4CUt2L-6}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-4CUt2L-6}}}\moddef{Derived results for Intuitionistic propositional logic~{\nwtagstyle{}\subpageref{NW1NjfzY-4CUt2L-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{NW1NjfzY-4CUt2L-5}{NW1NjfzY-4CUt2L-7}\nwenddeflinemarkup
+\LA{}Negation of disjunction~{\nwtagstyle{}\subpageref{NW1NjfzY-4UPWei-1}}\RA{}
+
+\LA{}Negation of conjunction~{\nwtagstyle{}\subpageref{NW1NjfzY-wYirn-1}}\RA{}
+
+\LA{}$(\neg A)\lor B$ sufficient to prove $A\implies B$~{\nwtagstyle{}\subpageref{NW1NjfzY-3NUP7w-1}}\RA{}
+
+\LA{}Implication as negated conjunction~{\nwtagstyle{}\subpageref{NW1NjfzY-2qUp6m-1}}\RA{}
+
+\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwendcode{}\nwbegindocs{14}\nwdocspar
+%\bigbreak% IFF
+\item \checkbox{1} $\vdash A\iff A$
+\item \checkbox{1} $\vdash(A\iff B)\implies(B\iff A)$
+\item \checkbox{1} Transitivity: $\vdash(A\iff B)\land(B\iff C)\implies(A\iff C)$
+\item \checkbox{0} $\vdash((A\iff B)\land A)\implies B$ and
+  $\vdash((A\iff B)\land B)\implies A$
+\nwenddocs{}\nwbegincode{15}\sublabel{NW1NjfzY-4CUt2L-7}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-4CUt2L-7}}}\moddef{Derived results for Intuitionistic propositional logic~{\nwtagstyle{}\subpageref{NW1NjfzY-4CUt2L-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{NW1NjfzY-4CUt2L-6}{\relax}\nwenddeflinemarkup
+\LA{}Iff is reflexive~{\nwtagstyle{}\subpageref{NW1NjfzY-YtLDN-1}}\RA{}
+
+\LA{}Iff is symmetric~{\nwtagstyle{}\subpageref{NW1NjfzY-3hb2X5-1}}\RA{}
+
+\LA{}Iff is transitive~{\nwtagstyle{}\subpageref{NW1NjfzY-2isj9x-1}}\RA{}
+\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwendcode{}\nwbegindocs{16}\nwdocspar
+\end{enumerate}
+\end{node}
+
+\begin{node}
+Given some list of formulas $\Gamma_{1}$ and a theorem
+$\Gamma_{2}\vdash A$, infer $\Gamma_{1}\cup\Gamma_{2}\vdash A$
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item Given $\Gamma_{2}\vdash A$
+\item $A,\Gamma_{1}\vdash A$ by assuming
+\item $\Gamma_{1}\vdash A\implies A$ by discharging $A$ from (2)
+\item $\Gamma_{2}\cup\Gamma_{1}\vdash A$ by modus ponens(3, 1)\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{17}\sublabel{NW1NjfzY-2n5HPL-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-2n5HPL-1}}}\moddef{Weakening inference rule~{\nwtagstyle{}\subpageref{NW1NjfzY-2n5HPL-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-1}}\nwenddeflinemarkup
+fun weaken Gamma th1 =
+  let
+    val th2 = Thm.assume (Thm.concl th1) Gamma;
+    val th3 = Thm.disch (Thm.concl th1) th2;
+  in
+    Thm.modus_ponens th2 th1
+  end;
+\nwindexdefn{\nwixident{Derived.weaken}}{Derived.weaken}{NW1NjfzY-2n5HPL-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-1}}\nwidentdefs{\\{{\nwixident{Derived.weaken}}{Derived.weaken}}}\nwidentuses{\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.concl}}{Thm.concl}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-2n5HPL-1}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-2n5HPL-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-2n5HPL-1}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-2n5HPL-1}\nwendcode{}\nwbegindocs{18}\nwdocspar
+\begin{node}
+Given $\Gamma_{1}\vdash A\implies B$ and $\Gamma_{2}\vdash B\implies C$,
+infer $(\Gamma_{1}\cup\Gamma_{2})\setminus\{A\}\vdash A\implies C$.
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item Given $\Gamma_{1}\vdash A\implies B$
+\item Given $\Gamma_{2}\vdash B\implies C$
+\item $A,\Gamma_{1}\vdash B$ by undischarging $A$ from (1)
+\item $A,\Gamma_{1}\cup\Gamma_{2}\vdash C$ by modus ponens(2, 3)
+\item $(\Gamma_{1}\cup\Gamma_{2})\setminus\{A\}\vdash A\implies C$ by discharging $A$\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{19}\sublabel{NW1NjfzY-2CxI45-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-2CxI45-1}}}\moddef{Hypothetical syllogism derived inference rule~{\nwtagstyle{}\subpageref{NW1NjfzY-2CxI45-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-1}}\nwenddeflinemarkup
+fun hypo_syll thm1 thm2 =
+  let
+    val (A,B) = Formula.dest_imp(Thm.concl thm1)
+                handle (Formula.Dest _) =>
+                       raise Fail "hypo_syll: first theorem is not an implication";
+    val th2 = Thm.modus_ponens thm2 (Thm.undisch thm1)
+              handle (Thm.Fail _) =>
+                     raise Fail "hypo_syll: conclusion of first theorem mismatches premise of second theorem";
+  in
+    Thm.disch A th2
+  end;
+\nwindexdefn{\nwixident{Derived.hypo{\_}syll}}{Derived.hypo:unsyll}{NW1NjfzY-2CxI45-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-1}}\nwidentdefs{\\{{\nwixident{Derived.hypo{\_}syll}}{Derived.hypo:unsyll}}}\nwidentuses{\\{{\nwixident{Formula.Dest}}{Formula.Dest}}\\{{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}}\\{{\nwixident{Thm.concl}}{Thm.concl}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.undisch}}{Thm.undisch}}}\nwindexuse{\nwixident{Formula.Dest}}{Formula.Dest}{NW1NjfzY-2CxI45-1}\nwindexuse{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}{NW1NjfzY-2CxI45-1}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-2CxI45-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-2CxI45-1}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-2CxI45-1}\nwindexuse{\nwixident{Thm.undisch}}{Thm.undisch}{NW1NjfzY-2CxI45-1}\nwendcode{}\nwbegindocs{20}\nwdocspar
+
+\begin{node}
+One possible Hilbert proof calculus for Intuitionistic logic has the
+axioms
+\begin{enumerate}
+\item $A\implies(\neg A\implies B)$
+\item $(A\implies B)\implies((A\implies\neg B)\implies\neg A)$
+\end{enumerate}
+We will obtain these as derived inference rules.
+
+Note: Kleene referred to $\vdash A\implies(\neg A\implies B)$ as
+``weak negation elimination'', so we will use it here.
+\end{node}
+
+\nwenddocs{}\nwbegincode{21}\sublabel{NW1NjfzY-16XbWD-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-16XbWD-1}}}\moddef{Weak negation elimination~{\nwtagstyle{}\subpageref{NW1NjfzY-16XbWD-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-1}}\nwenddeflinemarkup
+fun weak_not_elim A B =
+  let
+    val not_A = Formula.mk_not A;
+    val th1 = Thm.assume A [not_A];     (* A, not A |- A *)
+    val th2 = Thm.assume not_A [A];     (* A, not A |- not A *)
+    val th3 = Thm.not_elim th2;         (* A, not A |- A implies false *)
+    val th4 = Thm.modus_ponens th3 th1; (* A, not A |- false *)
+    val th5 = Thm.contr B th4;          (* A, not A |- B *)
+    val th6 = Thm.disch not_A th5;      (* A |- not A implies B *)
+  in
+    Thm.disch A th6
+  end;
+\nwindexdefn{\nwixident{Derived.weak{\_}not{\_}elim}}{Derived.weak:unnot:unelim}{NW1NjfzY-16XbWD-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-1}}\nwidentdefs{\\{{\nwixident{Derived.weak{\_}not{\_}elim}}{Derived.weak:unnot:unelim}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.contr}}{Thm.contr}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}}}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW1NjfzY-16XbWD-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-16XbWD-1}\nwindexuse{\nwixident{Thm.contr}}{Thm.contr}{NW1NjfzY-16XbWD-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-16XbWD-1}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-16XbWD-1}\nwindexuse{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}{NW1NjfzY-16XbWD-1}\nwendcode{}\nwbegindocs{22}\nwdocspar
+\begin{node}[Absurdum]\label{node:derived.nw:absurdum}
+$\vdash(A\implies B)\implies((A\implies\neg B)\implies\neg A)$
+\end{node}
+
+\nwenddocs{}\nwbegincode{23}\sublabel{NW1NjfzY-4ZKGAh-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-4ZKGAh-1}}}\moddef{Prove $\vdash(A\implies B)\implies((A\implies\neg B)\implies\neg A)$~{\nwtagstyle{}\subpageref{NW1NjfzY-4ZKGAh-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-1}}\nwenddeflinemarkup
+fun absurdum A B =
+  let
+    val not_B = Formula.mk_not B;
+    val A_imp_B = Formula.mk_imp(A, B);
+    val A_imp_not_B = Formula.mk_imp(A, not_B);
+    val th1 = Thm.assume A_imp_B [A_imp_not_B]; (* A => B, A => not B |- A => B *)
+    val th2 = Thm.undisch th1;                  (* A, A => B, A => not B |- B *)
+    val th3 = Thm.assume A_imp_not_B [A_imp_B]; (* A => B, A => not B |- A => not B *)
+    val th4 = Thm.undisch th3;                  (* A, A => B, A => not B |- not B *)
+    val th5 = Thm.not_elim th4;                 (* A, A => B, A => not B |- B => false *)
+    val th6 = Thm.disch A (Thm.modus_ponens th5 th2); (* A => B, A => not B |- A => false *)
+    val th7 = Thm.not_intro th6;                (* A => B, A => not B |- not A *)
+    val th8 = Thm.disch A_imp_not_B th7;        (* A => B |- (A => not B) => not A *)
+  in
+    Thm.disch A_imp_B th8
+  end;
+\nwindexdefn{\nwixident{Derived.absurdum}}{Derived.absurdum}{NW1NjfzY-4ZKGAh-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-1}}\nwidentdefs{\\{{\nwixident{Derived.absurdum}}{Derived.absurdum}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}}\\{{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}}\\{{\nwixident{Thm.undisch}}{Thm.undisch}}}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-4ZKGAh-1}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW1NjfzY-4ZKGAh-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-4ZKGAh-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-4ZKGAh-1}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-4ZKGAh-1}\nwindexuse{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}{NW1NjfzY-4ZKGAh-1}\nwindexuse{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}{NW1NjfzY-4ZKGAh-1}\nwindexuse{\nwixident{Thm.undisch}}{Thm.undisch}{NW1NjfzY-4ZKGAh-1}\nwendcode{}\nwbegindocs{24}\nwdocspar
+\begin{node}
+$\vdash A\lor A\implies A$
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $A\vdash A$ by assuming $A$
+\item $\vdash A\implies A$ by discharging $A$
+\item $\vdash A\lor A\implies A$ by $\lor$-elim(2, 2)\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{25}\sublabel{NW1NjfzY-3wJoEd-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3wJoEd-1}}}\moddef{$\vdash A\lor A\implies A$~{\nwtagstyle{}\subpageref{NW1NjfzY-3wJoEd-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-2}}\nwenddeflinemarkup
+fun or_idem A =
+  let
+    val th1 = Thm.assume A [];
+    val th2 = Thm.disch A th1;
+  in
+    Thm.or_elim th2 th2
+  end;
+\nwused{\\{NW1NjfzY-4CUt2L-2}}\nwidentuses{\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}}}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-3wJoEd-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-3wJoEd-1}\nwindexuse{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}{NW1NjfzY-3wJoEd-1}\nwendcode{}\nwbegindocs{26}\nwdocspar
+
+\begin{node}
+$\vdash (A\lor B)\implies(B\lor A)$
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $A\vdash A$ by assuming $A$
+\item $A\vdash B\lor A$ by $\lor$-intro-l($B$)
+\item $\vdash A\implies(B\lor A)$ by discharging $A$ from (2)
+\item $B\vdash B$ by assuming $B$
+\item $B\vdash B\lor A$ by $\lor$-intro-r($A$)
+\item $\vdash B\implies(B\lor A)$ by discharging $B$
+\item $\vdash(A\lor B)\implies(B\lor A)$ by $\lor$-elim(3, 6)\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{27}\sublabel{NW1NjfzY-3WoMbH-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3WoMbH-1}}}\moddef{Disjunction is commutative~{\nwtagstyle{}\subpageref{NW1NjfzY-3WoMbH-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-2}}\nwenddeflinemarkup
+fun or_comm A B =
+  let
+    val th1 = Thm.assume A [];
+    val th2 = Thm.or_intro_l B th1;
+    val th3 = Thm.disch A th2;
+    val th4 = Thm.assume B [];
+    val th5 = Thm.or_intro_r A th4;
+    val th6 = Thm.disch B th5;
+  in
+    Thm.or_elim th3 th6
+  end;
+\nwindexdefn{\nwixident{Derived.or{\_}comm}}{Derived.or:uncomm}{NW1NjfzY-3WoMbH-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-2}}\nwidentdefs{\\{{\nwixident{Derived.or{\_}comm}}{Derived.or:uncomm}}}\nwidentuses{\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}}\\{{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}}\\{{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}}}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-3WoMbH-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-3WoMbH-1}\nwindexuse{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}{NW1NjfzY-3WoMbH-1}\nwindexuse{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}{NW1NjfzY-3WoMbH-1}\nwindexuse{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}{NW1NjfzY-3WoMbH-1}\nwendcode{}\nwbegindocs{28}\nwdocspar
+\begin{node}
+$\vdash((A\lor B)\lor C)\iff(A\lor(B\lor C))$
+\end{node}
+
+\begin{proof}
+Claim 1: $\vdash((A\lor B)\lor C)\implies(A\lor(B\lor C))$
+\begin{enumerate}
+\item $A\vdash A$ by assuming
+\item $A\vdash A\lor(B\lor C)$ by $\lor$-intro-r($B\lor C$)
+\item\label{step:or-assoc:forward:coup-1} $\vdash A\implies(A\lor(B\lor C))$ by discharging
+\item $B\vdash B$ by assuming
+\item $B\vdash B\lor C$ by $\lor$-intro-r($C$)
+\item $B\vdash A\lor(B\lor C)$ by $\lor$-intro-l($A$)
+\item\label{step:or-assoc:forward:coup-2} $\vdash B\implies(A\lor(B\lor C))$ by discharging
+\item $C\vdash C$ by assuming
+\item $C\vdash B\lor C$ by $\lor$-intro-l($B$)
+\item $C\vdash A\lor(B\lor C)$ by $\lor$-intro-l($A$)
+\item\label{step:or-assoc:forward:coup-3} $\vdash C\implies(A\lor(B\lor C))$ by discharging
+\item\label{step:or-assoc:forward:penultimate-step} $\vdash(A\lor B)\implies(A\lor(B\lor C))$ by $\lor$-elim(\ref{step:or-assoc:forward:coup-1}, \ref{step:or-assoc:forward:coup-2})
+\item $\vdash((A\lor B)\lor C)\implies(A\lor(B\lor C))$ by $\lor$-elim(\ref{step:or-assoc:forward:penultimate-step}, \ref{step:or-assoc:forward:coup-3})
+\end{enumerate}
+Claim 2: $\vdash(A\lor(B\lor C))\implies((A\lor B)\lor C)$ by
+virtually the same reasoning:
+\begin{enumerate}
+\item $A\vdash A$ by assuming $A$
+\item $A\vdash A\lor B$ by $\lor$-intro-r($B$)
+\item $A\vdash (A\lor B)\lor C$ by $\lor$-intro-r($C$)
+\item\label{step:or-assoc:backward:coup-1} $\vdash A\implies((A\lor B)\lor C)$ by discharging $A$
+\item $B\vdash B$ by assuming $B$
+\item $B\vdash A\lor B$ by $\lor$-intro-l($A$)
+\item $B\vdash(A\lor B)\lor C$ by $\lor$-intro-r($C$)
+\item\label{step:or-assoc:backward:coup-2} $\vdash B\implies((A\lor B)\lor C)$ by discharging $B$
+\item $C\vdash C$ by assuming $C$
+\item $C\vdash(A\lor B)\lor C$ by $\lor$-intro-l($A\lor B$)
+\item\label{step:or-assoc:backward:coup-3} $\vdash C\implies((A\lor B)\lor C)$ by discharging $C$
+\item\label{step:or-assoc:backward:penultimate} $\vdash(B\lor C)\implies((A\lor B)\lor C)$ by $\lor$-elim(\ref{step:or-assoc:backward:coup-3}, \ref{step:or-assoc:backward:coup-2})
+\item $\vdash(A\lor(B\lor C))\implies((A\lor B)\lor C)$ by $\lor$-elim(\ref{step:or-assoc:backward:penultimate},
+\ref{step:or-assoc:backward:coup-1})
+\end{enumerate}
+Hence the result by $\Leftrightarrow$-introduction applied to claim 1
+and claim 2.
+\end{proof}
+
+\nwenddocs{}\nwbegincode{29}\sublabel{NW1NjfzY-J2rA5-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-J2rA5-1}}}\moddef{Disjunction is associative~{\nwtagstyle{}\subpageref{NW1NjfzY-J2rA5-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-2}}\nwenddeflinemarkup
+local
+  fun forward A B C =
+    let
+      val th1 = Thm.assume A [];
+      val th2 = Thm.or_intro_r (Formula.mk_or(B, C)) th1;
+      val th3 = Thm.disch A th2;
+      val th4 = Thm.assume B [];
+      val th5 = Thm.or_intro_r C th4;
+      val th6 = Thm.or_intro_l A th5;
+      val th7 = Thm.disch B th6;
+      val th8 = Thm.assume C [];
+      val th9 = Thm.or_intro_l B th8;
+      val th10 = Thm.or_intro_l A th9;
+      val th11 = Thm.disch C th10;
+      val th12 = Thm.or_elim th3 th7;
+    in
+      Thm.or_elim th12 th11
+    end;
+  fun backward A B C =
+    let
+      val th1 = Thm.assume A [];
+      val th2 = Thm.or_intro_r B th1;
+      val th3 = Thm.or_intro_r C th2;
+      val th4 = Thm.disch A th3;
+      val th5 = Thm.assume B [];
+      val th6 = Thm.or_intro_l A th5;
+      val th7 = Thm.or_intro_r C th6;
+      val th8 = Thm.disch B th7;
+      val th9 = Thm.assume C [];
+      val th10 = Thm.or_intro_l (Formula.mk_or(A, B)) th9;
+      val th11 = Thm.disch C th10;
+      val th12 = Thm.or_elim th11 th8;
+    in
+      Thm.or_elim th12 th4
+    end;
+in
+fun or_assoc A B C =
+  Thm.iff_intro (forward A B C) (backward A B C)
+end;
+\nwindexdefn{\nwixident{Derived.or{\_}assoc}}{Derived.or:unassoc}{NW1NjfzY-J2rA5-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-2}}\nwidentdefs{\\{{\nwixident{Derived.or{\_}assoc}}{Derived.or:unassoc}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}\\{{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}}\\{{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}}\\{{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}}}\nwindexuse{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}{NW1NjfzY-J2rA5-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-J2rA5-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-J2rA5-1}\nwindexuse{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}{NW1NjfzY-J2rA5-1}\nwindexuse{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}{NW1NjfzY-J2rA5-1}\nwindexuse{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}{NW1NjfzY-J2rA5-1}\nwindexuse{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}{NW1NjfzY-J2rA5-1}\nwendcode{}\nwbegindocs{30}\nwdocspar
+\begin{node}
+$\vdash(A\implies A')\implies(A\lor B\implies A'\lor B)$
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $A\implies A'\vdash A\implies A'$ by asssuming $A\implies A'$%1
+\item $A,A\implies A'\vdash A'$ by undischarging%2
+\item $A,A\implies A'\vdash A'\lor B$ by $\lor$-intro-r($B$)%3
+\item $A\implies A'\vdash A\implies A'\lor B$ by discharging $A$%4
+\item $A\implies A', B\vdash B$ by assuming%5
+\item $A\implies A', B\vdash A'\lor B$ by $\lor$-intro-l($A'$)%6
+\item $A\implies A'\vdash B\implies A'\lor B$ by discharging $B$%7
+\item $A\implies A'\vdash A\lor B\implies A'\lor B$ by $\lor$-elim(4, 7)%8
+\item $\vdash(A\implies A')\implies(A\lor B\implies A'\lor B)$ by discharging
+\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{31}\sublabel{NW1NjfzY-4VDMqe-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-4VDMqe-1}}}\moddef{Congruence of left disjunct~{\nwtagstyle{}\subpageref{NW1NjfzY-4VDMqe-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-2}}\nwenddeflinemarkup
+fun or_cong_l A A' B =
+  let
+    val A_imp_A' = Formula.mk_imp(A, A');
+    val th1 = Thm.assume A_imp_A' [];
+    val th2 = Thm.undisch th1;
+    val th3 = Thm.or_intro_r B th2;
+    val th4 = Thm.disch A th3;
+    val th5 = Thm.assume B [A_imp_A'];
+    val th6 = Thm.or_intro_l A' th5;
+    val th7 = Thm.disch B th6;
+    val th8 = Thm.or_elim th4 th7;
+  in
+    Thm.disch A_imp_A' th8
+  end;
+\nwindexdefn{\nwixident{Derived.or{\_}cong{\_}l}}{Derived.or:uncong:unl}{NW1NjfzY-4VDMqe-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-2}}\nwidentdefs{\\{{\nwixident{Derived.or{\_}cong{\_}l}}{Derived.or:uncong:unl}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}}\\{{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}}\\{{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}}\\{{\nwixident{Thm.undisch}}{Thm.undisch}}}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-4VDMqe-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-4VDMqe-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-4VDMqe-1}\nwindexuse{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}{NW1NjfzY-4VDMqe-1}\nwindexuse{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}{NW1NjfzY-4VDMqe-1}\nwindexuse{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}{NW1NjfzY-4VDMqe-1}\nwindexuse{\nwixident{Thm.undisch}}{Thm.undisch}{NW1NjfzY-4VDMqe-1}\nwendcode{}\nwbegindocs{32}\nwdocspar
+\begin{node}
+$\vdash(B\implies B')\implies(A\lor B\implies A\lor B')$
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $A,B\implies B'\vdash A$ by assuming%1
+\item $A,B\implies B'\vdash A\lor B'$ by $\lor$-intro-r($B'$)%2
+\item $B\implies B'\vdash A\implies A\lor B'$ by discharging $A$%3
+\item $B\implies B'\vdash B\implies B'$ by assuming %4
+\item $B,B\implies B'\vdash B'$ by undischarging%5
+\item $B,B\implies B'\vdash A\lor B'$ by $\lor$-intro-l($A$)%6
+\item $B\implies B'\vdash B\implies A\lor B'$ by discharging $B$%7
+\item $B\implies B'\vdash A\lor B\implies A\lor B'$ by $\lor$-elim(3, 7)%8
+\item $\vdash(B\implies B')\implies(A\lor B\implies A\lor B')$
+  by undischarging 7\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{33}\sublabel{NW1NjfzY-lrWvY-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-lrWvY-1}}}\moddef{Congruence of right disjunct~{\nwtagstyle{}\subpageref{NW1NjfzY-lrWvY-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-2}}\nwenddeflinemarkup
+fun or_cong_r A B B' =
+  let
+    val B_imp_B' = Formula.mk_imp(B, B');
+    val th1 = Thm.assume A [B_imp_B'];
+    val th2 = Thm.or_intro_r B' th1;
+    val th3 = Thm.disch A th2;
+    val th4 = Thm.assume B_imp_B' [];
+    val th5 = Thm.undisch th4;
+    val th6 = Thm.or_intro_l A th5;
+    val th7 = Thm.disch B th6;
+    val th8 = Thm.or_elim th3 th7;
+  in
+    Thm.disch B_imp_B' th8
+  end;
+\nwindexdefn{\nwixident{Derived.or{\_}cong{\_}r}}{Derived.or:uncong:unr}{NW1NjfzY-lrWvY-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-2}}\nwidentdefs{\\{{\nwixident{Derived.or{\_}cong{\_}r}}{Derived.or:uncong:unr}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}}\\{{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}}\\{{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}}\\{{\nwixident{Thm.undisch}}{Thm.undisch}}}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-lrWvY-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-lrWvY-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-lrWvY-1}\nwindexuse{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}{NW1NjfzY-lrWvY-1}\nwindexuse{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}{NW1NjfzY-lrWvY-1}\nwindexuse{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}{NW1NjfzY-lrWvY-1}\nwindexuse{\nwixident{Thm.undisch}}{Thm.undisch}{NW1NjfzY-lrWvY-1}\nwendcode{}\nwbegindocs{34}\begin{node}
+We have $\vdash A\implies(B\implies A\land B)$.
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $A\vdash A$ by assuming
+\item $B\vdash B$ by assuming
+\item $A,B\vdash A\land B$ by $\land$-introduction(1, 2)
+\item $A\vdash B\implies(A\land B)$ by discharging $B$ from 3
+\item $\vdash A\implies(B\implies(A\land B))$ by discharging $A$ from 4\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{35}\sublabel{NW1NjfzY-1I5AY8-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-1I5AY8-1}}}\moddef{Conjunction tautology $\vdash A\implies(B\implies A\land B)$~{\nwtagstyle{}\subpageref{NW1NjfzY-1I5AY8-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-3}}\nwenddeflinemarkup
+fun and_thm A B =
+  let
+    val AB = Formula.mk_and(A, B);
+    val th1 = Thm.assume A [B];
+    val th2 = Thm.assume B [A];
+    val th3 = Thm.and_intro th1 th2;
+    val th4 = Thm.disch B th3;
+  in
+    Thm.disch A th4
+  end;
+\nwindexdefn{\nwixident{Derived.and{\_}thm}}{Derived.and:unthm}{NW1NjfzY-1I5AY8-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-3}}\nwidentdefs{\\{{\nwixident{Derived.and{\_}thm}}{Derived.and:unthm}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1NjfzY-1I5AY8-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-1I5AY8-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-1I5AY8-1}\nwendcode{}\nwbegindocs{36}\nwdocspar
+\begin{node}
+$\vdash A\land B\implies B\land A$
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $A\land B\vdash A\land B$ by assuming $A\land B$
+\item $A\land B\vdash B$ by $\land$-elim-r(1)
+\item $A\land B\vdash A$ by $\land$-elim-l(1)
+\item $A\land B\vdash B\land A$ by $\land$-intro(2, 3)
+\item $\vdash(A\land B)\implies(B\land A)$ by discharging $A\land B$\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{37}\sublabel{NW1NjfzY-29ie6N-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-29ie6N-1}}}\moddef{Conjunction is commutative~{\nwtagstyle{}\subpageref{NW1NjfzY-29ie6N-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-3}}\nwenddeflinemarkup
+fun and_comm A B =
+  let
+    val A_and_B = Formula.mk_and(A, B);
+    val th1 = Thm.assume A_and_B [];
+    val th2 = Thm.and_elim_r th1;
+    val th3 = Thm.and_elim_l th1;
+    val th4 = Thm.and_intro th2 th3;
+  in
+    Thm.disch A_and_B th4
+  end;
+\nwindexdefn{\nwixident{Derived.and{\_}comm}}{Derived.and:uncomm}{NW1NjfzY-29ie6N-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-3}}\nwidentdefs{\\{{\nwixident{Derived.and{\_}comm}}{Derived.and:uncomm}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1NjfzY-29ie6N-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-29ie6N-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-29ie6N-1}\nwendcode{}\nwbegindocs{38}\nwdocspar
+\begin{node}
+$\vdash(A\land(B\land C))\iff((A\land B)\land C)$
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $(A\land(B\land C))\vdash(A\land(B\land C))$ by assuming $(A\land(B\land C))$
+\item $(A\land(B\land C))\vdash A$ by $\land$-elim-l(1)%2
+\item $(A\land(B\land C))\vdash(B\land C)$ by $\land$-elim-r(1)
+\item $(A\land(B\land C))\vdash B$ by $\land$-elim-l(3)%3
+\item $(A\land(B\land C))\vdash C$ by $\land$-elim-r(3)%4
+\item $(A\land(B\land C))\vdash A\land B$ by $\land$-intro(2, 4)%5
+\item $(A\land(B\land C))\vdash(A\land B)\land C$ by $\land$-intro(5, 4)%6
+\item $\vdash(A\land(B\land C))\implies((A\land B)\land C$ by discharging%7
+\item $((A\land B)\land C)\vdash((A\land B)\land C)$ by assuming $((A\land B)\land C)$%8
+\item $((A\land B)\land C)\vdash(A\land B)$ by $\land$-elim-l(8)%9
+\item $((A\land B)\land C)\vdash A$ by $\land$-elim-l(9)%10
+\item $((A\land B)\land C)\vdash B$ by $\land$-elim-r(9)%11
+\item $((A\land B)\land C)\vdash C$ by $\land$-elim-r(8)%12
+\item $((A\land B)\land C)\vdash B\land C$ by $\land$-intro(11, 12)%13
+\item $((A\land B)\land C)\vdash A\land(B\land C)$ by $\land$-intro(10, 13)%14
+\item $\vdash((A\land B)\land C)\implies(A\land(B\land C))$ by
+  discharging 14%15
+\item $\vdash(A\land(B\land C))\iff((A\land B)\land C)$ by $\Leftrightarrow$-intro(7, 15)\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{39}\sublabel{NW1NjfzY-328uZt-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-328uZt-1}}}\moddef{Conjunction is associative~{\nwtagstyle{}\subpageref{NW1NjfzY-328uZt-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-3}}\nwenddeflinemarkup
+local
+  fun forward A B C =
+    let
+      val A_BC = Formula.mk_and(A, Formula.mk_and(B, C));
+      val th1 = Thm.assume A_BC [];
+      val th2 = Thm.and_elim_l th1; (* ... |- A *)
+      val th3 = Thm.and_elim_r th1;
+      val th4 = Thm.and_elim_l th3; (* ... |- B *)
+      val th5 = Thm.and_elim_r th3; (* ... |- C *)
+      val th6 = Thm.and_intro th2 th4;
+      val th7 = Thm.and_intro th6 th5;
+    in
+      Thm.disch A_BC th7
+    end;
+  fun backward A B C =
+    let
+      val AB_C = Formula.mk_and(Formula.mk_and(A, B), C);
+      val th1 = Thm.assume AB_C [];
+      val th2 = Thm.and_elim_l th1; (* ... |- A & B *)
+      val th3 = Thm.and_elim_l th2; (* ... |- A *)
+      val th4 = Thm.and_elim_r th2; (* ... |- B *)
+      val th5 = Thm.and_elim_r th1; (* ... |- C *)
+      val th6 = Thm.and_intro th4 th5; (* ... |- B & C *)
+      val th7 = Thm.and_intro th3 th6; (* ... |- A & (B & C) *)
+    in
+      Thm.disch AB_C th7
+    end;
+in
+fun and_assoc A B C =
+  Thm.iff_intro (forward A B C) (backward A B C)
+end;
+\nwindexdefn{\nwixident{Derived.and{\_}assoc}}{Derived.and:unassoc}{NW1NjfzY-328uZt-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-3}}\nwidentdefs{\\{{\nwixident{Derived.and{\_}assoc}}{Derived.and:unassoc}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1NjfzY-328uZt-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-328uZt-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-328uZt-1}\nwindexuse{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}{NW1NjfzY-328uZt-1}\nwendcode{}\nwbegindocs{40}\nwdocspar
+\begin{node}
+$\vdash(A\implies A')\implies(A\land B\implies A'\land B)$
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $A\implies A', A\land B\vdash A\implies A'$ by assuming%1
+\item $A\implies A', A\land B\vdash A\land B$ by assuming%2
+\item $A\implies A', A\land B\vdash A$ by $\land$-elim-l(2)%3
+\item $A\implies A', A\land B\vdash A'$ by modus ponens(1, 3)%4
+\item $A\implies A', A\land B\vdash B$ by $\land$-elim-r(2)%5
+\item $A\implies A', A\land B\vdash A'\land B$ by $\land$-intro(4,5)%6
+\item $A\implies A'\vdash A\land B\implies A'\land B$ by discharging
+\item $\vdash(A\implies A')\implies (A\land B\implies A'\land B)$ by discharging
+\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{41}\sublabel{NW1NjfzY-4YXcw4-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-4YXcw4-1}}}\moddef{Conjunction left congruence~{\nwtagstyle{}\subpageref{NW1NjfzY-4YXcw4-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-3}}\nwenddeflinemarkup
+fun and_cong_l A A' B =
+  let
+    val A_imp_A' = Formula.mk_imp(A, A');
+    val A_and_B = Formula.mk_and(A, B);
+    val th1 = Thm.assume A_imp_A' [A_and_B];
+    val th2 = Thm.assume A_and_B [A_imp_A'];
+    val th3 = Thm.and_elim_l th2;
+    val th4 = Thm.modus_ponens th1 th3;
+    val th5 = Thm.and_elim_r th2;
+    val th6 = Thm.and_intro th4 th5;
+    val th7 = Thm.disch A_and_B th6;
+  in
+    Thm.disch A_imp_A' th7
+  end;
+\nwindexdefn{\nwixident{Derived.and{\_}cong{\_}l}}{Derived.and:uncong:unl}{NW1NjfzY-4YXcw4-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-3}}\nwidentdefs{\\{{\nwixident{Derived.and{\_}cong{\_}l}}{Derived.and:uncong:unl}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1NjfzY-4YXcw4-1}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-4YXcw4-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-4YXcw4-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-4YXcw4-1}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-4YXcw4-1}\nwendcode{}\nwbegindocs{42}\nwdocspar
+\begin{node}
+$\vdash(B\implies B')\implies(A\land B\implies A\land B')$
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $A\land B,B\implies B'\vdash B\implies B'$ by assuming%1
+\item $A\land B,B\implies B'\vdash A\land B$ by assuming%2
+\item $A\land B,B\implies B'\vdash A$ by $\land$-elim-l(2)%3
+\item $A\land B,B\implies B'\vdash B$ by $\land$-elim-r(2)%4
+\item $A\land B,B\implies B'\vdash B'$ by modus ponens(1, 4)%5
+\item $A\land B,B\implies B'\vdash A\land B'$ by $\land$-intro(3, 5)%6
+\item $B\implies B'\vdash A\land B \implies A\land B'$ by discharging%7
+\item $\vdash(B\implies B')\implies(A\land B \implies A\land B')$ by discharging
+\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{43}\sublabel{NW1NjfzY-TrI6l-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-TrI6l-1}}}\moddef{Conjunction right congruence~{\nwtagstyle{}\subpageref{NW1NjfzY-TrI6l-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-3}}\nwenddeflinemarkup
+fun and_cong_r A B B' =
+  let
+    val A_and_B = Formula.mk_and(A, B);
+    val B_imp_B' = Formula.mk_imp(B, B');
+    val th1 = Thm.assume B_imp_B' [];
+    val th2 = Thm.assume A_and_B [];
+    val th3 = Thm.and_elim_l th2;
+    val th4 = Thm.and_elim_r th2;
+    val th5 = Thm.modus_ponens th1 th4;
+    val th6 = Thm.and_intro th3 th5;
+    val th7 = Thm.disch A_and_B th6;
+  in
+    Thm.disch B_imp_B' th7
+  end;
+\nwindexdefn{\nwixident{Derived.and{\_}cong{\_}r}}{Derived.and:uncong:unr}{NW1NjfzY-TrI6l-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-3}}\nwidentdefs{\\{{\nwixident{Derived.and{\_}cong{\_}r}}{Derived.and:uncong:unr}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1NjfzY-TrI6l-1}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-TrI6l-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-TrI6l-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-TrI6l-1}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-TrI6l-1}\nwendcode{}\nwbegindocs{44}\nwdocspar
+\begin{node}[Krzysztof Grabczewski]
+$\vdash A\lor B\implies((A\implies C)\implies((B\implies D)\implies(C\lor D)))$
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $\vdash(A\implies C)\implies((A\lor B)\implies(C\lor B))$ by
+  disjunction congruence left%1
+\item $A\lor B,A\implies C\vdash C\lor B$ by undischarging (1) twice%2
+\item $\vdash(B\implies D)\implies((C\lor B)\implies(C\lor D))$ by
+  disjunction congruence right%3
+\item $B\implies D\vdash(C\lor B)\implies(C\lor D)$ by undischarging(3)%4
+\item $A\lor B,A\implies C,B\implies D\vdash C\lor D$ by modus
+  ponens(4, 2)
+\item $A\lor B,A\implies C\vdash(B\implies D)\implies(C\lor D)$
+\item $A\lor B\vdash(A\implies C)\implies((B\implies D)\implies(C\lor D))$
+\item $\vdash(A\lor B)\implies((A\implies C)\implies((B\implies D)\implies(C\lor D)))$\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{45}\sublabel{NW1NjfzY-h4O6T-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-h4O6T-1}}}\moddef{Disjunction two-sided congruence~{\nwtagstyle{}\subpageref{NW1NjfzY-h4O6T-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-4}}\nwenddeflinemarkup
+fun disj_imp_disj A B C D =
+  let
+    val B_imp_D = Formula.mk_imp(B, D);
+    val A_imp_C = Formula.mk_imp(A, C);
+    val A_or_B = Formula.mk_or(A, B);
+    val th1 = or_cong_l A C B;
+    val th2 = Thm.undisch (Thm.undisch th1);
+    val th3 = or_cong_r C B D;
+    val th4 = Thm.undisch th3;
+    val th5 = Thm.modus_ponens th4 th2;
+  in
+    Thm.disch A_or_B (Thm.disch A_imp_C (Thm.disch B_imp_D th5))
+  end;
+\nwindexdefn{\nwixident{Derived.disj{\_}imp{\_}disj}}{Derived.disj:unimp:undisj}{NW1NjfzY-h4O6T-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-4}}\nwidentdefs{\\{{\nwixident{Derived.disj{\_}imp{\_}disj}}{Derived.disj:unimp:undisj}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.undisch}}{Thm.undisch}}}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-h4O6T-1}\nwindexuse{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}{NW1NjfzY-h4O6T-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-h4O6T-1}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-h4O6T-1}\nwindexuse{\nwixident{Thm.undisch}}{Thm.undisch}{NW1NjfzY-h4O6T-1}\nwendcode{}\nwbegindocs{46}\nwdocspar
+\begin{node}% conj_disj_distribL
+$\vdash A\land(B\lor C)\iff((A\land B)\lor(A\land C))$
+\end{node}
+
+\begin{proof}
+The forward proof:
+\begin{enumerate}
+\item $B\lor C\vdash B\lor C$ by assuming
+\item $\vdash (B\lor C)\implies[(B\implies A\land B)\implies((C\implies A\land C)\implies(A\land B)\lor(A\land C))]$
+  by {\Tt{}disj{\_}imp{\_}disj\nwendquote} $B$ $C$ $A\land B$ $A\land C$
+\item $\vdash B\lor C\vdash(B\implies A\land B)\implies((C\implies A\land C)\implies(A\land B)\lor(A\land C))$
+  by modus ponens(2, 1)%3
+\item $A\vdash B\implies A\land B$%4
+\item $A, B\lor C\vdash(C\implies A\land C)\implies(A\land B)\lor(A\land C)$
+  by modus ponens(3, 4)%5
+\item $A\vdash C\implies A\land C$%6
+\item $A, B\lor C\vdash(A\land B)\lor(A\land C)$
+  by modus ponens(5, 6)%7
+\item $\vdash A\implies(B\lor C\implies(A\land B)\lor(A\land C))$
+  by discharging the hypotheses%8
+\item $\vdash A\land(B\lor C)\implies(A\land B)\lor(A\land C)$
+  by uncurrying(8)%
+\end{enumerate}
+The backward direction:
+\begin{enumerate}
+\item $A\land B\vdash A\land B$ by assuming $A\land B$%1
+\item $A\land B\vdash B$ by $\land$-elim-r(1)%2
+\item $A\land B\vdash B\lor C$ by $\lor$-intro-r($C$, 2)%3
+\item $A\land B\vdash A$ by $\land$-elim-l(1)%4
+\item $A\land B\vdash A\land(B\lor C)$ by $\land$-intro(4, 3)%5
+\item $A\land C\vdash A\land C$ by assuming $A\land C$%6
+\item $A\land C\vdash C$ by $\land$-elim-r(6)%7
+\item $A\land C\vdash B\lor C$ by $\lor$-intro-l($B$, 7)%8
+\item $A\land C\vdash A$ by $\land$-elim-l(6)%9
+\item $A\land C\vdash A\land(B\lor C)$ by $\land$-intro(9, 8)%10
+\item $\vdash(A\land C)\implies A\land(B\lor C)$ by discharging 10
+\item $\vdash(A\land B)\implies A\land(B\lor C)$ by discharging 5
+\item $\vdash((A\land B)\lor(A\land C))\implies A\land(B\lor C)$ by
+  $\lor$-elim(12, 11)
+\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{47}\sublabel{NW1NjfzY-efA9w-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-efA9w-1}}}\moddef{$\vdash A\land(B\lor C)\iff((A\land B)\lor(A\land C))$~{\nwtagstyle{}\subpageref{NW1NjfzY-efA9w-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-4}}\nwenddeflinemarkup
+local
+  fun uncurry_imp A B C =
+  let
+    val AB = Formula.mk_and(A, B);
+    val A_imp_B_imp_C = Formula.mk_imp(A, Formula.mk_imp(B, C));
+    val th1 = Thm.assume A_imp_B_imp_C [AB];
+    val th2 = Thm.assume AB [A_imp_B_imp_C];
+    val th3 = Thm.and_elim_l th2; (* ... |- A *)
+    val th4 = Thm.modus_ponens th1 th3; (* ... |- B => C *)
+    val th5 = Thm.and_elim_r th2; (* ... |- B *)
+    val th6 = Thm.modus_ponens th4 th5; (* ... |- C *);
+    val th7 = Thm.disch AB th6;
+  in
+    Thm.disch A_imp_B_imp_C th7
+  end;
+  fun forward A B C =
+    let
+      (* taut X produces "A |- X => (A & X)" *)
+      fun taut X =
+        let
+          val lm1 = Thm.assume X [A];
+          val lm2 = Thm.assume A [X];
+          val lm3 = Thm.and_intro lm2 lm1;
+        in
+          Thm.disch X lm3
+        end;
+      val B_or_C = Formula.mk_or(B, C);
+      val AB_or_AC = Formula.mk_or(Formula.mk_and(A, B),
+                                   Formula.mk_and(A, C));
+      val th1 = disj_imp_disj B C (Formula.mk_and(A,B)) (Formula.mk_and(A,C));
+      val th2 = Thm.assume B_or_C [];
+      val th3 = Thm.modus_ponens th1 th2;
+      val th4 = Thm.modus_ponens th3 (taut B);
+      val th5 = Thm.modus_ponens th4 (taut C);
+      val th6 = Thm.disch B_or_C th5;
+      val th7 = Thm.disch A th6; (* |- A => ((B or C) => (A & B) or (A & C)) *)
+    in
+      Thm.modus_ponens (uncurry_imp A B_or_C AB_or_AC) th7
+    end;
+  fun backward A B C =
+    let
+      val AB = Formula.mk_and(A, B);
+      val AC = Formula.mk_and(A, C);
+      val th1 = Thm.assume AB [];
+      val th2 = Thm.and_elim_r th1;
+      val th3 = Thm.or_intro_r C th2;
+      val th4 = Thm.and_elim_l th1;
+      val th5 = Thm.disch AB (Thm.and_intro th4 th3);
+      val th6 = Thm.assume AC [];
+      val th7 = Thm.and_elim_r th6;
+      val th8 = Thm.or_intro_l B th7;
+      val th9 = Thm.and_elim_l th6;
+      val th10 = Thm.disch AC (Thm.and_intro th9 th8);
+    in
+      Thm.or_elim th5 th10
+    end;
+in
+fun conj_disj_distribL A B C =
+  Thm.iff_intro (forward A B C) (backward A B C)
+end;
+\nwindexdefn{\nwixident{Derived.conj{\_}disj{\_}distribL}}{Derived.conj:undisj:undistribL}{NW1NjfzY-efA9w-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-4}}\nwidentdefs{\\{{\nwixident{Derived.conj{\_}disj{\_}distribL}}{Derived.conj:undisj:undistribL}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}}\\{{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}}\\{{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}}}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1NjfzY-efA9w-1}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-efA9w-1}\nwindexuse{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}{NW1NjfzY-efA9w-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-efA9w-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-efA9w-1}\nwindexuse{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}{NW1NjfzY-efA9w-1}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-efA9w-1}\nwindexuse{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}{NW1NjfzY-efA9w-1}\nwindexuse{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}{NW1NjfzY-efA9w-1}\nwindexuse{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}{NW1NjfzY-efA9w-1}\nwendcode{}\nwbegindocs{48}\nwdocspar
+\begin{node}%conj_disj_distribR
+$\vdash (A\lor B)\land C\iff((A\land C)\lor(B\land C))$
+\end{node}
+
+\begin{proof}
+The forward direction:
+\begin{enumerate}
+\item $\vdash C\land(A\lor B)\iff(C\land A)\lor(C\land B)$ by
+  {\Tt{}conj{\_}disj{\_}distribL\nwendquote}($C$, $A$, $B$)%1
+\item $\vdash C\land(A\lor B)\implies(C\land A)\lor(C\land B)$ by $\Leftrightarrow$-elim-l(1)%2
+\item $\vdash (A\lor B)\land C\implies C\land(A\lor B)$ by
+  {\Tt{}and{\_}comm\nwendquote}($A\lor B$, $C$)%3
+\item $\vdash (A\lor B)\land C\implies(C\land A)\lor(C\land B)$ by
+  hypothetical syllogism(3, 2)%4
+\item $(A\lor B)\land C\vdash(C\land A)\lor(C\land B)$ by undischarging(4)%5
+\item $\vdash(C\land A)\implies(A\land C)$ by {\Tt{}and{\_}comm\nwendquote}($C$, $A$)%6
+\item $\vdash((C\land A)\implies(A\land C))\implies(((C\land A)\lor(C\land B))\implies((A\land C)\lor(C\land B)))$
+  by {\Tt{}or{\_}cong{\_}l\nwendquote}($C\land A$, $A\land C$, $C\land B$)%7
+\item $\vdash((C\land A)\lor(C\land B))\implies((A\land C)\lor(C\land B))$
+  by modus ponens(7, 6)% 8
+\item $(A\lor B)\land C\vdash(A\land C)\lor(C\land B)$ by modus
+  ponens(8, 5)%9
+\item $\vdash(C\land B)\implies(B\land C)$ by {\Tt{}and{\_}comm\nwendquote}($C$, $B$)%10
+\item $\vdash((C\land B)\implies(B\land C))\implies(((A\land
+  C)\lor(C\land B))\implies((A\land C)\lor(B\land C)))$ by
+  {\Tt{}or{\_}cong{\_}r\nwendquote}($A\land C$, $C\land B$, $B\land C$)%11
+\item $\vdash((A\land C)\lor(C\land B))\implies((A\land C)\lor(B\land C))$ by modus
+  ponens(11, 10)%12
+\item $(A\lor B)\land C\vdash(A\land C)\lor(B\land C)$ by modus
+  ponens(9, 12)%13
+\item $\vdash((A\lor B)\land C)\implies(A\land C)\lor(B\land C)$ by
+  discharging 13%14
+\end{enumerate}
+The backward direction:
+\begin{enumerate}\setcounter{enumi}{14}
+\item $A\land C\vdash A\land C$ by assuming%15
+\item $A\land C\vdash A$ by $\land$-elim-l(15)%16
+\item $A\land C\vdash A\lor B$ by $\lor$-intro-r(16, $B$)%17
+\item $A\land C\vdash C$ by $\land$-elim-r(15)%18
+\item $(A\land C)\vdash(A\lor B)\land C$ by $\land$-intro(17,18)%19
+\item $\vdash(A\land C)\implies(A\lor B)\land C$ by discharging(19)%20
+\item $B\land C\vdash B\land C$ by assuming%21
+\item $B\land C\vdash B$ by $\land$-elim-l(21)%22
+\item $B\land C\vdash A\lor B$ by $\lor$-intro-l($A$, 22)%23
+\item $B\land C\vdash C$ by $\land$-elim-r(21)%24
+\item $B\land C\vdash(A\lor B)\land C$ by $\land$-intro(23, 24)%25
+\item $\vdash(B\land C)\implies((A\lor B)\land C)$ by discarging(25)%26
+\item $\vdash(A\land C)\lor(B\land C)\implies((A\lor B)\land C)$ by $\lor$-intro(20, 26)\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{49}\sublabel{NW1NjfzY-8du9Q-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-8du9Q-1}}}\moddef{Right distributivity of conjunction over disjunction~{\nwtagstyle{}\subpageref{NW1NjfzY-8du9Q-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-4}}\nwenddeflinemarkup
+local
+  infixr &;
+  fun (A & B) = Formula.mk_and(A, B);
+  fun forward A B C =
+    let
+      val A_or_B = Formula.mk_or(A, B);
+      val th1 = conj_disj_distribL C A B;
+      val th2 = Thm.iff_elim_l th1;
+      val th3 = and_comm A_or_B C;
+      val th4 = hypo_syll th3 th2;
+      val th5 = Thm.undisch th4;
+      val th6 = and_comm C A;
+      val th7 = or_cong_l (C & A) (A & C) (C & B);
+      val th8 = Thm.modus_ponens th7 th6;
+      val th9 = Thm.modus_ponens th8 th5;
+      val th10 = and_comm C B;
+      val th11 = or_cong_r (A & C) (C & B) (B & C);
+      val th12 = Thm.modus_ponens th11 th10;
+      val th13 = Thm.modus_ponens th9 th12;
+    in
+      Thm.disch (Formula.mk_or(A,B) & C) th13
+    end;
+  fun backward A B C =
+    let
+      fun iter X Y =
+        let
+          val lm1 = Thm.assume (X & C) [];
+          val lm2 = Thm.and_elim_l lm1;
+          val lm3 = Thm.or_intro_r Y lm2;
+          val lm4 = Thm.and_elim_r lm1;
+          val lm5 = Thm.and_intro lm3 lm4;
+        in
+          Thm.disch (X & C) lm5
+        end;
+      val th20 = iter A B;
+      val th26 = iter B A;
+    in
+      Thm.and_intro th20 th26
+    end;
+in
+fun conj_disj_distribR A B C =
+  Thm.iff_intro (forward A B C) (backward A B C)
+end;
+\nwindexdefn{\nwixident{Derived.conj{\_}disj{\_}distribR}}{Derived.conj:undisj:undistribR}{NW1NjfzY-8du9Q-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-4}}\nwidentdefs{\\{{\nwixident{Derived.conj{\_}disj{\_}distribR}}{Derived.conj:undisj:undistribR}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.iff{\_}elim{\_}l}}{Thm.iff:unelim:unl}}\\{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}}\\{{\nwixident{Thm.undisch}}{Thm.undisch}}}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1NjfzY-8du9Q-1}\nwindexuse{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}{NW1NjfzY-8du9Q-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-8du9Q-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-8du9Q-1}\nwindexuse{\nwixident{Thm.iff{\_}elim{\_}l}}{Thm.iff:unelim:unl}{NW1NjfzY-8du9Q-1}\nwindexuse{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}{NW1NjfzY-8du9Q-1}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-8du9Q-1}\nwindexuse{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}{NW1NjfzY-8du9Q-1}\nwindexuse{\nwixident{Thm.undisch}}{Thm.undisch}{NW1NjfzY-8du9Q-1}\nwendcode{}\nwbegindocs{50}\nwdocspar
+\begin{node}%disj_conj_distribL
+$\vdash A\lor(B\land C)\iff((A\lor B)\land(A\lor C))$
+\end{node}
+
+\begin{proof}
+The forward direction:
+\begin{enumerate}
+\item $A\vdash A$ by assuming%1
+\item $A\vdash A\lor B$ by $\lor$-intro(1, $B$)%2
+\item $A\vdash A\lor C$ by $\lor$-intro(1, $C$)%3
+\item $A\vdash(A\lor B)\land(A\lor C)$ by $\land$-intro(2, 3)%4
+\item $\vdash A\implies(A\lor B)\land(A\lor C)$ by discharging(4)%5
+\item $B\land C\vdash B\land C$ by assuming%6
+\item $B\land C\vdash B$ by $\land$-elim-l(6)%7
+\item $B\land C\vdash A\lor B$ by $\lor$-intro-l(7, $A$)%8
+\item $B\land C\vdash C$ by $\land$-elim-r(6)%9
+\item $B\land C\vdash A\lor C$ by $\lor$-intr-l(9, $A$)%10
+\item $B\land C\vdash (A\lor B)\land(A\lor C)$ by $\land$-intro(8, 10)%11
+\item $\vdash B\land C\implies(A\lor B)\land(A\lor C)$ by discharging(11)%12
+\item $\vdash A\lor(B\land C)\implies(A\lor B)\land(A\lor C)$ by $\lor$-elim(5, 12)%13
+\end{enumerate}
+The other direction ($\vdash(A\lor B)\land(A\lor C)\implies A\lor(B\land C)$):
+\begin{enumerate}
+\item $A\vdash A$ by assuming%1
+\item $A\vdash A\lor(B\land C)$ by $\lor$-intro-r($B\land C$, 1)%2
+\item $\vdash A\implies A\lor(B\land C)$ by discharging $A$ in (2)%3
+\item $B,C\vdash B$ by assuming%4
+\item $B,C\vdash C$ by assuming%5
+\item $B,C\vdash B\land C$ by $\land$-intro(4, 5)%6
+\item $B,C\vdash A\lor(B\land C)$ by $\lor$-intro-l($A$, 6)%7
+\item $B\vdash C\implies A\lor(B\land C)$ by discharging $C$ from 7%8
+\item $B\vdash A\lor C\implies A\lor(B\land C)$ by $\lor$-elim(3, 8)%9
+\item $\vdash B\implies(A\lor C\implies A\lor(B\land C))$ by
+  discharging $B$ from 9%10
+\item $A,A\lor C\vdash A\lor(B\land C)$ by weakening 3 with $A\lor C$%11
+\item $A\vdash A\lor C\implies A\lor(B\land C)$ by discharging $A\lor C$ from 11%12
+\item $\vdash A\implies(A\lor C\implies A\lor(B\land C)$ by
+  discharging $A$ from 12%13
+\item $\vdash (A\lor B)\implies((A\lor C)\implies A\lor(B\land C))$ by
+  $\lor$-elim(13, 10)%14
+\item $\vdash ((A\lor B)\implies((A\lor C)\implies A\lor(B\land C)))\implies((A\lor B)\land(A\lor C)\implies A\lor(B\land C))$
+  by uncurrying $A\lor B$, $A\lor C$, $A\lor(B\land C)$%15
+\item $\vdash(A\lor B)\land(A\lor C)\implies A\lor(B\land C)$ by modus
+  ponens(15, 11)\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{51}\sublabel{NW1NjfzY-2uP77E-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-2uP77E-1}}}\moddef{Left distributivity of disjunction over conjunction~{\nwtagstyle{}\subpageref{NW1NjfzY-2uP77E-1}}}\endmoddef\nwstartdeflinemarkup\nwenddeflinemarkup
+local
+  infixr & or;
+  fun (A & B) = Formula.mk_and(A, B);
+  fun (A or B) = Formula.mk_or(A, B);
+  fun uncurry A B C =
+    let
+      val AB = A & B;
+      val A_imp_B_imp_C = Formula.mk_imp(A, Formula.mk_imp(B, C));
+      val th1 = Thm.assume A_imp_B_imp_C [AB];
+      val th2 = Thm.assume AB [A_imp_B_imp_C];
+      val th3 = Thm.and_elim_l th2; (* ... |- A *)
+      val th4 = Thm.modus_ponens th1 th3; (* ... |- B => C *)
+      val th5 = Thm.and_elim_r th2; (* ... |- B *)
+      val th6 = Thm.modus_ponens th4 th5; (* ... |- C *);
+      val th7 = Thm.disch AB th6;
+    in
+      Thm.disch A_imp_B_imp_C th7
+    end;
+  fun forward A B C =
+    let
+      val th1 = Thm.assume A [];
+      val th2 = Thm.or_intro_r B th1;
+      val th3 = Thm.or_intro_r C th1;
+      val th4 = Thm.and_intro th2 th3;
+      val th5 = Thm.disch A th4;
+      val th6 = Thm.assume (B & C) [];
+      val th7 = Thm.and_elim_l th6;
+      val th8 = Thm.or_intro_l A th7;
+      val th9 = Thm.and_elim_r th6;
+      val th10 = Thm.or_intro_l A th9;
+      val th11 = Thm.and_intro th8 th10;
+      val th12 = Thm.disch (B & C) th11;
+    in
+      Thm.or_elim th5 th12
+    end;
+  fun backward A B C =
+    let
+      val th1 = Thm.assuming A [];
+      val th2 = Thm.or_intro_r (B & C) th1;
+      val th3 = Thm.disch A th2;
+      val th4 = Thm.assume B [C];
+      val th5 = Thm.assume C [B];
+      val th6 = Thm.and_intro th4 th5;
+      val th7 = Thm.or_intro_l A th6;
+      val th8 = Thm.disch C th7;
+      val th9 = Thm.or_elim th3 th8;
+      val th10 = Thm.disch B th9;
+      val th11 = weaken [(A or C)] th3;
+      val th12 = Thm.disch (A or C) th11;
+      val th13 = Thm.disch A th11;
+      val th14 = Thm.or_elim th13 th10;
+      val th15 = uncurry (A or B) (A or C) (A & (B or C));
+    in
+      Thm.modus_ponens th15 th14
+    end;
+in
+fun disj_conj_distribL A B C =
+  Thm.iff_intro (forward A B C) (backward A B C)
+end;
+\nwnotused{Left distributivity of disjunction over conjunction}\nwidentuses{\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}}\\{{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}}\\{{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}}}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1NjfzY-2uP77E-1}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-2uP77E-1}\nwindexuse{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}{NW1NjfzY-2uP77E-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-2uP77E-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-2uP77E-1}\nwindexuse{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}{NW1NjfzY-2uP77E-1}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-2uP77E-1}\nwindexuse{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}{NW1NjfzY-2uP77E-1}\nwindexuse{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}{NW1NjfzY-2uP77E-1}\nwindexuse{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}{NW1NjfzY-2uP77E-1}\nwendcode{}\nwbegindocs{52}\nwdocspar
+
+\begin{node}%disj_conj_distribR
+$\vdash (A\land B)\lor C\iff((A\lor C)\land(B\lor C))$
+\end{node}
+
+There are two ways to prove this: use {\Tt{}disj{\_}conj{\_}distribL\nwendquote} and
+congruences and commutativity to get the result (requiring 23 steps); or in a way analogous
+to the proof of {\Tt{}disj{\_}conj{\_}distribL\nwendquote} (requiring 27 steps). 
+
+\begin{proof}
+\begin{enumerate}
+\item $\vdash (A\land B)\lor C\iff C\lor(A\land B)$ by $\lor$-commutativity
+\item $\vdash C\lor(A\land B)\iff (C\lor A)\land(C\lor B)$ by {\Tt{}disj{\_}conj{\_}distribL\nwendquote} $C$ $A$ $B$
+\item $\vdash[(A\land B)\lor C\iff C\lor(A\land B)]\land[C\lor(A\land B)\iff (C\lor A)\land(C\lor B)]$ by $\land$-intro(1, 2)%3
+\item $\vdash(A\land B)\lor C\iff (C\lor A)\land(C\lor B)$ by modus ponens ({\Tt{}iff{\_}trans\nwendquote}
+$((A\land B)\lor C)$ $(C\lor(A\land B))$ $[C\lor(A\land B)\iff (C\lor A)\land(C\lor B)]$),
+3%4
+\end{enumerate}
+\bigbreak
+Then we have the forward proof:
+\begin{enumerate}\setcounter{enumi}{4}
+\item $\vdash(A\land B)\lor C\implies (C\lor A)\land(C\lor B)$ by $\Leftrightarrow$-elim-r(4)%5
+\item $\vdash(C\lor A)\implies(A\lor C)$ by $\lor$-commutativity%6
+\item $\vdash((C\lor A)\implies(A\lor C))\implies((C\lor A)\land(C\lor B)\implies(A\lor C)\land(C\lor B))$
+  by $\land$-congruence%7
+\item $\vdash(C\lor A)\land(C\lor B)\implies(A\lor C)\land(C\lor B)$
+  by modus ponens(7, 6)%8
+\item $\vdash(A\land B)\lor C\implies (A\lor C)\land(C\lor B)$
+  by hypothetical syllogism(5, 8)%9
+\item $\vdash(C\lor B)\implies(B\lor C)$ by $\lor$-commutativity%10
+\item $\vdash((C\lor B)\implies(B\lor C))\implies((A\lor
+  C))\land(C\lor B)\implies(A\lor C)\land(B\lor C))$
+  by $\lor$-congruence-r%11
+\item $\vdash (A\lor C))\land(C\lor B)\implies(A\lor C)\land(B\lor C)$
+  by modus ponens(11, 10)%12
+\item $\vdash(A\land B)\lor C\implies (A\lor C)\land(B\lor C)$
+  by hypothetical syllogism(9, 12)%13
+\end{enumerate}
+\bigbreak
+The backward proof:
+\begin{enumerate}\setcounter{enumi}{13}
+\item $\vdash(C\lor A)\land(C\lor B)\implies(A\land B)\lor C$ by $\Leftrightarrow$-elim-r(4)%14
+\item $\vdash(A\lor C)\implies(C\lor A)$ by $\lor$-commutativity%15
+\item $\vdash((A\lor C)\implies(C\lor A))\implies((A\lor C)\land(C\lor B)\implies(C\lor A)\land(C\lor B))$
+  by $\land$-congruence-r%16
+\item $\vdash(A\lor C)\land(C\lor B)\implies(C\lor A)\land(C\lor B)$
+  by modus ponens(16, 15)%17
+\item $\vdash(A\lor C)\land(C\lor B)\implies(A\land B)\lor C$ by
+  hypothetical syllogism(17, 14)%18
+\item $\vdash(B\lor C)\implies(C\lor B)$ by $\lor$-commutativity%19
+\item $\vdash((B\lor C)\implies(C\lor B))\implies((A\lor C)\land(B\lor
+  C)\implies(A\lor C)\land(C\lor B))$
+  by $\land$-congruence-r%20
+\item $\vdash (A\lor C)\land(B\lor C)\implies(A\lor C)\land(C\lor B)$
+  by modus ponens(20, 19)%21
+\item $\vdash(A\lor C)\land(B\lor C)\implies(A\land B)\lor C$ by
+  hypothetical syllogism(21, 18)%22
+\item $\vdash(A\land B)\lor C\iff(A\lor C)\land(B\lor C)$ by
+  $\Leftrightarrow$-intro(13, 22)\qedhere
+\end{enumerate}
+\end{proof}
+
+\begin{node}
+$\vdash A\implies A$.
+\end{node}
+
+\nwenddocs{}\nwbegincode{53}\sublabel{NW1NjfzY-2PXiqP-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-2PXiqP-1}}}\moddef{Theorem: implications is reflexive~{\nwtagstyle{}\subpageref{NW1NjfzY-2PXiqP-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-5}}\nwenddeflinemarkup
+fun imp_reflexive A =
+  Thm.disch A (Thm.assume A []);
+\nwused{\\{NW1NjfzY-4CUt2L-5}}\nwidentuses{\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-2PXiqP-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-2PXiqP-1}\nwendcode{}\nwbegindocs{54}\nwdocspar
+
+\begin{theorem}[Frege]
+$\vdash(A\implies(B\implies C))\implies((A\implies B)\implies(A\implies C))$
+\end{theorem}
+
+\begin{proof}
+\begin{enumerate}
+\item $(A\implies(B\implies C)), (A\implies B), A\vdash A$
+\item $(A\implies(B\implies C)), (A\implies B), A\vdash A\implies B$
+\item $(A\implies(B\implies C)), (A\implies B), A\vdash B$ by modus ponens(2,1)
+\item $(A\implies(B\implies C)), (A\implies B), A\vdash A\implies(B\implies C)$
+\item $(A\implies(B\implies C)), (A\implies B), A\vdash B\implies C$
+  by modus ponens(4, 1)
+\item $(A\implies(B\implies C)), (A\implies B), A\vdash C$
+  by modus ponens(5, 3)
+\item $(A\implies(B\implies C)), (A\implies B)\vdash A\implies C$
+  by discharging $A$
+\item $(A\implies(B\implies C))\vdash (A\implies B)\implies(A\implies C)$
+  by discharging $A\implies B$
+\item $\vdash(A\implies(B\implies C))\implies\bigl((A\implies B)\implies(A\implies C)\bigr)$
+  by discharging $A\implies(B\implies C)$\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{55}\sublabel{NW1NjfzY-bcGD8-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-bcGD8-1}}}\moddef{Frege's tautology (propositional logic)~{\nwtagstyle{}\subpageref{NW1NjfzY-bcGD8-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-5}}\nwenddeflinemarkup
+fun frege_id A B C =
+  let
+    val A_imp_B_imp_C = Formula.mk_imp(A, Formula.mk_imp(B, C));
+    val A_imp_B = Formula.mk_imp(A, B);
+
+    val th1 = Thm.assume A [A_imp_B_imp_C, A_imp_B]; (* ... |- A *)
+    val th2 = Thm.assume A_imp_B [A_imp_B_imp_C, A];
+    val th3 = Thm.modus_ponens th2 th1; (* ... |- B *)
+    
+    val th4 = Thm.assume A_imp_B_imp_C [A_imp_B, A];
+    val th5 = Thm.modus_ponens th4 th1; (* ... |- B => C *)
+    val th6 = Thm.modus_ponens th5 th2; (* ... |- C *)
+    val th7 = Thm.disch A th6; (* ... |- A => C *)
+    val th8 = Thm.disch A_imp_B th7;
+  in
+    Thm.disch A_imp_B_imp_C th8
+  end;
+\nwindexdefn{\nwixident{Derived.frege{\_}id}}{Derived.frege:unid}{NW1NjfzY-bcGD8-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-5}}\nwidentdefs{\\{{\nwixident{Derived.frege{\_}id}}{Derived.frege:unid}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-bcGD8-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-bcGD8-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-bcGD8-1}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-bcGD8-1}\nwendcode{}\nwbegindocs{56}\nwdocspar
+\begin{node}
+We can ``curry'' implications to conjunction, and vice-versa. That is
+to say, we can replace $A\land B\implies C$ with $A\implies(B\implies C)$
+and vice-versa.
+\end{node}
+
+\begin{proof}
+$\vdash(A\land B\implies C)\implies(A\implies(B\implies C))$
+\begin{enumerate}
+\item $A,B,A\land B\implies C\vdash A$ by assuming
+\item $A,B,A\land B\implies C\vdash B$ by assuming
+\item $A,B,A\land B\implies C\vdash A\land B$ by $\land$-intro(1, 2)
+\item $A,B,A\land B\implies C\vdash A\land B\implies C$ by assuming
+\item $A,B,A\land B\implies C\vdash C$ by modus ponens(4, 3)
+\item $A,A\land B\implies C\vdash B\implies C$ by discharging $B$
+\item $A\land B\implies C\vdash A\implies(B\implies C)$ by discharging $A$
+\item $\vdash(A\land B\implies C)\implies(A\implies(B\implies C))$ by discharging \qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{57}\sublabel{NW1NjfzY-1iptma-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-1iptma-1}}}\moddef{Curry implication~{\nwtagstyle{}\subpageref{NW1NjfzY-1iptma-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-5}}\nwenddeflinemarkup
+fun curry_imp A B C =
+  let
+    val AB = Formula.mk_and(A, B);
+    val AB_imp_C = Formula.mk_imp(AB, C);
+    val th1 = Thm.assume A [B, AB_imp_C];
+    val th2 = Thm.assume B [A, AB_imp_C];
+    val th3 = Thm.and_intro th1 th2; (* ... |- A & B *)
+    val th4 = Thm.assume AB_imp_C [A, B];
+    val th5 = Thm.modus_ponens th4 th3; (* |- C *)
+    val th6 = Thm.disch B th5;
+    val th7 = Thm.disch A th6;
+  in
+    Thm.disch AB_imp_C th7
+  end;
+\nwindexdefn{\nwixident{Derived.curry{\_}imp}}{Derived.curry:unimp}{NW1NjfzY-1iptma-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-5}}\nwidentdefs{\\{{\nwixident{Derived.curry{\_}imp}}{Derived.curry:unimp}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1NjfzY-1iptma-1}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-1iptma-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-1iptma-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-1iptma-1}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-1iptma-1}\nwendcode{}\nwbegindocs{58}\nwdocspar
+\begin{node}
+Uncurrying $\vdash(A\implies(B\implies C))\implies(A\land B\implies C)$
+\end{node}
+
+\begin{proof}
+$\vdash(A\implies(B\implies C))\implies(A\land B\implies C)$
+\begin{enumerate}
+\item\label{step:derived.nw:uncurrying:step-1} $A\land B,A\implies(B\implies C)\vdash A\implies(B\implies C)$ by assuming
+\item $A\land B,A\implies(B\implies C)\vdash A\land B$ by assuming
+\item\label{step:derived.nw:uncurrying:obtain-a} $A\land B,A\implies(B\implies C)\vdash A$ by $\land$-elim-l~(2)
+\item\label{step:derived.nw:uncurrying:obtain-b-implies-c} $A\land B,A\implies(B\implies C)\vdash B\implies C$ by modus ponens(\ref{step:derived.nw:uncurrying:step-1}, \ref{step:derived.nw:uncurrying:obtain-a})
+\item\label{step:derived.nw:uncurrying:obtain-b} $A\land B,A\implies(B\implies C)\vdash B$ by $\land$-elim-r~(2)
+\item $A\land B,A\implies(B\implies C)\vdash C$ by modus ponens(\ref{step:derived.nw:uncurrying:obtain-b-implies-c}, \ref{step:derived.nw:uncurrying:obtain-b})
+\item $A\implies(B\implies C)\vdash A\land B\implies C$ by discharging
+\item $\vdash(A\implies(B\implies C))\implies(A\land B\implies C)$ by discharging\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{59}\sublabel{NW1NjfzY-1JZnQr-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-1JZnQr-1}}}\moddef{Uncurrying implication~{\nwtagstyle{}\subpageref{NW1NjfzY-1JZnQr-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-5}}\nwenddeflinemarkup
+fun uncurry_imp A B C =
+  let
+    val AB = Formula.mk_and(A, B);
+    val A_imp_B_imp_C = Formula.mk_imp(A, Formula.mk_imp(B, C));
+    val th1 = Thm.assume A_imp_B_imp_C [AB];
+    val th2 = Thm.assume AB [A_imp_B_imp_C];
+    val th3 = Thm.and_elim_l th2; (* ... |- A *)
+    val th4 = Thm.modus_ponens th1 th3; (* ... |- B => C *)
+    val th5 = Thm.and_elim_r th2; (* ... |- B *)
+    val th6 = Thm.modus_ponens th4 th5; (* ... |- C *);
+    val th7 = Thm.disch AB th6;
+  in
+    Thm.disch A_imp_B_imp_C th7
+  end;
+\nwindexdefn{\nwixident{Derived.uncurry{\_}imp}}{Derived.uncurry:unimp}{NW1NjfzY-1JZnQr-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-5}}\nwidentdefs{\\{{\nwixident{Derived.uncurry{\_}imp}}{Derived.uncurry:unimp}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1NjfzY-1JZnQr-1}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-1JZnQr-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-1JZnQr-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-1JZnQr-1}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-1JZnQr-1}\nwendcode{}\nwbegindocs{60}\nwdocspar
+\begin{node}
+The hypothetical syllogism $\vdash(A\implies B)\implies((B\implies C)\implies(A\implies C))$.
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $A,A\implies B, B\implies C\vdash A$ by assume
+\item $A,A\implies B, B\implies C\vdash A\implies B$ by assume
+\item $A,A\implies B, B\implies C\vdash B$ by modus ponens(2, 1)
+\item $A,A\implies B, B\implies C\vdash B\implies C$ by assume
+\item $A,A\implies B, B\implies C\vdash C$ by modus ponens(4, 3)
+\item $A\implies B, B\implies C\vdash A\implies C$ by discharging $A$
+\item $A\implies B\vdash(B\implies C)\implies(A\implies C)$ by discharging $B\implies C$
+\item $\vdash(A\implies B)\implies\bigl((B\implies C)\implies(A\implies C)\bigr)$ by discharging $A\implies B$\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{61}\sublabel{NW1NjfzY-1KT69U-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-1KT69U-1}}}\moddef{Hypothetical syllogism~{\nwtagstyle{}\subpageref{NW1NjfzY-1KT69U-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-5}}\nwenddeflinemarkup
+fun hypo_syll_thm A B C =
+  let
+    val A_imp_B = Formula.mk_imp(A, B);
+    val B_imp_C = Formula.mk_imp(B, C);
+    val th1 = Thm.assume A [A_imp_B, B_imp_C];
+    val th2 = Thm.assume A_imp_B [A, B_imp_C];
+    val th3 = Thm.modus_ponens th2 th1;
+    val th4 = Thm.assume B_imp_C [A, B_imp_C];
+    val th5 = Thm.modus_ponens th4 th3;
+    val th6 = Thm.disch A th5;
+    val th7 = Thm.disch B_imp_C th6;
+  in
+    Thm.disch A_imp_B th7
+  end;
+\nwindexdefn{\nwixident{Derived.hypo{\_}syll{\_}thm}}{Derived.hypo:unsyll:unthm}{NW1NjfzY-1KT69U-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-5}}\nwidentdefs{\\{{\nwixident{Derived.hypo{\_}syll{\_}thm}}{Derived.hypo:unsyll:unthm}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-1KT69U-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-1KT69U-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-1KT69U-1}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-1KT69U-1}\nwendcode{}\nwbegindocs{62}\nwdocspar
+\begin{node}
+Transitivity follows from uncurrying and hypothetical syllogism.
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $\vdash((A\implies B)\implies((B\implies C)\implies(A\implies C)))\implies((A\implies B)\land (B\implies C)\implies (A\implies C))$
+  by uncurrying $A\implies B$, $B\implies C$, $A\implies C$
+\item $\vdash(A\implies B)\implies((B\implies C)\implies(A\implies C))$
+  by hypothetical syllogism $A$, $B$, $C$
+\item $\vdash(A\implies B)\land (B\implies C)\implies (A\implies C)$
+  by modus ponens(1, 2)\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{63}\sublabel{NW1NjfzY-1sm2GN-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-1sm2GN-1}}}\moddef{Transitivity of implies~{\nwtagstyle{}\subpageref{NW1NjfzY-1sm2GN-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-5}}\nwenddeflinemarkup
+fun imp_trans A B C =
+  Thm.modus_ponens (uncurry_imp (Formula.mk_imp(A, B))
+                                (Formula.mk_imp(B, C))
+                                (Formula.mk_imp(A, C)))
+                   (hypo_syll_thm A B C);
+\nwindexdefn{\nwixident{Derived.imp{\_}trans}}{Derived.imp:untrans}{NW1NjfzY-1sm2GN-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-5}}\nwidentdefs{\\{{\nwixident{Derived.imp{\_}trans}}{Derived.imp:untrans}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-1sm2GN-1}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-1sm2GN-1}\nwendcode{}\nwbegindocs{64}\nwdocspar
+
+
+\begin{node}
+The contrapositive comes in two flavors for Intuitionistic logic. The
+first form we will prove is $\vdash(A\implies B)\implies(\neg B\implies\neg A)$.
+\end{node}
+
+\nwenddocs{}\nwbegincode{65}\sublabel{NW1NjfzY-4KFbFg-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-4KFbFg-1}}}\moddef{Contrapositive derived rules~{\nwtagstyle{}\subpageref{NW1NjfzY-4KFbFg-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-5}}\nwprevnextdefs{\relax}{NW1NjfzY-4KFbFg-2}\nwenddeflinemarkup
+fun contrapositive A B =
+  let
+    val A_imp_B = Formula.mk_imp(A, B);
+    val not_B = Formula.mk_not(B);
+    val th1 = Thm.assume A_imp_B [A, not_B];
+    val th2 = Thm.assume A [A_imp_B, not_B];
+    val th3 = Thm.modus_ponens th1 th2;      (* A, not B, A => B |- B *)
+    val th4 = Thm.assume not_B [A, A_imp_B]; (* A, not B, A => B |- not B *)
+    val th5 = Thm.not_elim th4;
+    val th6 = Thm.modus_ponens th5 th3;      (* A, not B, A => B |- false *)
+    val th7 = Thm.disch A th6;           (* not B, A => B |- A => false *)
+    val th8 = Thm.not_intro th7;             (* not B, A => B |- not A *)
+    val th9 = Thm.disch not_B th8;
+  in
+    Thm.disch A_imp_B th9
+  end;
+\nwindexdefn{\nwixident{Derived.contrapositive}}{Derived.contrapositive}{NW1NjfzY-4KFbFg-1}\eatline
+\nwalsodefined{\\{NW1NjfzY-4KFbFg-2}}\nwused{\\{NW1NjfzY-4CUt2L-5}}\nwidentdefs{\\{{\nwixident{Derived.contrapositive}}{Derived.contrapositive}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}}\\{{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}}}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-4KFbFg-1}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW1NjfzY-4KFbFg-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-4KFbFg-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-4KFbFg-1}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-4KFbFg-1}\nwindexuse{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}{NW1NjfzY-4KFbFg-1}\nwindexuse{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}{NW1NjfzY-4KFbFg-1}\nwendcode{}\nwbegindocs{66}\nwdocspar
+\begin{node}
+Since Intuitionistic logic lacks the law of the excluded middle, we
+also want to prove $\vdash(A\implies\neg B)\implies(B\implies\neg A)$.
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $(A\implies B),A,\neg B\vdash A\implies B$ by assume
+\item $(A\implies B),A,\neg B\vdash A$ by assume
+\item $(A\implies B),A,\neg B\vdash B$ by MP(1,2)
+\item $(A\implies B),A,\neg B\vdash \neg B$ by assume
+\item $(A\implies B),A,\neg B\vdash B\implies\bot$ by $\neg$-elim(4)
+\item $(A\implies B),A,\neg B\vdash \bot$ by MP(5,3)
+\item $(A\implies B),\neg B\vdash A\implies\bot$ by discharging $A$
+\item $(A\implies B),\neg B\vdash \neg A$ by $\neg$-intro(7)
+\item $(A\implies B)\vdash\neg B\implies \neg A$ by discharging $\neg B$
+\item $\vdash(A\implies B)\implies(\neg B\implies \neg A)$ by discharging $\neg B$\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{67}\sublabel{NW1NjfzY-4KFbFg-2}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-4KFbFg-2}}}\moddef{Contrapositive derived rules~{\nwtagstyle{}\subpageref{NW1NjfzY-4KFbFg-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-5}}\nwprevnextdefs{NW1NjfzY-4KFbFg-1}{\relax}\nwenddeflinemarkup
+fun contrapositive_not A B =
+  let
+    val not_B = Formula.mk_not B;
+    val not_A = Formula.mk_not A;
+    val A_imp_not_B = Formula.mk_imp(A, not_B);
+    val not_A_imp_B = Formula.mk_imp(not_A, B);
+    val th1 = Thm.assume A_imp_not_B [A, B];
+    val th2 = Thm.assume A [A_imp_not_B, B];
+    val th3 = Thm.modus_ponens th1 th2; (* A, B, A => not B |- not B *)
+    val th4 = Thm.not_elim th3;         (* A, B, A => not B |- B => false *)
+    val th5 = Thm.assume B [A_imp_not_B, A];
+    val th6 = Thm.modus_ponens th4 th5; (* A, B, A => not B |- false *)
+    val th7 = Thm.disch A th6;      (* B, A => not B |- A => false *)
+    val th8 = Thm.not_intro th7;        (* B, A => not B |- not A *)
+    val th9 = Thm.disch B th8;      (* A => not B |- B => not A *)
+  in
+    Thm.disch A_imp_not_B th9
+  end;
+\nwindexdefn{\nwixident{Derived.contrapositive{\_}not}}{Derived.contrapositive:unnot}{NW1NjfzY-4KFbFg-2}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-5}}\nwidentdefs{\\{{\nwixident{Derived.contrapositive{\_}not}}{Derived.contrapositive:unnot}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}}\\{{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}}}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-4KFbFg-2}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW1NjfzY-4KFbFg-2}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-4KFbFg-2}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-4KFbFg-2}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-4KFbFg-2}\nwindexuse{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}{NW1NjfzY-4KFbFg-2}\nwindexuse{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}{NW1NjfzY-4KFbFg-2}\nwendcode{}\nwbegindocs{68}\nwdocspar
+\begin{node}
+$\vdash\neg(A\lor B)\iff((\neg A)\land(\neg B))$
+\end{node}
+
+\begin{proof}
+Backwards direction:
+\begin{enumerate}
+\item $\neg A\land\neg B\vdash \neg A\land\neg B$ by assuming $\neg A\land\neg B$%1
+\item $\neg A\land\neg B\vdash \neg A$ by $\land$-elim-l(1)%2
+\item $\neg A\land\neg B\vdash A\implies\bot$ by $\neg$-elim(2)%3
+\item $\neg A\land\neg B\vdash\neg B$ by $\land$-elim-r(1)%4
+\item $\neg A\land\neg B\vdash B\implies\bot$ by $\neg$-elim(4)%5
+\item $\neg A\land\neg B\vdash A\lor B\implies\bot$ by $\lor$-elim(3, 5)%6
+\item $\neg A\land\neg B\vdash\neg(A\lor B)$ by $\neg$-intro(6)%7
+\item $\vdash(\neg A\land\neg B)\implies\neg(A\lor B)$ by discharging 7
+\end{enumerate}
+Forwards direction:
+\begin{enumerate}
+\item $A\lor B,\bot\vdash\bot$ by assuming $\bot$%1
+\item $A\lor B,\bot\vdash\neg A\land\neg B$ by contr($\neg A\land\neg B$)%2
+\item $A\lor B\vdash\bot\implies(\neg A\land\neg B)$ by discharging $\bot$%3
+\item $\vdash(A\lor B)\implies(\bot\implies(\neg A\land\neg B))$ by discharging%4
+\item $\vdash((A\lor B)\implies(\bot\implies(\neg A\land\neg B)))\implies(((A\lor B)\implies\bot)\implies(\neg A\land\neg B))$
+  by {\Tt{}frege{\_}id\nwendquote}($A\lor B$, $\bot$, $\neg A\land\neg B$)%5
+\item $\vdash(((A\lor B)\implies\bot)\implies(\neg A\land\neg B))$ by
+  modus ponens(5, 4)%6
+\item $\vdash(\neg(A\lor B))\implies((A\lor B)\implies\bot)$%7
+\item $\vdash(\neg(A\lor B))\implies(\neg A\land\neg B)$ by
+  hypothetical syllogism(7, 6)\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{69}\sublabel{NW1NjfzY-4UPWei-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-4UPWei-1}}}\moddef{Negation of disjunction~{\nwtagstyle{}\subpageref{NW1NjfzY-4UPWei-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-6}}\nwenddeflinemarkup
+local
+  fun backward A B =
+    let
+      val not_A_and_not_B = Formula.mk_and(Formula.mk_not(A),
+                                           Formula.mk_not(B));
+      val th1 = Thm.assume not_A_and_not_B [];
+      val th2 = Thm.and_elim_l th1;
+      val th3 = Thm.not_elim th2;
+      val th4 = Thm.and_elim_r th1;
+      val th5 = Thm.not_elim th4;
+      val th6 = Thm.or_elim th3 th5;
+      val th7 = Thm.not_intro th6;
+    in
+      Thm.disch not_A_and_not_B th7
+    end;
+  fun forward A B =
+    let
+      val A_or_B = Formula.mk_or(A, B);
+      val not_A_and_not_B = Formula.mk_and(Formula.mk_not(A),
+                                           Formula.mk_not(B));
+      val F = Formula.mk_falsum ();
+      val th1 = Thm.assume F [A_or_B];
+      val th2 = Thm.contr not_A_and_not_B th1;
+      val th3 = Thm.disch F th2;
+      val th4 = Thm.disch A_or_B th3;
+      val th5 = frege_id A_or_B F not_A_and_not_B;
+      val th6 = Thm.modus_ponens th5 th4;
+      val th7 = Thm.disch not_A_and_not_B
+                              (Thm.not_elim (Thm.assume not_A_and_not_B []));
+    in
+      hypo_syll th7 th6
+    end;
+in
+fun not_or A B =
+  Thm.iff_intro (forward A B) (backward A B)
+end;
+\nwindexdefn{\nwixident{Derived.not{\_}or}}{Derived.not:unor}{NW1NjfzY-4UPWei-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-6}}\nwidentdefs{\\{{\nwixident{Derived.not{\_}or}}{Derived.not:unor}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.contr}}{Thm.contr}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}}\\{{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}}\\{{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}}}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1NjfzY-4UPWei-1}\nwindexuse{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}{NW1NjfzY-4UPWei-1}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW1NjfzY-4UPWei-1}\nwindexuse{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}{NW1NjfzY-4UPWei-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-4UPWei-1}\nwindexuse{\nwixident{Thm.contr}}{Thm.contr}{NW1NjfzY-4UPWei-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-4UPWei-1}\nwindexuse{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}{NW1NjfzY-4UPWei-1}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-4UPWei-1}\nwindexuse{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}{NW1NjfzY-4UPWei-1}\nwindexuse{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}{NW1NjfzY-4UPWei-1}\nwindexuse{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}{NW1NjfzY-4UPWei-1}\nwendcode{}\nwbegindocs{70}\nwdocspar
+\begin{node}
+$\vdash((\neg A)\lor(\neg B))\implies\neg(A\land B)$
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $A\land B\vdash A\land B$ by assuming $A\land B$%1
+\item $A\land B\vdash A$ by $\land$-elim-l(1)%2
+\item $\vdash(A\land B)\implies A$ by discharging 2%3
+\item $\vdash((A\land B)\implies A)\implies(\neg A\implies\neg(A\land B))$
+  by {\Tt{}contrapositive\nwendquote}($A\land B$, $A$)%4
+\item\label{step:disjunction-of-nots:coup-1} $\vdash\neg A\implies\neg(A\land B)$
+by modus ponens(4, 3)%5
+\item $A\land B\vdash B$ by $\land$-elim-r(1)%6
+\item $\vdash(A\land B)\implies B$ by discharging 6%7
+\item $\vdash((A\land B)\implies B)\implies(\neg B\implies\neg(A\land B))$
+  by {\Tt{}contrapositive\nwendquote}($A\land B$, $B$)%8
+\item\label{step:disjunction-of-nots:coup-2} $\vdash\neg B\implies\neg(A\land B)$
+  by modus ponens(8, 7)% 9
+\item $\vdash((\neg A)\lor(\neg B))\implies\neg(A\land B)$
+  by $\lor$-elim(\ref{step:disjunction-of-nots:coup-1}, \ref{step:disjunction-of-nots:coup-2})\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{71}\sublabel{NW1NjfzY-wYirn-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-wYirn-1}}}\moddef{Negation of conjunction~{\nwtagstyle{}\subpageref{NW1NjfzY-wYirn-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-6}}\nwenddeflinemarkup
+fun not_and A B =
+  let
+    val A_and_B = Formula.mk_and(A, B);
+    val th1 = Thm.assume A_and_B [];
+    fun iter X and_elim =
+      let
+        val lm2 = and_elim th1;
+        val lm3 = Thm.disch A_and_B lm2;
+        val lm4 = contrapositive A_and_B X;
+      in
+        Thm.modus_ponens lm4 lm3
+      end;
+    val th6 = iter A (Thm.and_elim_l);
+    val th9 = iter B (Thm.and_elim_r);
+  in
+    Thm.or_elim th6 th9
+  end;
+\nwindexdefn{\nwixident{Derived.not{\_}and}}{Derived.not:unand}{NW1NjfzY-wYirn-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-6}}\nwidentdefs{\\{{\nwixident{Derived.not{\_}and}}{Derived.not:unand}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}}}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1NjfzY-wYirn-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-wYirn-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-wYirn-1}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-wYirn-1}\nwindexuse{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}{NW1NjfzY-wYirn-1}\nwendcode{}\nwbegindocs{72}\nwdocspar
+\begin{node}
+$\vdash((\neg A)\lor B)\implies(A\implies B)$
+\end{node}
+
+We want to prove $\vdash\neg A\implies(A\implies B)$ and $\vdash B\implies(A\implies B)$
+
+\begin{proof}
+\begin{enumerate}
+\item $\vdash A\implies(\neg A\implies B)$ by {\Tt{}weak{\_}not{\_}elim\ A\ B\nwendquote}
+\item $A,\neg A\vdash B$ by undischarging $A$, $\neg A$
+\item $\vdash(\neg A)\implies(A\implies B)$ by discharging $A$ and
+  then discharging $\neg A$
+\item $A,B\vdash B$ by assume
+\item $B\vdash A\implies B$ by discharging $A$
+\item $\vdash B\implies(A\implies B)$ by discharging $B$
+\item $\vdash((\neg A)\lor B)\implies(A\implies B)$ by $\lor$-elimination(3,6)
+\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{73}\sublabel{NW1NjfzY-3NUP7w-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3NUP7w-1}}}\moddef{$(\neg A)\lor B$ sufficient to prove $A\implies B$~{\nwtagstyle{}\subpageref{NW1NjfzY-3NUP7w-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-6}}\nwenddeflinemarkup
+fun not_disj_to_imp A B =
+  let
+    val not_A = Formula.mk_not(A);
+    val th1 = weak_not_elim A B;
+    val th2 = Thm.undisch (Thm.undisch th1);
+    val th3 = Thm.disch not_A (Thm.disch A th2);
+
+    val th4 = Thm.assume B [A];
+    val th5 = Thm.disch A th4;
+    val th6 = Thm.disch B th5;
+  in
+    Thm.or_elim th3 th6
+  end;
+\nwindexdefn{\nwixident{Derived.not{\_}disj{\_}to{\_}imp}}{Derived.not:undisj:unto:unimp}{NW1NjfzY-3NUP7w-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-6}}\nwidentdefs{\\{{\nwixident{Derived.not{\_}disj{\_}to{\_}imp}}{Derived.not:undisj:unto:unimp}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}}\\{{\nwixident{Thm.undisch}}{Thm.undisch}}}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW1NjfzY-3NUP7w-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-3NUP7w-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-3NUP7w-1}\nwindexuse{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}{NW1NjfzY-3NUP7w-1}\nwindexuse{\nwixident{Thm.undisch}}{Thm.undisch}{NW1NjfzY-3NUP7w-1}\nwendcode{}\nwbegindocs{74}\nwdocspar
+\begin{node}
+$\vdash(A\implies B)\implies\neg(A\land\neg B)$
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $A\land\neg B, A\implies B\vdash A\land\neg B$ by assume
+\item $A\land\neg B, A\implies B\vdash A$ by $\land$-elim-l(1)
+\item $A\land\neg B, A\implies B\vdash\neg B$ by $\land$-elim-r(1)
+\item $A\land\neg B, A\implies B\vdash B\implies\bot$ by $\neg$-elim(3)
+\item $A\land\neg B, A\implies B\vdash A\implies B$ by assume
+\item $A\land\neg B, A\implies B\vdash B$ by modus ponens(5, 2)
+\item $A\land\neg B, A\implies B\vdash \bot$ by modus ponens(4, 6)
+\item $A\implies B\vdash(A\land\neg B)\implies \bot$ by discharging($A\land\neg B$)
+\item $A\implies B\vdash\neg(A\land\neg B)$ by $\neg$-introduction
+\item $\vdash(A\implies B)\implies\neg(A\land\neg B)$ by discharging\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{75}\sublabel{NW1NjfzY-2qUp6m-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-2qUp6m-1}}}\moddef{Implication as negated conjunction~{\nwtagstyle{}\subpageref{NW1NjfzY-2qUp6m-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-6}}\nwenddeflinemarkup
+fun imp_is_not_and A B =
+  let
+    val not_B = Formula.mk_not(B);
+    val A_and_not_B = Formula.mk_and(A, not_B);
+    val A_imp_B = Formula.mk_imp(A, B);
+    val th1 = Thm.assume A_and_not_B [A_imp_B];
+    val th2 = Thm.and_elim_l th1;            (* ... |- A *)
+    val th3 = Thm.and_elim_r th1;            (* ... |- not B *)
+    val th4 = Thm.not_elim th3;              (* ... |- B => false *)
+    val th5 = Thm.assume A_imp_B [A_and_not_B]; (* ... |- A => B *)
+    val th6 = Thm.modus_ponens th5 th2;      (* ... |- B *)
+    val th7 = Thm.modus_ponens th4 th6;      (* ... |- false *)
+    val th8 = Thm.disch A_and_not_B th7; (* ... |- (A & not B) => false *)
+    val th9 = Thm.not_intro th8;             (* ... |- not (A & not B) *)
+  in
+    Thm.disch A_imp_B th9
+  end;
+\nwindexdefn{\nwixident{Derived.imp{\_}is{\_}not{\_}and}}{Derived.imp:unis:unnot:unand}{NW1NjfzY-2qUp6m-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-6}}\nwidentdefs{\\{{\nwixident{Derived.imp{\_}is{\_}not{\_}and}}{Derived.imp:unis:unnot:unand}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}}\\{{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}}}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1NjfzY-2qUp6m-1}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-2qUp6m-1}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW1NjfzY-2qUp6m-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-2qUp6m-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-2qUp6m-1}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-2qUp6m-1}\nwindexuse{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}{NW1NjfzY-2qUp6m-1}\nwindexuse{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}{NW1NjfzY-2qUp6m-1}\nwendcode{}\nwbegindocs{76}\nwdocspar
+\begin{node}
+$\vdash A\iff A$
+\end{node}
+
+\nwenddocs{}\nwbegincode{77}\sublabel{NW1NjfzY-YtLDN-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-YtLDN-1}}}\moddef{Iff is reflexive~{\nwtagstyle{}\subpageref{NW1NjfzY-YtLDN-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-7}}\nwenddeflinemarkup
+fun iff_refl A =
+  let val th1 = imp_reflexive A
+  in Thm.iff_intro th1 th1 end;
+\nwindexdefn{\nwixident{Derived.iff{\_}refl}}{Derived.iff:unrefl}{NW1NjfzY-YtLDN-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-7}}\nwidentdefs{\\{{\nwixident{Derived.iff{\_}refl}}{Derived.iff:unrefl}}}\nwidentuses{\\{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}}\nwindexuse{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}{NW1NjfzY-YtLDN-1}\nwendcode{}\nwbegindocs{78}\nwdocspar
+\begin{node}
+$\vdash(A\iff B)\implies(B\iff A)$
+\end{node}
+
+\nwenddocs{}\nwbegincode{79}\sublabel{NW1NjfzY-3hb2X5-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3hb2X5-1}}}\moddef{Iff is symmetric~{\nwtagstyle{}\subpageref{NW1NjfzY-3hb2X5-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-7}}\nwenddeflinemarkup
+fun iff_sym A B =
+  let
+    val A_iff_B = Formula.mk_iff(A, B);
+    val th1 = Thm.assume A_iff_B [];
+    val th2 = Thm.iff_elim_l th1; (* ... |- A => B *)
+    val th3 = Thm.iff_elim_r th1; (* ... |- B => A *)
+  in
+    Thm.disch A_iff_B (Thm.iff_intro th3 th2)
+  end;
+\nwindexdefn{\nwixident{Derived.iff{\_}sym}}{Derived.iff:unsym}{NW1NjfzY-3hb2X5-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-7}}\nwidentdefs{\\{{\nwixident{Derived.iff{\_}sym}}{Derived.iff:unsym}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.iff{\_}elim{\_}l}}{Thm.iff:unelim:unl}}\\{{\nwixident{Thm.iff{\_}elim{\_}r}}{Thm.iff:unelim:unr}}\\{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}}\nwindexuse{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}{NW1NjfzY-3hb2X5-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-3hb2X5-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-3hb2X5-1}\nwindexuse{\nwixident{Thm.iff{\_}elim{\_}l}}{Thm.iff:unelim:unl}{NW1NjfzY-3hb2X5-1}\nwindexuse{\nwixident{Thm.iff{\_}elim{\_}r}}{Thm.iff:unelim:unr}{NW1NjfzY-3hb2X5-1}\nwindexuse{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}{NW1NjfzY-3hb2X5-1}\nwendcode{}\nwbegindocs{80}\nwdocspar
+\begin{node}
+$\vdash (A\iff B)\land(B\iff C)\implies(A\iff C)$
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $(A\iff B)\land(B\iff C)\vdash(A\iff B)\land(B\iff C)$ by assuming%1
+\item $(A\iff B)\land(B\iff C)\vdash A\iff B$ by $\land$-elim-l(1)%2
+\item $(A\iff B)\land(B\iff C)\vdash A\implies B$ by $\iff$-elim-l(2)%3
+\item $(A\iff B)\land(B\iff C)\vdash B\iff C$ by $\land$-elim-r(1)%4
+\item $(A\iff B)\land(B\iff C)\vdash B\implies C$ by $\iff$-elim-r(4)%5
+\item $(A\iff B)\land(B\iff C)\vdash A\implies C$ by {\Tt{}imp{\_}trans\nwendquote}(3, 5)%6
+\item $(A\iff B)\land(B\iff C)\vdash C\implies B$ by $\iff$-elim-l(4)%7
+\item $(A\iff B)\land(B\iff C)\vdash B\implies A$ by $\iff$-elim-r(2)%8
+\item $(A\iff B)\land(B\iff C)\vdash C\implies A$ by {\Tt{}imp{\_}trans\nwendquote}(8, 9)%9
+\item $(A\iff B)\land(B\iff C)\vdash A\iff C$ by $\Leftrightarrow$-intro(6, 9)
+\item $\vdash((A\iff B)\land(B\iff C))\implies(A\iff C)$ by discharging hypothesis from step 10\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{81}\sublabel{NW1NjfzY-2isj9x-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-2isj9x-1}}}\moddef{Iff is transitive~{\nwtagstyle{}\subpageref{NW1NjfzY-2isj9x-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4CUt2L-7}}\nwenddeflinemarkup
+fun iff_trans A B C =
+  let
+    val A_iff_B = Formula.mk_iff(A, B);
+    val B_iff_C = Formula.mk_iff(B, C);
+    val AB_and_BC = Formula.mk_and(A_iff_B, B_iff_C);
+    val th1 = Thm.assume AB_and_BC [];
+    val th2 = Thm.and_elim_l th1; (* ... |- A iff B *)
+    val th3 = Thm.iff_elim_l th2; (* ... |- A => B *)
+    val th4 = Thm.and_elim_r th1; (* ... |- B iff C *)
+    val th5 = Thm.iff_elim_r th4; (* ... |- B => C *)
+    val th6 = Thm.and_intro th3 th5; (* ... |- (A => B) & (B => C *)
+    val th7 = Thm.modus_ponens (imp_trans A B C) th6; (* ... |- A => C *)
+    val th8 = Thm.iff_elim_r th2; (* ... |- B => A *)
+    val th9 = Thm.iff_elim_l th4; (* ... |- C => B *)
+    val th10 = Thm.and_intro th4 th8; (* ... |- (C => B) & (B => A *)
+    val th11 = Thm.modus_ponens (imp_trans C B A) th10; (* ... |- C => A *)
+    val th12 = Thm.iff_intro th7 th11; (* ... |- A iff C *)
+  in
+    Thm.disch AB_and_BC th12
+  end;
+\nwindexdefn{\nwixident{Derived.iff{\_}trans}}{Derived.iff:untrans}{NW1NjfzY-2isj9x-1}\eatline
+\nwused{\\{NW1NjfzY-4CUt2L-7}}\nwidentdefs{\\{{\nwixident{Derived.iff{\_}trans}}{Derived.iff:untrans}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.iff{\_}elim{\_}l}}{Thm.iff:unelim:unl}}\\{{\nwixident{Thm.iff{\_}elim{\_}r}}{Thm.iff:unelim:unr}}\\{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1NjfzY-2isj9x-1}\nwindexuse{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}{NW1NjfzY-2isj9x-1}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-2isj9x-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-2isj9x-1}\nwindexuse{\nwixident{Thm.iff{\_}elim{\_}l}}{Thm.iff:unelim:unl}{NW1NjfzY-2isj9x-1}\nwindexuse{\nwixident{Thm.iff{\_}elim{\_}r}}{Thm.iff:unelim:unr}{NW1NjfzY-2isj9x-1}\nwindexuse{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}{NW1NjfzY-2isj9x-1}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-2isj9x-1}\nwendcode{}\nwbegindocs{82}\nwdocspar
+\vfill\eject
+\begin{node}[Quantifier theorems]\label{node:fs0:derived.nw:toc:predicate-logic}
+Let $C$ be such that $x$ is not free in $C$ (i.e., $x\notin FV(C)$).
+We also have derived rules for quantifiers:
+\begin{enumerate}\setcounter{enumi}{\value{node}}
+\item \checkbox{1} $\vdash((\forall x\ldotp A[x])\lor C)\implies\forall x\ldotp
+(A[x]\lor C)$%a(done)
+\item \checkbox{1} $\vdash((\exists x\ldotp A[x])\lor(\exists x\ldotp B[x]))\iff\exists x\ldotp(A[x]\lor B[x])$%b(done)
+\item \checkbox{1} $\vdash(\forall x\ldotp A[x]\land B[x])\iff((\forall x\ldotp A[x])\land(\forall x\ldotp B[x]))$%c(done)
+\item \checkbox{1} $\vdash(\exists x\ldotp A[x]\land B[x])\implies((\exists x\ldotp A[x])\land(\exists x\ldotp B[x]))$%d(done)
+\item \checkbox{1} $\vdash(\forall x\ldotp(A[x]\implies C))\iff((\exists x\ldotp A[x])\implies C)$%e(done)
+\item \checkbox{1} $\vdash(\forall x\ldotp\neg A[x])\iff\neg(\exists x\ldotp A[x])$%e'(done)
+\bigbreak
+\item \checkbox{0} $\vdash(\forall x\ldotp(C\implies A[x]))\iff(C\implies\forall x\ldotp A[x])$%f
+\item \checkbox{1} $\vdash(\exists x\ldotp(A[x]\implies C))\implies((\forall x\ldotp A[x])\implies C)$%g
+\item \checkbox{1} $\vdash(\exists x\ldotp\neg A[x])\implies\neg(\forall x\ldotp A[x])$%g'
+\item \checkbox{0} $\vdash(\exists x\ldotp(C\implies A[x]))\implies(C\implies\exists x\ldotp A[x])$%h
+\item \checkbox{0} $\vdash(\exists x\ldotp C)\iff C$ and $\vdash(\forall x\ldotp C)\iff C$
+\end{enumerate}
+\end{node}
+
+\nwenddocs{}\nwbegincode{83}\sublabel{NW1NjfzY-uZfts-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}}\moddef{Derived results for Intuitionistic predicate logic~{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{\relax}{NW1NjfzY-uZfts-2}\nwenddeflinemarkup
+
+\nwalsodefined{\\{NW1NjfzY-uZfts-2}\\{NW1NjfzY-uZfts-3}\\{NW1NjfzY-uZfts-4}\\{NW1NjfzY-uZfts-5}\\{NW1NjfzY-uZfts-6}\\{NW1NjfzY-uZfts-7}\\{NW1NjfzY-uZfts-8}\\{NW1NjfzY-uZfts-9}\\{NW1NjfzY-uZfts-A}\\{NW1NjfzY-uZfts-B}}\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwendcode{}\nwbegindocs{84}\nwdocspar
+
+\begin{node}% all_disj?
+$\vdash(\forall x\ldotp A[x]\lor C)\implies\forall x\ldotp(A[x]\lor C)$
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $C\vdash C$ by assuming%1
+\item $C\vdash A[x]\lor C$ by $\lor$-intro-l($A[x]$)%2
+\item $C\vdash\forall x\ldotp(A[x]\lor C)$ by $\forall$-intro(2)%3
+\item $\vdash C\implies\forall x\ldotp(A[x]\lor C)$ by discharging%4
+\item $\forall x\ldotp A[x]\vdash\forall x\ldotp A[x]$ by assuming $\forall x\ldotp A[x]$%5
+\item $\forall x\ldotp A[x]\vdash A[x]$ by $\forall$-elimination(5, $x$)%6
+\item $\forall x\ldotp A[x]\vdash A[x]\lor C$ by $\lor$-intro-r($C$)%7
+\item $\forall x\ldotp A[x]\vdash\forall x\ldotp(A[x]\lor C)$ by
+  $\forall$-intro(7, $x$)%8
+\item $\vdash(\forall x\ldotp A[x])\implies\forall x\ldotp(A[x]\lor C)$ by
+  discharging 8%9
+\item $\vdash((\forall x\ldotp A[x])\lor C)\implies\forall x\ldotp(A[x]\lor C)$
+  by $\lor$-elimination(9, 4)\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{85}\sublabel{NW1NjfzY-uZfts-2}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-2}}}\moddef{Derived results for Intuitionistic predicate logic~{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{NW1NjfzY-uZfts-1}{NW1NjfzY-uZfts-3}\nwenddeflinemarkup
+(* all_disjL : Term.t. -> Formula.t -> Formula.t -> Thm.t *)
+fun all_disjL x A C =
+  let
+    val th1 = Thm.assume C [];
+    val th2 = Thm.or_intro_l A th1;
+    val th3 = Thm.forall_intro x th2;
+    val th4 = Thm.disch C th3;
+    val th5 = Thm.assume (Formula.mk_forall(x, A)) [];
+    val th6 = Thm.forall_elim x th5;
+    val th7 = Thm.or_intro_r C th6;
+    val th8 = Thm.forall_intro x th7;
+    val th9 = Thm.disch (Formula.mk_forall(x, A)) th8;
+  in
+    Thm.or_elim th9 th4
+  end;
+\nwindexdefn{\nwixident{Derived.all{\_}disjL}}{Derived.all:undisjL}{NW1NjfzY-uZfts-2}\eatline
+\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.all{\_}disjL}}{Derived.all:undisjL}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}}\\{{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}}\\{{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}}\\{{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}}\\{{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-uZfts-2}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW1NjfzY-uZfts-2}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1NjfzY-uZfts-2}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-2}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-2}\nwindexuse{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}{NW1NjfzY-uZfts-2}\nwindexuse{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}{NW1NjfzY-uZfts-2}\nwindexuse{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}{NW1NjfzY-uZfts-2}\nwindexuse{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}{NW1NjfzY-uZfts-2}\nwindexuse{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}{NW1NjfzY-uZfts-2}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW1NjfzY-uZfts-2}\nwendcode{}\nwbegindocs{86}\nwdocspar
+We also add a test to check that the result works.
+
+\nwenddocs{}\nwbegincode{87}\sublabel{NW1NjfzY-3rvgpx-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}}\moddef{Unit tests for \code{}Derived.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}}\endmoddef\nwstartdeflinemarkup\nwprevnextdefs{\relax}{NW1NjfzY-3rvgpx-2}\nwenddeflinemarkup
+fun all_disjL_test () =
+  let
+    val x = Term.Var("x", Sort.IND);
+    val A = Formula.mk_pred("A", [x]);
+    val C = Formula.mk_pred("C", []);
+    val expected = Formula.mk_imp(Formula.mk_or(Formula.mk_forall(x,A),C),
+                                  Formula.mk_forall(x, Formula.mk_or(A,C)));
+    val actual = Thm.concl (\nwlinkedidentc{Derived.all_disjL}{NW1NjfzY-uZfts-2} x A C);
+  in
+    Formula.eq expected actual
+  end;
+\nwalsodefined{\\{NW1NjfzY-3rvgpx-2}\\{NW1NjfzY-3rvgpx-3}\\{NW1NjfzY-3rvgpx-4}\\{NW1NjfzY-3rvgpx-5}\\{NW1NjfzY-3rvgpx-6}\\{NW1NjfzY-3rvgpx-7}\\{NW1NjfzY-3rvgpx-8}\\{NW1NjfzY-3rvgpx-9}\\{NW1NjfzY-3rvgpx-A}}\nwnotused{Unit tests for [[Derived.sml]]}\nwidentuses{\\{{\nwixident{Derived.all{\_}disjL}}{Derived.all:undisjL}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Derived.all{\_}disjL}}{Derived.all:undisjL}{NW1NjfzY-3rvgpx-1}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1NjfzY-3rvgpx-1}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-3rvgpx-1}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-3rvgpx-1}\nwindexuse{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}{NW1NjfzY-3rvgpx-1}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1NjfzY-3rvgpx-1}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1NjfzY-3rvgpx-1}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-3rvgpx-1}\nwendcode{}\nwbegindocs{88}\nwdocspar
+
+\begin{node}%ex_disj_distrib
+$\vdash((\exists x\ldotp A[x])\lor(\exists x\ldotp B[x]))\iff\exists x\ldotp(A[x]\lor B[x])$
+\end{node}
+
+\begin{proof}
+The forward proof:
+\begin{enumerate}
+\item $A[x]\vdash A[x]$ by assuming $A[x]$%1
+\item $A[x]\vdash A[x]\lor B[x]$ by $\lor$-intro-r($B[x]$)%2
+\item $A[x]\vdash\exists x\ldotp(A[x]\lor B[x])$ by $\exists$-intro(2, $x$)%3
+\item $\vdash A[x]\implies\exists x\ldotp(A[x]\lor B[x])$ by
+  discharging $A[x]$%4
+\item $\vdash(\exists x\ldotp A[x])\implies\exists x\ldotp(A[x]\lor B[x])$ by
+  $\exists$-elimination(4)%5
+\item $B[x]\vdash B[x]$ by assuming $B[x]$%6
+\item $B[x]\vdash A[x]\lor B[x]$ by $\lor$-intro-l(6, $A[x]$)%7
+\item $B[x]\vdash\exists x\ldotp(A[x]\lor B[x])$ by $\exists$-intro(7, $x$)%8
+\item $\vdash B[x]\implies\exists x\ldotp(A[x]\lor B[x])$ by
+  discharging $B[x]$%9
+\item $\vdash(\exists x\ldotp B[x])\implies\exists x\ldotp(A[x]\lor B[x])$ by
+  $\exists$-elimination(9)%10
+\item $\vdash(\exists x\ldotp A[x])\lor(\exists x\ldotp B[x])\implies\exists x\ldotp(A[x]\lor B[x])$
+  by $\lor$-intro(5, 10)%11
+\end{enumerate}
+The backward proof:
+\begin{enumerate}\setcounter{enumi}{11}
+\item $A[x]\vdash \exists x\ldotp A[x]$ by $\exists$-intro(1)%12
+\item $A[x]\vdash(\exists x\ldotp A[x])\lor(\exists x\ldotp B[x])$ by $\lor$-intro-r($\exists x\ldotp B[x]$)%13
+\item $\vdash A[x]\implies((\exists x\ldotp A[x])\lor(\exists x\ldotp B[x]))$
+  by discharging $A[x]$%14
+\item $B[x]\vdash\exists x\ldotp B[x]$ by $\exists$-intro(6)%15
+\item $B[x]\vdash(\exists x\ldotp A[x])\lor(\exists x\ldotp B[x])$ by $\lor$-intro-l($\exists x\ldotp A[x]$)%16
+\item $\vdash B[x]\implies((\exists x\ldotp A[x])\lor(\exists x\ldotp B[x]))$
+  by discharging $B[x]$ from 16%17
+\item $\vdash (A[x]\lor B[x])\implies((\exists x\ldotp A[x])\lor(\exists x\ldotp B[x]))$
+  by $\lor$-elimination(14, 17)%18
+\item $\vdash\exists x\ldotp(A[x]\lor B[x])\implies((\exists x\ldotp A[x])\lor(\exists x\ldotp B[x]))$
+  by $\exists$-elimination(18)\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{89}\sublabel{NW1NjfzY-uZfts-3}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-3}}}\moddef{Derived results for Intuitionistic predicate logic~{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{NW1NjfzY-uZfts-2}{NW1NjfzY-uZfts-4}\nwenddeflinemarkup
+local
+  fun forward x A B =
+    let
+      val th1 = Thm.assume A [];
+      val th2 = Thm.or_intro_r B th1;
+      val th3 = Thm.exists_intro x x (Formula.mk_or(A, B))
+                                 th2;
+      val th4 = Thm.disch A th3;
+      val th5 = Thm.exists_elim x th4;
+      val th6 = Thm.assume B [];
+      val th7 = Thm.or_intro_l A th6;
+      val th8 = Thm.exists_intro x x (Formula.mk_or(A, B)) th7;
+      val th9 = Thm.disch B th8;
+      val th10 = Thm.exists_elim x th9;
+    in
+      Thm.or_elim th5 th10
+    end;
+  fun backward x A B =
+    let
+      val th1 = Thm.assume A [];
+      val th2 = Thm.exists_intro x x A th1;
+      val th3 = Thm.or_intro_r (Formula.mk_exists(x, B)) th2;
+      val th4 = Thm.disch A th3;
+      val th5 = Thm.assume B [];
+      val th6 = Thm.exists_intro x x B th5;
+      val th7 = Thm.or_intro_l (Formula.mk_exists(x, A)) th6;
+      val th8 = Thm.disch B th7;
+      val th9 = Thm.or_elim th4 th8;
+    in
+      Thm.exists_elim x th9
+    end;
+in
+fun ex_disj_distrib x A B =
+  Thm.iff_intro (forward x A B) (backward x A B)
+end;
+\nwindexdefn{\nwixident{Derived.ex{\_}disj{\_}distrib}}{Derived.ex:undisj:undistrib}{NW1NjfzY-uZfts-3}\eatline
+\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.ex{\_}disj{\_}distrib}}{Derived.ex:undisj:undistrib}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}}\\{{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}}\\{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}\\{{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}}\\{{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}}\\{{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}}}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-uZfts-3}\nwindexuse{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}{NW1NjfzY-uZfts-3}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-3}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-3}\nwindexuse{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}{NW1NjfzY-uZfts-3}\nwindexuse{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}{NW1NjfzY-uZfts-3}\nwindexuse{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}{NW1NjfzY-uZfts-3}\nwindexuse{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}{NW1NjfzY-uZfts-3}\nwindexuse{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}{NW1NjfzY-uZfts-3}\nwindexuse{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}{NW1NjfzY-uZfts-3}\nwendcode{}\nwbegindocs{90}\nwdocspar
+\nwenddocs{}\nwbegincode{91}\sublabel{NW1NjfzY-3rvgpx-2}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-2}}}\moddef{Unit tests for \code{}Derived.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}}\plusendmoddef\nwstartdeflinemarkup\nwprevnextdefs{NW1NjfzY-3rvgpx-1}{NW1NjfzY-3rvgpx-3}\nwenddeflinemarkup
+fun ex_disj_distrib_test () =
+  let
+    val x = Term.Var("x", Sort.IND);
+    val A = Formula.mk_pred("A", [x]);
+    val B = Formula.mk_pred("B", [x]);
+    val expected =
+      Formula.mk_iff(Formula.mk_or(Formula.mk_exists(x,A),
+                                   Formula.mk_exists(x,B)),
+                     Formula.mk_exists(x, Formula.mk_or(A,B)));
+    val actual = Thm.concl (\nwlinkedidentc{Derived.ex_disj_distrib}{NW1NjfzY-uZfts-3} x A B);
+  in
+    Formula.eq expected actual
+  end;
+\nwidentuses{\\{{\nwixident{Derived.ex{\_}disj{\_}distrib}}{Derived.ex:undisj:undistrib}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}}\\{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Derived.ex{\_}disj{\_}distrib}}{Derived.ex:undisj:undistrib}{NW1NjfzY-3rvgpx-2}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1NjfzY-3rvgpx-2}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-3rvgpx-2}\nwindexuse{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}{NW1NjfzY-3rvgpx-2}\nwindexuse{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}{NW1NjfzY-3rvgpx-2}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1NjfzY-3rvgpx-2}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1NjfzY-3rvgpx-2}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-3rvgpx-2}\nwendcode{}\nwbegindocs{92}\nwdocspar
+
+\begin{node}%all_conj_distrib
+$\vdash(\forall x\ldotp A[x]\land B[x])\iff((\forall x\ldotp A[x])\land(\forall x\ldotp B[x]))$
+\end{node}
+
+\begin{proof}
+Forward proof:
+\begin{enumerate}
+\item $\forall x\ldotp(A[x]\land B[x])\vdash\forall x\ldotp(A[x]\land B[x])$
+  by assuming $\forall x\ldotp(A[x]\land B[x])$%1
+\item $\forall x\ldotp(A[x]\land B[x])\vdash A[x]\land B[x]$ by $\forall$-elim%2
+\item $\forall x\ldotp(A[x]\land B[x])\vdash A[x]$ by $\land$-elim-l(2)%3
+\item $\forall x\ldotp(A[x]\land B[x])\vdash\forall x\ldotp A[x]$ by $\forall$-intro(3)%4
+\item $\forall x\ldotp(A[x]\land B[x])\vdash B[x]$ by $\land$-elim-r(2)%5
+\item $\forall x\ldotp(A[x]\land B[x])\vdash\forall x\ldotp B[x]$ by $\forall$-intro(5)%6
+\item $\forall x\ldotp(A[x]\land B[x])\vdash(\forall x\ldotp A[x])\land(\forall x\ldotp B[x])$
+  by $\land$-intro(4, 6)%7
+\item $\vdash(\forall x\ldotp(A[x]\land B[x]))\implies((\forall x\ldotp A[x])\land(\forall x\ldotp B[x]))$
+  by discharging (7)%8
+\end{enumerate}
+Backward proof
+\begin{enumerate}\setcounter{enumi}{8}
+\item $(\forall x\ldotp A[x])\land(\forall x\ldotp B[x])\vdash(\forall x\ldotp A[x])\land(\forall x\ldotp B[x])$
+  by assuming $(\forall x\ldotp A[x])\land(\forall x\ldotp B[x])$%9
+\item $(\forall x\ldotp A[x])\land(\forall x\ldotp B[x])\vdash(\forall x\ldotp A[x])$
+  by $\land$-elim-l(9)%10
+\item $(\forall x\ldotp A[x])\land(\forall x\ldotp B[x])\vdash A[x]$
+  by $\forall$-elim(10)%11
+\item $(\forall x\ldotp A[x])\land(\forall x\ldotp B[x])\vdash\forall x\ldotp B[x]$
+  by $\land$-elim-r(9)%12
+\item $(\forall x\ldotp A[x])\land(\forall x\ldotp B[x])\vdash B[x]$
+  by $\forall$-elim(12)%13
+\item $(\forall x\ldotp A[x])\land(\forall x\ldotp B[x])\vdash
+  A[x]\land B[x]$ by $\land$-intro(11, 13)% 14
+\item $(\forall x\ldotp A[x])\land(\forall x\ldotp B[x])\vdash\forall
+  x\ldotp(A[x]\land B[x])$ by $\forall$-intro(14)% 15
+\item $\vdash((\forall x\ldotp A[x])\land(\forall x\ldotp B[x]))\implies\forall
+  x\ldotp(A[x]\land B[x])$ by discharging 15\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{93}\sublabel{NW1NjfzY-uZfts-4}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-4}}}\moddef{Derived results for Intuitionistic predicate logic~{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{NW1NjfzY-uZfts-3}{NW1NjfzY-uZfts-5}\nwenddeflinemarkup
+fun all_conj_distrib x A B =
+  let
+    (* backward proof *)
+    val th1 = Thm.assume (Formula.mk_forall(x, Formula.mk_and(A, B))) [];
+    val th2 = Thm.forall_elim x th1;
+    val th3 = Thm.and_elim_l th2; (* ... |- A[x] *)
+    val th4 = Thm.forall_intro x th3;
+    val th5 = Thm.and_elim_r th2; (* ... |- B[x] *)
+    val th6 = Thm.forall_intro x th5;
+    val th7 = Thm.and_intro th4 th6;
+    val th8 = Thm.disch (Formula.mk_forall(x, Formula.mk_and(A, B))) th7;
+    (* forward proof *)
+    val th9 = Thm.assume (Formula.mk_and(Formula.mk_forall(x, A),
+                                         Formula.mk_forall(x, B)))
+                         [];
+    val th10 = Thm.and_elim_l th9;
+    val th11 = Thm.forall_elim x th10;
+    val th12 = Thm.and_elim_r th9;
+    val th13 = Thm.forall_elim x th12;
+    val th14 = Thm.and_intro th11 th13;
+    val th15 = Thm.forall_intro x th14;
+    val th16 = Thm.disch (Formula.mk_and(Formula.mk_forall(x, A),
+                                         Formula.mk_forall(x, B)))
+                         th15;
+  in
+    Thm.iff_intro th16 th8
+  end;
+\nwindexdefn{\nwixident{Derived.all{\_}conj{\_}distrib}}{Derived.all:unconj:undistrib}{NW1NjfzY-uZfts-4}\eatline
+\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.all{\_}conj{\_}distrib}}{Derived.all:unconj:undistrib}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}}\\{{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}}\\{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1NjfzY-uZfts-4}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-uZfts-4}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-4}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-4}\nwindexuse{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}{NW1NjfzY-uZfts-4}\nwindexuse{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}{NW1NjfzY-uZfts-4}\nwindexuse{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}{NW1NjfzY-uZfts-4}\nwendcode{}\nwbegindocs{94}\nwdocspar
+\nwenddocs{}\nwbegincode{95}\sublabel{NW1NjfzY-3rvgpx-3}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-3}}}\moddef{Unit tests for \code{}Derived.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}}\plusendmoddef\nwstartdeflinemarkup\nwprevnextdefs{NW1NjfzY-3rvgpx-2}{NW1NjfzY-3rvgpx-4}\nwenddeflinemarkup
+fun all_conj_distrib_test () =
+  let
+    val x = Term.Var("x", Sort.IND);
+    val A = Formula.mk_pred("A", [x]);
+    val B = Formula.mk_pred("B", [x]);
+    val expected =
+      Formula.mk_iff(Formula.mk_and(Formula.mk_forall(x,A),
+                                    Formula.mk_forall(x,B)),
+                     Formula.mk_forall(x, Formula.mk_and(A,B)));
+    val actual = Thm.concl (\nwlinkedidentc{Derived.all_conj_distrib}{NW1NjfzY-uZfts-4} x A B);
+  in
+    if not(Formula.eq expected actual)
+    then "Expecting: "^(Formula.serialize expected)^"\\nActual: "^
+         (Formula.serialize actual)^"\\n"
+    else ""
+  end;
+\nwidentuses{\\{{\nwixident{Derived.all{\_}conj{\_}distrib}}{Derived.all:unconj:undistrib}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Derived.all{\_}conj{\_}distrib}}{Derived.all:unconj:undistrib}{NW1NjfzY-3rvgpx-3}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1NjfzY-3rvgpx-3}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1NjfzY-3rvgpx-3}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-3rvgpx-3}\nwindexuse{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}{NW1NjfzY-3rvgpx-3}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1NjfzY-3rvgpx-3}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW1NjfzY-3rvgpx-3}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1NjfzY-3rvgpx-3}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-3rvgpx-3}\nwendcode{}\nwbegindocs{96}\nwdocspar
+
+\begin{node}%ex_conj_distrib
+$\vdash(\exists x\ldotp A[x]\land B[x])\implies((\exists x\ldotp A[x])\land(\exists x\ldotp B[x]))$
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $A[x]\land B[x]\vdash A[x]\land B[x]$ 
+  by assuming $A[x]\land B[x]$%1
+\item $A[x]\land B[x]\vdash A[x]$ by $\land$-elim-l(1)%2
+\item $A[x]\land B[x]\vdash \exists x\ldotp A[x]$ by $\exists$-intro(2, $x$)%3
+\item $\vdash A[x]\land B[x]\implies\exists x\ldotp A[x]$ by
+  discharging 3%4
+\item $A[x]\land B[x]\vdash B[x]$ by $\land$-elim-r(1)%5
+\item $A[x]\land B[x]\vdash \exists x\ldotp  B[x]$ by $\exists$-intro(5)%6
+\item $\vdash A[x]\land B[x]\implies \exists x\ldotp  B[x]$ by
+  discharging 6%7
+\item $\vdash A[x]\land B[x]\implies(\exists x\ldotp A[x])\land(\exists x\ldotp B[x])$
+  by $\land$-intro(4, 7)%8
+\item $\vdash(\exists x\ldotp A[x]\land B[x])\implies(\exists x\ldotp A[x])\land(\exists x\ldotp B[x])$
+  by $\exists$-elim(8)\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{97}\sublabel{NW1NjfzY-uZfts-5}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-5}}}\moddef{Derived results for Intuitionistic predicate logic~{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{NW1NjfzY-uZfts-4}{NW1NjfzY-uZfts-6}\nwenddeflinemarkup
+fun ex_conj_distrib x A B =
+  let
+    val AB = Formula.mk_and(A, B);
+    val th1 = Thm.assume AB [];
+    val th2 = Thm.and_elim_l th1;
+    val th3 = Thm.exists_intro x x A th2;
+    val th4 = Thm.and_elim_r th1;
+    val th5 = Thm.exists_intro x x B th4;
+    val th6 = Thm.and_intro th3 th5;
+    val th7 = Thm.disch AB th6;
+  in
+    Thm.exists_elim x th7
+  end;
+\nwindexdefn{\nwixident{Derived.ex{\_}conj{\_}distrib}}{Derived.ex:unconj:undistrib}{NW1NjfzY-uZfts-5}\eatline
+\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.ex{\_}conj{\_}distrib}}{Derived.ex:unconj:undistrib}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}}\\{{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}}}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1NjfzY-uZfts-5}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-5}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-5}\nwindexuse{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}{NW1NjfzY-uZfts-5}\nwindexuse{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}{NW1NjfzY-uZfts-5}\nwendcode{}\nwbegindocs{98}\nwdocspar
+\nwenddocs{}\nwbegincode{99}\sublabel{NW1NjfzY-3rvgpx-4}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-4}}}\moddef{Unit tests for \code{}Derived.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}}\plusendmoddef\nwstartdeflinemarkup\nwprevnextdefs{NW1NjfzY-3rvgpx-3}{NW1NjfzY-3rvgpx-5}\nwenddeflinemarkup
+fun ex_conj_distrib_test () =
+  let
+    val x = Term.Var("x", Sort.IND);
+    val A = Formula.mk_pred("A", [x]);
+    val B = Formula.mk_pred("B", [x]);
+    val expected =
+      Formula.mk_imp(Formula.mk_exists(x, Formula.mk_and(A,B)),
+                     Formula.mk_and(Formula.mk_exists(x, A),
+                                    Formula.mk_exists(x, B)));
+    val actual = Thm.concl (\nwlinkedidentc{Derived.ex_conj_distrib}{NW1NjfzY-uZfts-5} x A B);
+  in
+    if not(Formula.eq expected actual)
+    then "Expecting: "^(Formula.serialize expected)^"\\nActual: "^
+         (Formula.serialize actual)^"\\n"
+    else ""
+  end;
+\nwidentuses{\\{{\nwixident{Derived.ex{\_}conj{\_}distrib}}{Derived.ex:unconj:undistrib}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Derived.ex{\_}conj{\_}distrib}}{Derived.ex:unconj:undistrib}{NW1NjfzY-3rvgpx-4}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1NjfzY-3rvgpx-4}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1NjfzY-3rvgpx-4}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-3rvgpx-4}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-3rvgpx-4}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1NjfzY-3rvgpx-4}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW1NjfzY-3rvgpx-4}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1NjfzY-3rvgpx-4}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-3rvgpx-4}\nwendcode{}\nwbegindocs{100}\nwdocspar
+
+\begin{node}%imp_ex
+$\vdash(\forall x\ldotp(A[x]\implies C))\iff((\exists x\ldotp A[x])\implies C)$
+
+This is more useful as two theorems:
+\begin{equation}
+\vdash(\forall x\ldotp(A[x]\implies C))\implies((\exists x\ldotp A[x])\implies C)
+\end{equation}  
+\begin{equation}
+\vdash((\exists x\ldotp A[x])\implies C)\implies(\forall x\ldotp(A[x]\implies C))
+\end{equation}  
+\end{node}
+
+\begin{proof}
+$\vdash\bigl((\exists x\ldotp A[x])\implies C\bigr)\implies\bigl(\forall x\ldotp(A[x]\implies C)\bigr)$
+\begin{enumerate}
+\item $A[x],(\exists x\ldotp A[x])\implies C\vdash A[x]$ by assume
+\item $A[x],(\exists x\ldotp A[x])\implies C\vdash\exists x\ldotp A[x]$ by $\exists$-intro
+\item $A[x],(\exists x\ldotp A[x])\implies C\vdash(\exists x\ldotp A[x])\implies C$ by assume
+\item $A[x],(\exists x\ldotp A[x])\implies C\vdash C$ by modus ponens(3, 2)
+\item $(\exists x\ldotp A[x])\implies C\vdash A[x]\implies C$ by
+  discharging $A[x]$
+\item $(\exists x\ldotp A[x])\implies C\vdash\forall x\ldotp(A[x]\implies C)$ by
+  $\forall$-introduction
+\item $\vdash\bigl((\exists x\ldotp A[x])\implies C\bigr)\implies\bigl(\forall x\ldotp(A[x]\implies C)\bigr)$ by
+  discharging the remaining hypothesis.
+\end{enumerate}
+$\vdash\bigl(\forall x\ldotp(A[x]\implies C)\bigr)\implies\bigl((\exists x\ldotp A[x])\implies C\bigr)$
+\begin{enumerate}
+\item $\bigl(\forall x\ldotp(A[x]\implies C)\bigr)\vdash\bigl(\forall x\ldotp(A[x]\implies C)\bigr)$
+  by assuming
+\item $\bigl(\forall x\ldotp(A[x]\implies C)\bigr)\vdash A[x]\implies C$
+  by $\forall$-elimination
+\item $\bigl(\forall x\ldotp(A[x]\implies C)\bigr)\vdash(\exists x\ldotp A[x])\implies C$
+  by $\exists$-elimination
+\item $\vdash\bigl(\forall x\ldotp(A[x]\implies C)\bigr)\implies\bigl((\exists x\ldotp A[x])\implies C\bigr)$
+  by discharging the only hypothesis.\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{101}\sublabel{NW1NjfzY-uZfts-6}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-6}}}\moddef{Derived results for Intuitionistic predicate logic~{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{NW1NjfzY-uZfts-5}{NW1NjfzY-uZfts-7}\nwenddeflinemarkup
+local
+fun backward x A C =
+  let
+    val ex_A = Formula.mk_exists(x, A);
+    val ex_A_imp_C = Formula.mk_imp(ex_A, C);
+    (* val A_imp_C = Formula.mk_imp(A, C); *)
+    val th1 = Thm.assume A [ex_A_imp_C];
+    val th2 = Thm.exists_intro x x A th1;
+    val th3 = Thm.assume ex_A_imp_C [A];
+    val th4 = Thm.modus_ponens th3 th2;
+    val th5 = Thm.disch A th4;
+    val th6 = Thm.forall_intro x th5;
+  in
+    Thm.disch ex_A_imp_C th6
+  end;
+
+fun forward x A C =
+  let
+    val A_imp_C = Formula.mk_imp(A, C);
+    val for_x_st_A_holds_C = Formula.mk_forall(x, A_imp_C);
+    val th1 = Thm.assume for_x_st_A_holds_C [];
+    val th2 = Thm.forall_elim x th1;
+    val th3 = Thm.exists_elim x th2;
+  in
+    Thm.disch for_x_st_A_holds_C th3
+  end;
+in
+fun imp_ex x A C =
+  Thm.iff_intro (forward x A C) (backward x A C)
+end;
+\nwindexdefn{\nwixident{Derived.imp{\_}ex}}{Derived.imp:unex}{NW1NjfzY-uZfts-6}\eatline
+\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.imp{\_}ex}}{Derived.imp:unex}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}}\\{{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}}\\{{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}}\\{{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}}\\{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-uZfts-6}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-uZfts-6}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-uZfts-6}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-6}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-6}\nwindexuse{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}{NW1NjfzY-uZfts-6}\nwindexuse{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}{NW1NjfzY-uZfts-6}\nwindexuse{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}{NW1NjfzY-uZfts-6}\nwindexuse{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}{NW1NjfzY-uZfts-6}\nwindexuse{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}{NW1NjfzY-uZfts-6}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-uZfts-6}\nwendcode{}\nwbegindocs{102}\nwdocspar
+\nwenddocs{}\nwbegincode{103}\sublabel{NW1NjfzY-3rvgpx-5}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-5}}}\moddef{Unit tests for \code{}Derived.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}}\plusendmoddef\nwstartdeflinemarkup\nwprevnextdefs{NW1NjfzY-3rvgpx-4}{NW1NjfzY-3rvgpx-6}\nwenddeflinemarkup
+fun imp_ex_test () =
+  let
+    val x = Term.Var("x", Sort.IND);
+    val A = Formula.mk_pred("A", [x]);
+    val C = Formula.mk_pred("C", []);
+    val expected =
+      Formula.mk_iff(Formula.mk_forall(x, Formula.mk_imp(A,C)),
+                     Formula.mk_imp(Formula.mk_exists(x, A),
+                                    C));
+    val actual = Thm.concl (\nwlinkedidentc{Derived.imp_ex}{NW1NjfzY-uZfts-6} x A C);
+  in
+    if not(Formula.eq expected actual)
+    then "Expecting: "^(Formula.serialize expected)^"\\nActual: "^
+         (Formula.serialize actual)^"\\n"
+    else ""
+  end;
+\nwidentuses{\\{{\nwixident{Derived.imp{\_}ex}}{Derived.imp:unex}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Derived.imp{\_}ex}}{Derived.imp:unex}{NW1NjfzY-3rvgpx-5}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1NjfzY-3rvgpx-5}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-3rvgpx-5}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-3rvgpx-5}\nwindexuse{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}{NW1NjfzY-3rvgpx-5}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-3rvgpx-5}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1NjfzY-3rvgpx-5}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW1NjfzY-3rvgpx-5}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1NjfzY-3rvgpx-5}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-3rvgpx-5}\nwendcode{}\nwbegindocs{104}\nwdocspar
+
+\begin{node}
+$\vdash(\forall x\ldotp\neg A[x])\iff(\neg(\exists x\ldotp A[x]))$
+
+This is a variant of the previous result, except that it's faster.
+\end{node}
+
+\nwenddocs{}\nwbegincode{105}\sublabel{NW1NjfzY-uZfts-7}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-7}}}\moddef{Derived results for Intuitionistic predicate logic~{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{NW1NjfzY-uZfts-6}{NW1NjfzY-uZfts-8}\nwenddeflinemarkup
+local
+fun backward x A =
+  let
+    val ex_A = Formula.mk_exists(x, A);
+    val F = Formula.mk_falsum ();
+    val ex_A_imp_F = Formula.mk_imp(ex_A, F);
+    (* val A_imp_F = Formula.mk_imp(A, F); *)
+    val th1 = Thm.assume A [ex_A_imp_F];
+    val th2 = Thm.exists_intro x x A th1;
+    val th3 = Thm.assume ex_A_imp_F [A];
+    val th4 = Thm.modus_ponens th3 th2; (* ... |- false *)
+    val th5 = Thm.disch A th4; (* ... |- A => false *)
+    val th6 = Thm.not_intro th5; (* ... |- not A[x] *)
+    val th7 = Thm.forall_intro x th6; (* ... |- for x holds not A[x] *)
+    val th8 = Thm.assume (Formula.mk_not ex_A) [];
+    val th9 = Thm.not_elim th8;
+  in
+    hypo_syll (Thm.disch (Formula.mk_not ex_A) th9)
+              (Thm.disch ex_A_imp_F th7)
+  end;
+
+fun forward x A =
+  let
+    val F = Formula.mk_falsum ();
+    val A_imp_F = Formula.mk_imp(A, F);
+    val for_x_holds_not_A = Formula.mk_forall(x, Formula.mk_not(A));
+    val th1 = Thm.assume for_x_holds_not_A []; 
+    val th2 = Thm.forall_elim x th1; (* ... |- not A[x] *)
+    val th3 = Thm.not_elim th2; (* ... |- A[x] => false *)
+    val th4 = Thm.exists_elim x th3; (* ... |- (exists x. A[x]) => false *)
+    val th5 = Thm.not_intro th4; (* ... |- not(exists x. A[x]) *)
+  in
+    Thm.disch for_x_holds_not_A th5
+  end;
+in
+fun not_all_iff_ex_not x A =
+  Thm.iff_intro (forward x A) (backward x A)
+end;
+\nwindexdefn{\nwixident{Derived.not{\_}all{\_}iff{\_}ex{\_}not}}{Derived.not:unall:uniff:unex:unnot}{NW1NjfzY-uZfts-7}\eatline
+\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.not{\_}all{\_}iff{\_}ex{\_}not}}{Derived.not:unall:uniff:unex:unnot}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}}\\{{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}}\\{{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}}\\{{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}}\\{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}}\\{{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}}}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}{NW1NjfzY-uZfts-7}\nwendcode{}\nwbegindocs{106}\nwdocspar
+\nwenddocs{}\nwbegincode{107}\sublabel{NW1NjfzY-3rvgpx-6}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-6}}}\moddef{Unit tests for \code{}Derived.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}}\plusendmoddef\nwstartdeflinemarkup\nwprevnextdefs{NW1NjfzY-3rvgpx-5}{NW1NjfzY-3rvgpx-7}\nwenddeflinemarkup
+fun not_all_iff_ex_not_test () =
+  let
+    val x = Term.Var("x", Sort.IND);
+    val A = Formula.mk_pred("A", [x]);
+    val expected =
+      Formula.mk_iff(Formula.mk_forall(x, Formula.mk_not(A)),
+                     Formula.mk_not(Formula.mk_exists(x, A)));
+    val actual = Thm.concl (\nwlinkedidentc{Derived.not_all_iff_ex_not}{NW1NjfzY-uZfts-7} x A);
+  in
+    if not(Formula.eq expected actual)
+    then "Expecting: "^(Formula.serialize expected)^"\\nActual: "^
+         (Formula.serialize actual)^"\\n"
+    else ""
+  end;
+\nwidentuses{\\{{\nwixident{Derived.not{\_}all{\_}iff{\_}ex{\_}not}}{Derived.not:unall:uniff:unex:unnot}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Derived.not{\_}all{\_}iff{\_}ex{\_}not}}{Derived.not:unall:uniff:unex:unnot}{NW1NjfzY-3rvgpx-6}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1NjfzY-3rvgpx-6}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-3rvgpx-6}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-3rvgpx-6}\nwindexuse{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}{NW1NjfzY-3rvgpx-6}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW1NjfzY-3rvgpx-6}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1NjfzY-3rvgpx-6}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW1NjfzY-3rvgpx-6}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1NjfzY-3rvgpx-6}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-3rvgpx-6}\nwendcode{}\nwbegindocs{108}\nwdocspar
+
+\begin{node}
+$\vdash(\forall x\ldotp(C\implies A[x]))\iff(C\implies\forall x\ldotp A[x])$
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $\forall x\ldotp(C\implies A[x])\vdash\forall x\ldotp(C\implies A[x])$
+by assuming%1
+\item $\forall x\ldotp(C\implies A[x])\vdash C\implies A[x]$
+  by $\forall$-elim($x$, 1)%2
+\item $C,\forall x\ldotp(C\implies A[x])\vdash A[x]$
+  by undischarging%3
+\item $C,\forall x\ldotp(C\implies A[x])\vdash\forall x\ldotp A[x]$
+  by $\forall$-intro($x$, 3)%4
+\item $\forall x\ldotp(C\implies A[x])\vdash C\implies\forall x\ldotp A[x]$
+  by discharging $C$%5
+\item $\vdash(\forall x\ldotp(C\implies A[x]))\implies(C\implies\forall x\ldotp A[x])$
+  by discharging%6
+\item $C\implies\forall x\ldotp A[x]\vdash C\implies\forall x\ldotp A[x]$
+  by assuming%7
+\item $C,C\implies\forall x\ldotp A[x]\vdash\forall x\ldotp A[x]$
+  by undischarging%8
+\item $C,C\implies\forall x\ldotp A[x]\vdash A[x]$
+  by $\forall$-elim($x$, 8)%9
+\item $C\implies\forall x\ldotp A[x]\vdash C\implies A[x]$
+  by discharging $C$%10
+\item $C\implies\forall x\ldotp A[x]\vdash\forall x\ldotp(C\implies A[x])$
+  by $\forall$-intro($x$, 10)%11
+\item $\vdash(C\implies\forall x\ldotp A[x])\implies(\forall x\ldotp(C\implies A[x]))$
+  by discharging%13
+\item $\vdash(\forall x\ldotp(C\implies A[x]))\iff(C\implies\forall x\ldotp A[x])$
+  by $\Leftrightarrow$-intro(6, 13)\qedhere%14
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{109}\sublabel{NW1NjfzY-uZfts-8}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-8}}}\moddef{Derived results for Intuitionistic predicate logic~{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{NW1NjfzY-uZfts-7}{NW1NjfzY-uZfts-9}\nwenddeflinemarkup
+(* all_imp : Term.t -> Formula.t -> Formula.t -> Thm.t
+
+all_imp x C A =
+|- (for x st C holds A[x]) iff (C implies for x holds A[x]) *)
+fun all_imp x C A =
+  let
+    val all_C_imp_A = Formula.mk_forall(x, Formula.mk_imp(C, A));
+    (* forward direction *)
+    val th1 = Thm.assume all_C_imp_A [];
+    val th2 = Thm.forall_elim x th1;
+    val th3 = Thm.undisch th2;
+    val th4 = Thm.forall_intro x th3;
+    val th5 = Thm.disch C th4;
+    val th6 = Thm.disch all_C_imp_A th5;
+    (* backward direction *)
+    val C_imp_all_A = Formula.mk_imp(C, Formula.mk_forall(x, A));
+    val th7 = Thm.assume C_imp_all_A [];
+    val th8 = Thm.undisch th7;
+    val th9 = Thm.forall_elim x th8;
+    val th10 = Thm.disch C th9;
+    val th11 = Thm.forall_intro x th10;
+    val th12 = Thm.disch C_imp_all_A th11;
+  in
+    Thm.iff_intro th6 th12
+  end;
+\nwindexdefn{\nwixident{Derived.all{\_}imp}}{Derived.all:unimp}{NW1NjfzY-uZfts-8}\eatline
+\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.all{\_}imp}}{Derived.all:unimp}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}}\\{{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}}\\{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}\\{{\nwixident{Thm.t}}{Thm.t}}\\{{\nwixident{Thm.undisch}}{Thm.undisch}}}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-uZfts-8}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-uZfts-8}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW1NjfzY-uZfts-8}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1NjfzY-uZfts-8}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-8}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-8}\nwindexuse{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}{NW1NjfzY-uZfts-8}\nwindexuse{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}{NW1NjfzY-uZfts-8}\nwindexuse{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}{NW1NjfzY-uZfts-8}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW1NjfzY-uZfts-8}\nwindexuse{\nwixident{Thm.undisch}}{Thm.undisch}{NW1NjfzY-uZfts-8}\nwendcode{}\nwbegincode{110}\sublabel{NW1NjfzY-3rvgpx-7}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-7}}}\moddef{Unit tests for \code{}Derived.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}}\plusendmoddef\nwstartdeflinemarkup\nwprevnextdefs{NW1NjfzY-3rvgpx-6}{NW1NjfzY-3rvgpx-8}\nwenddeflinemarkup
+fun all_imp_test () =
+  let
+    val x = Term.Var("x", Sort.IND);
+    val A = Formula.mk_pred("A", [x]);
+    val C = Formula.mk_pred("C", []);
+    val expected =
+      Formula.mk_iff(Formula.mk_forall(x, Formula.mk_imp(C, A)),
+                     Formula.mk_imp(C, Formula.mk_forall(x, A)));
+    val actual = Thm.concl (\nwlinkedidentc{Derived.all_imp}{NW1NjfzY-uZfts-8} x C A);
+  in
+    if not(Formula.eq expected actual)
+    then "Expecting: "^(Formula.serialize expected)^"\\nActual: "^
+         (Formula.serialize actual)^"\\n"
+    else ""
+  end;
+\nwidentuses{\\{{\nwixident{Derived.all{\_}imp}}{Derived.all:unimp}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Derived.all{\_}imp}}{Derived.all:unimp}{NW1NjfzY-3rvgpx-7}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1NjfzY-3rvgpx-7}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-3rvgpx-7}\nwindexuse{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}{NW1NjfzY-3rvgpx-7}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-3rvgpx-7}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1NjfzY-3rvgpx-7}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW1NjfzY-3rvgpx-7}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1NjfzY-3rvgpx-7}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-3rvgpx-7}\nwendcode{}\nwbegindocs{111}\nwdocspar
+
+\begin{node}
+$\vdash(\exists x\ldotp(A[x]\implies C))\implies((\forall x\ldotp A[x])\implies C)$
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $A[x]\implies C\vdash A[x]\implies C$
+  by assuming%1
+\item $\forall x\ldotp A[x]\vdash\forall x\ldotp A[x]$ by assuming%2
+\item $\forall x\ldotp A[x]\vdash A[x]$ by $\forall$-elim($x$, 2)%3
+\item $(\forall x\ldotp A[x]),(A[x]\implies C)\vdash C$
+  by modus ponens(1, 3)%4
+\item $(A[x]\implies C)\vdash(\forall x\ldotp A[x])\implies C$
+  by discharging $\forall x\ldotp A[x]$%5
+\item $\vdash(A[x]\implies C)\implies((\forall x\ldotp A[x])\implies C)$
+  by discharging%6
+\item $\vdash(\exists x\ldotp(A[x]\implies C))\implies((\forall x\ldotp A[x])\implies C)$
+  by $\exists$-elim($x$, 6)\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{112}\sublabel{NW1NjfzY-uZfts-9}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-9}}}\moddef{Derived results for Intuitionistic predicate logic~{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{NW1NjfzY-uZfts-8}{NW1NjfzY-uZfts-A}\nwenddeflinemarkup
+fun imp_all x A C =
+  let
+    val A_imp_C = Formula.mk_imp(A, C);
+    val all_A = Formula.mk_forall(x, A);
+    val th1 = Thm.assume A_imp_C [];
+    val th2 = Thm.assume all_A [];
+    val th3 = Thm.forall_elim x th2;
+    val th4 = Thm.modus_ponens th1 th3;
+    val th5 = Thm.disch all_A th4;
+    val th6 = Thm.disch A_imp_C th5;
+  in
+    Thm.exists_elim x th6
+  end;
+\nwindexdefn{\nwixident{Derived.imp{\_}all}}{Derived.imp:unall}{NW1NjfzY-uZfts-9}\eatline
+\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.imp{\_}all}}{Derived.imp:unall}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}}\\{{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-uZfts-9}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-uZfts-9}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-9}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-9}\nwindexuse{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}{NW1NjfzY-uZfts-9}\nwindexuse{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}{NW1NjfzY-uZfts-9}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-uZfts-9}\nwendcode{}\nwbegindocs{113}\nwdocspar
+\nwenddocs{}\nwbegincode{114}\sublabel{NW1NjfzY-3rvgpx-8}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-8}}}\moddef{Unit tests for \code{}Derived.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}}\plusendmoddef\nwstartdeflinemarkup\nwprevnextdefs{NW1NjfzY-3rvgpx-7}{NW1NjfzY-3rvgpx-9}\nwenddeflinemarkup
+fun imp_all_test () =
+  let
+    val x = Term.Var("x", Sort.IND);
+    val A = Formula.mk_pred("A", [x]);
+    val C = Formula.mk_pred("C", []);
+    val expected =
+      Formula.mk_imp(Formula.mk_exists(x, Formula.mk_imp(A,C)),
+                     Formula.mk_imp(Formula.mk_forall(x, A),
+                                    C));
+    val actual = Thm.concl (\nwlinkedidentc{Derived.imp_all}{NW1NjfzY-uZfts-9} x A C);
+  in
+    if not(Formula.eq expected actual)
+    then "Expecting: "^(Formula.serialize expected)^"\\nActual: "^
+         (Formula.serialize actual)^"\\n"
+    else ""
+  end;
+\nwidentuses{\\{{\nwixident{Derived.imp{\_}all}}{Derived.imp:unall}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Derived.imp{\_}all}}{Derived.imp:unall}{NW1NjfzY-3rvgpx-8}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1NjfzY-3rvgpx-8}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-3rvgpx-8}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-3rvgpx-8}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-3rvgpx-8}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1NjfzY-3rvgpx-8}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW1NjfzY-3rvgpx-8}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1NjfzY-3rvgpx-8}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-3rvgpx-8}\nwendcode{}\nwbegindocs{115}\nwdocspar
+
+\begin{node}
+$\vdash(\exists x\ldotp\neg A[x])\implies\neg(\forall x\ldotp A[x])$
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $\neg A[x]\vdash\neg A[x]$
+  by assuming%1
+\item $\neg A[x]\vdash A[x]\implies\bot$ by $\neg$-elim(1)%2
+\item $\forall x\ldotp A[x]\vdash\forall x\ldotp A[x]$ by assuming%3
+\item $\forall x\ldotp A[x]\vdash A[x]$ by $\forall$-elim($x$, 3)%4
+\item $(\forall x\ldotp A[x]),(\neg A[x])\vdash\bot$
+  by modus ponens(2, 4)%5
+\item $(\neg A[x])\vdash(\forall x\ldotp A[x]) \implies \bot$
+  by discharging $\forall x\ldotp A[x]$%6
+\item $(\neg A[x])\vdash\neg(\forall x\ldotp A[x])$
+  by $\neg$-intro(6)%7
+\item $\vdash(\neg A[x])\implies\neg(\forall x\ldotp A[x])$
+  by discharging $\neg A[x]$%8
+\item $\vdash(\exists x\ldotp\neg A[x])\implies\neg(\forall x\ldotp A[x])$
+  by $\exists$-elim($x$, 8)\qedhere%9
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{116}\sublabel{NW1NjfzY-uZfts-A}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-A}}}\moddef{Derived results for Intuitionistic predicate logic~{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{NW1NjfzY-uZfts-9}{NW1NjfzY-uZfts-B}\nwenddeflinemarkup
+fun ex_not x A =
+  let
+    val not_A = Formula.mk_not A;
+    val all_A = Formula.mk_forall(x, A);
+    val F = Formula.mk_falsum ();
+    val th1 = Thm.assume not_A [];
+    val th2 = Thm.not_elim th1;
+    val th3 = Thm.assume all_A [];
+    val th4 = Thm.forall_elim x th3;
+    val th5 = Thm.modus_ponens th2 th4;
+    val th6 = Thm.disch all_A th5;
+    val th7 = Thm.not_intro th6;
+    val th8 = Thm.disch not_A th7;
+  in
+    Thm.exists_elim x th8
+  end;
+\nwindexdefn{\nwixident{Derived.ex{\_}not}}{Derived.ex:unnot}{NW1NjfzY-uZfts-A}\eatline
+\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.ex{\_}not}}{Derived.ex:unnot}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}}\\{{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}}\\{{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}}}\nwindexuse{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}{NW1NjfzY-uZfts-A}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-uZfts-A}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW1NjfzY-uZfts-A}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-A}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-A}\nwindexuse{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}{NW1NjfzY-uZfts-A}\nwindexuse{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}{NW1NjfzY-uZfts-A}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-uZfts-A}\nwindexuse{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}{NW1NjfzY-uZfts-A}\nwindexuse{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}{NW1NjfzY-uZfts-A}\nwendcode{}\nwbegindocs{117}\nwdocspar
+\nwenddocs{}\nwbegincode{118}\sublabel{NW1NjfzY-3rvgpx-9}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-9}}}\moddef{Unit tests for \code{}Derived.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}}\plusendmoddef\nwstartdeflinemarkup\nwprevnextdefs{NW1NjfzY-3rvgpx-8}{NW1NjfzY-3rvgpx-A}\nwenddeflinemarkup
+fun ex_not_test () =
+  let
+    val x = Term.Var("x", Sort.IND);
+    val A = Formula.mk_pred("A", [x]);
+    val expected =
+      Formula.mk_imp(Formula.mk_exists(x, Formula.mk_not(A)),
+                     Formula.mk_not(Formula.mk_forall(x, A)));
+    val actual = Thm.concl (\nwlinkedidentc{Derived.ex_not}{NW1NjfzY-uZfts-A} x A);
+  in
+    if not(Formula.eq expected actual)
+    then "Expecting: "^(Formula.serialize expected)^"\\nActual: "^
+         (Formula.serialize actual)^"\\n"
+    else ""
+  end;
+\nwidentuses{\\{{\nwixident{Derived.ex{\_}not}}{Derived.ex:unnot}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Derived.ex{\_}not}}{Derived.ex:unnot}{NW1NjfzY-3rvgpx-9}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1NjfzY-3rvgpx-9}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-3rvgpx-9}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-3rvgpx-9}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-3rvgpx-9}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW1NjfzY-3rvgpx-9}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1NjfzY-3rvgpx-9}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW1NjfzY-3rvgpx-9}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1NjfzY-3rvgpx-9}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-3rvgpx-9}\nwendcode{}\nwbegindocs{119}\nwdocspar
+
+\begin{node}
+$\vdash(\exists x\ldotp(C\implies A[x]))\implies(C\implies\exists x\ldotp A[x])$
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $C\implies A[x]\vdash C\implies A[x]$ by assuming
+\item $C\vdash C$ by assuming
+\item $C, C\implies A[x]\vdash A[x]$ by modus ponens(1, 2)%3
+\item $C, C\implies A[x]\vdash\exists x\ldotp A[x]$ by
+  $\exists$-intro($x$, 3)%4
+\item $C\implies A[x]\vdash C\implies\exists x\ldotp A[x]$ by
+  discharging $C$%5
+\item $\vdash(C\implies A[x])\implies(C\implies\exists x\ldotp A[x])$ by
+  discharging $C\implies A[x]$%6
+\item $\vdash(\exists x\ldotp(C\implies A[x]))\implies(C\implies\exists x\ldotp A[x])$ by
+  $\exists$-elim($x$, 6)\qedhere%7
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{120}\sublabel{NW1NjfzY-uZfts-B}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-B}}}\moddef{Derived results for Intuitionistic predicate logic~{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{NW1NjfzY-uZfts-A}{\relax}\nwenddeflinemarkup
+(* ex_imp : Term.t -> Formula.t -> Formula.t -> Thm.t
+
+|- (ex x st C implies A[x]) implies (C implies ex x st A[x]) *)
+fun ex_imp x C A =
+  let
+    val C_imp_A = Formula.mk_imp(C, A);
+    val th1 = Thm.assume C_imp_A [];
+    val th2 = Thm.assume C [];
+    val th3 = Thm.modus_ponens th1 th2;
+    val th4 = Thm.exists_intro x x A th3;
+    val th5 = Thm.disch C th4;
+    val th6 = Thm.disch C_imp_A th5;
+  in
+    Thm.exists_elim x th6
+  end;
+\nwindexdefn{\nwixident{Derived.ex{\_}imp}}{Derived.ex:unimp}{NW1NjfzY-uZfts-B}\eatline
+\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.ex{\_}imp}}{Derived.ex:unimp}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}}\\{{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-uZfts-B}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW1NjfzY-uZfts-B}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1NjfzY-uZfts-B}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-B}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-B}\nwindexuse{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}{NW1NjfzY-uZfts-B}\nwindexuse{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}{NW1NjfzY-uZfts-B}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-uZfts-B}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW1NjfzY-uZfts-B}\nwendcode{}\nwbegindocs{121}\nwdocspar
+\nwenddocs{}\nwbegincode{122}\sublabel{NW1NjfzY-3rvgpx-A}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-A}}}\moddef{Unit tests for \code{}Derived.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}}\plusendmoddef\nwstartdeflinemarkup\nwprevnextdefs{NW1NjfzY-3rvgpx-9}{\relax}\nwenddeflinemarkup
+fun ex_imp_test () =
+  let
+    val x = Term.Var("x", Sort.IND);
+    val A = Formula.mk_pred("A", [x]);
+    val C = Formula.mk_pred("C", []);
+    val expected =
+      Formula.mk_imp(Formula.mk_exists(x, Formula.mk_imp(C,A)),
+                     Formula.mk_imp(C,
+                                    Formula.mk_exists(x, A)));
+    val actual = Thm.concl (ex_imp x C A);
+  in
+    if not(Formula.eq expected actual)
+    then "Expecting: "^(Formula.serialize expected)^"\\nActual: "^
+         (Formula.serialize actual)^"\\n"
+    else ""
+  end;
+\nwidentuses{\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1NjfzY-3rvgpx-A}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-3rvgpx-A}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-3rvgpx-A}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1NjfzY-3rvgpx-A}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW1NjfzY-3rvgpx-A}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1NjfzY-3rvgpx-A}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-3rvgpx-A}\nwendcode{}\nwbegindocs{123}\nwdocspar
+
+\begin{node}
+$\vdash(\exists x\ldotp C)\iff C$ and $\vdash(\forall x\ldotp C)\iff C$
+\end{node}
+
+\nwenddocs{}
+
+\nwixlogsorted{c}{{$(\neg A)\lor B$ sufficient to prove $A\implies B$}{NW1NjfzY-3NUP7w-1}{\nwixu{NW1NjfzY-4CUt2L-6}\nwixd{NW1NjfzY-3NUP7w-1}}}%
+\nwixlogsorted{c}{{$\vdash A\land(B\lor C)\iff((A\land B)\lor(A\land C))$}{NW1NjfzY-efA9w-1}{\nwixu{NW1NjfzY-4CUt2L-4}\nwixd{NW1NjfzY-efA9w-1}}}%
+\nwixlogsorted{c}{{$\vdash A\lor A\implies A$}{NW1NjfzY-3wJoEd-1}{\nwixu{NW1NjfzY-4CUt2L-2}\nwixd{NW1NjfzY-3wJoEd-1}}}%
+\nwixlogsorted{c}{{Congruence of left disjunct}{NW1NjfzY-4VDMqe-1}{\nwixu{NW1NjfzY-4CUt2L-2}\nwixd{NW1NjfzY-4VDMqe-1}}}%
+\nwixlogsorted{c}{{Congruence of right disjunct}{NW1NjfzY-lrWvY-1}{\nwixu{NW1NjfzY-4CUt2L-2}\nwixd{NW1NjfzY-lrWvY-1}}}%
+\nwixlogsorted{c}{{Conjunction is associative}{NW1NjfzY-328uZt-1}{\nwixu{NW1NjfzY-4CUt2L-3}\nwixd{NW1NjfzY-328uZt-1}}}%
+\nwixlogsorted{c}{{Conjunction is commutative}{NW1NjfzY-29ie6N-1}{\nwixu{NW1NjfzY-4CUt2L-3}\nwixd{NW1NjfzY-29ie6N-1}}}%
+\nwixlogsorted{c}{{Conjunction left congruence}{NW1NjfzY-4YXcw4-1}{\nwixu{NW1NjfzY-4CUt2L-3}\nwixd{NW1NjfzY-4YXcw4-1}}}%
+\nwixlogsorted{c}{{Conjunction right congruence}{NW1NjfzY-TrI6l-1}{\nwixu{NW1NjfzY-4CUt2L-3}\nwixd{NW1NjfzY-TrI6l-1}}}%
+\nwixlogsorted{c}{{Conjunction tautology $\vdash A\implies(B\implies A\land B)$}{NW1NjfzY-1I5AY8-1}{\nwixu{NW1NjfzY-4CUt2L-3}\nwixd{NW1NjfzY-1I5AY8-1}}}%
+\nwixlogsorted{c}{{Contrapositive derived rules}{NW1NjfzY-4KFbFg-1}{\nwixu{NW1NjfzY-4CUt2L-5}\nwixd{NW1NjfzY-4KFbFg-1}\nwixd{NW1NjfzY-4KFbFg-2}}}%
+\nwixlogsorted{c}{{Curry implication}{NW1NjfzY-1iptma-1}{\nwixu{NW1NjfzY-4CUt2L-5}\nwixd{NW1NjfzY-1iptma-1}}}%
+\nwixlogsorted{c}{{Derived results for Intuitionistic predicate logic}{NW1NjfzY-uZfts-1}{\nwixu{NW1NjfzY-4dPl0p-1}\nwixd{NW1NjfzY-uZfts-1}\nwixd{NW1NjfzY-uZfts-2}\nwixd{NW1NjfzY-uZfts-3}\nwixd{NW1NjfzY-uZfts-4}\nwixd{NW1NjfzY-uZfts-5}\nwixd{NW1NjfzY-uZfts-6}\nwixd{NW1NjfzY-uZfts-7}\nwixd{NW1NjfzY-uZfts-8}\nwixd{NW1NjfzY-uZfts-9}\nwixd{NW1NjfzY-uZfts-A}\nwixd{NW1NjfzY-uZfts-B}}}%
+\nwixlogsorted{c}{{Derived results for Intuitionistic propositional logic}{NW1NjfzY-4CUt2L-1}{\nwixu{NW1NjfzY-4dPl0p-1}\nwixd{NW1NjfzY-4CUt2L-1}\nwixd{NW1NjfzY-4CUt2L-2}\nwixd{NW1NjfzY-4CUt2L-3}\nwixd{NW1NjfzY-4CUt2L-4}\nwixd{NW1NjfzY-4CUt2L-5}\nwixd{NW1NjfzY-4CUt2L-6}\nwixd{NW1NjfzY-4CUt2L-7}}}%
+\nwixlogsorted{c}{{Derived.sml}{NW1NjfzY-4dPl0p-1}{\nwixd{NW1NjfzY-4dPl0p-1}}}%
+\nwixlogsorted{c}{{Disjunction is associative}{NW1NjfzY-J2rA5-1}{\nwixu{NW1NjfzY-4CUt2L-2}\nwixd{NW1NjfzY-J2rA5-1}}}%
+\nwixlogsorted{c}{{Disjunction is commutative}{NW1NjfzY-3WoMbH-1}{\nwixu{NW1NjfzY-4CUt2L-2}\nwixd{NW1NjfzY-3WoMbH-1}}}%
+\nwixlogsorted{c}{{Disjunction two-sided congruence}{NW1NjfzY-h4O6T-1}{\nwixu{NW1NjfzY-4CUt2L-4}\nwixd{NW1NjfzY-h4O6T-1}}}%
+\nwixlogsorted{c}{{Frege's tautology (propositional logic)}{NW1NjfzY-bcGD8-1}{\nwixu{NW1NjfzY-4CUt2L-5}\nwixd{NW1NjfzY-bcGD8-1}}}%
+\nwixlogsorted{c}{{Hypothetical syllogism}{NW1NjfzY-1KT69U-1}{\nwixu{NW1NjfzY-4CUt2L-5}\nwixd{NW1NjfzY-1KT69U-1}}}%
+\nwixlogsorted{c}{{Hypothetical syllogism derived inference rule}{NW1NjfzY-2CxI45-1}{\nwixu{NW1NjfzY-4CUt2L-1}\nwixd{NW1NjfzY-2CxI45-1}}}%
+\nwixlogsorted{c}{{Iff is reflexive}{NW1NjfzY-YtLDN-1}{\nwixu{NW1NjfzY-4CUt2L-7}\nwixd{NW1NjfzY-YtLDN-1}}}%
+\nwixlogsorted{c}{{Iff is symmetric}{NW1NjfzY-3hb2X5-1}{\nwixu{NW1NjfzY-4CUt2L-7}\nwixd{NW1NjfzY-3hb2X5-1}}}%
+\nwixlogsorted{c}{{Iff is transitive}{NW1NjfzY-2isj9x-1}{\nwixu{NW1NjfzY-4CUt2L-7}\nwixd{NW1NjfzY-2isj9x-1}}}%
+\nwixlogsorted{c}{{Implication as negated conjunction}{NW1NjfzY-2qUp6m-1}{\nwixu{NW1NjfzY-4CUt2L-6}\nwixd{NW1NjfzY-2qUp6m-1}}}%
+\nwixlogsorted{c}{{Left distributivity of disjunction over conjunction}{NW1NjfzY-2uP77E-1}{\nwixd{NW1NjfzY-2uP77E-1}}}%
+\nwixlogsorted{c}{{Negation of conjunction}{NW1NjfzY-wYirn-1}{\nwixu{NW1NjfzY-4CUt2L-6}\nwixd{NW1NjfzY-wYirn-1}}}%
+\nwixlogsorted{c}{{Negation of disjunction}{NW1NjfzY-4UPWei-1}{\nwixu{NW1NjfzY-4CUt2L-6}\nwixd{NW1NjfzY-4UPWei-1}}}%
+\nwixlogsorted{c}{{Prove $\vdash(A\implies B)\implies((A\implies\neg B)\implies\neg A)$}{NW1NjfzY-4ZKGAh-1}{\nwixu{NW1NjfzY-4CUt2L-1}\nwixd{NW1NjfzY-4ZKGAh-1}}}%
+\nwixlogsorted{c}{{Right distributivity of conjunction over disjunction}{NW1NjfzY-8du9Q-1}{\nwixu{NW1NjfzY-4CUt2L-4}\nwixd{NW1NjfzY-8du9Q-1}}}%
+\nwixlogsorted{c}{{Theorem: implications is reflexive}{NW1NjfzY-2PXiqP-1}{\nwixu{NW1NjfzY-4CUt2L-5}\nwixd{NW1NjfzY-2PXiqP-1}}}%
+\nwixlogsorted{c}{{Transitivity of implies}{NW1NjfzY-1sm2GN-1}{\nwixu{NW1NjfzY-4CUt2L-5}\nwixd{NW1NjfzY-1sm2GN-1}}}%
+\nwixlogsorted{c}{{Uncurrying implication}{NW1NjfzY-1JZnQr-1}{\nwixu{NW1NjfzY-4CUt2L-5}\nwixd{NW1NjfzY-1JZnQr-1}}}%
+\nwixlogsorted{c}{{Unit tests for \code{}Derived.sml\edoc{}}{NW1NjfzY-3rvgpx-1}{\nwixd{NW1NjfzY-3rvgpx-1}\nwixd{NW1NjfzY-3rvgpx-2}\nwixd{NW1NjfzY-3rvgpx-3}\nwixd{NW1NjfzY-3rvgpx-4}\nwixd{NW1NjfzY-3rvgpx-5}\nwixd{NW1NjfzY-3rvgpx-6}\nwixd{NW1NjfzY-3rvgpx-7}\nwixd{NW1NjfzY-3rvgpx-8}\nwixd{NW1NjfzY-3rvgpx-9}\nwixd{NW1NjfzY-3rvgpx-A}}}%
+\nwixlogsorted{c}{{Weak negation elimination}{NW1NjfzY-16XbWD-1}{\nwixu{NW1NjfzY-4CUt2L-1}\nwixd{NW1NjfzY-16XbWD-1}}}%
+\nwixlogsorted{c}{{Weakening inference rule}{NW1NjfzY-2n5HPL-1}{\nwixu{NW1NjfzY-4CUt2L-1}\nwixd{NW1NjfzY-2n5HPL-1}}}%
+\nwixlogsorted{i}{{\nwixident{Derived.absurdum}}{Derived.absurdum}}%
+\nwixlogsorted{i}{{\nwixident{Derived.all{\_}conj{\_}distrib}}{Derived.all:unconj:undistrib}}%
+\nwixlogsorted{i}{{\nwixident{Derived.all{\_}disjL}}{Derived.all:undisjL}}%
+\nwixlogsorted{i}{{\nwixident{Derived.all{\_}imp}}{Derived.all:unimp}}%
+\nwixlogsorted{i}{{\nwixident{Derived.and{\_}assoc}}{Derived.and:unassoc}}%
+\nwixlogsorted{i}{{\nwixident{Derived.and{\_}comm}}{Derived.and:uncomm}}%
+\nwixlogsorted{i}{{\nwixident{Derived.and{\_}cong{\_}l}}{Derived.and:uncong:unl}}%
+\nwixlogsorted{i}{{\nwixident{Derived.and{\_}cong{\_}r}}{Derived.and:uncong:unr}}%
+\nwixlogsorted{i}{{\nwixident{Derived.and{\_}thm}}{Derived.and:unthm}}%
+\nwixlogsorted{i}{{\nwixident{Derived.conj{\_}disj{\_}distribL}}{Derived.conj:undisj:undistribL}}%
+\nwixlogsorted{i}{{\nwixident{Derived.conj{\_}disj{\_}distribR}}{Derived.conj:undisj:undistribR}}%
+\nwixlogsorted{i}{{\nwixident{Derived.contrapositive}}{Derived.contrapositive}}%
+\nwixlogsorted{i}{{\nwixident{Derived.contrapositive{\_}not}}{Derived.contrapositive:unnot}}%
+\nwixlogsorted{i}{{\nwixident{Derived.curry{\_}imp}}{Derived.curry:unimp}}%
+\nwixlogsorted{i}{{\nwixident{Derived.disj{\_}imp{\_}disj}}{Derived.disj:unimp:undisj}}%
+\nwixlogsorted{i}{{\nwixident{Derived.ex{\_}conj{\_}distrib}}{Derived.ex:unconj:undistrib}}%
+\nwixlogsorted{i}{{\nwixident{Derived.ex{\_}disj{\_}distrib}}{Derived.ex:undisj:undistrib}}%
+\nwixlogsorted{i}{{\nwixident{Derived.ex{\_}imp}}{Derived.ex:unimp}}%
+\nwixlogsorted{i}{{\nwixident{Derived.ex{\_}not}}{Derived.ex:unnot}}%
+\nwixlogsorted{i}{{\nwixident{Derived.frege{\_}id}}{Derived.frege:unid}}%
+\nwixlogsorted{i}{{\nwixident{Derived.hypo{\_}syll}}{Derived.hypo:unsyll}}%
+\nwixlogsorted{i}{{\nwixident{Derived.hypo{\_}syll{\_}thm}}{Derived.hypo:unsyll:unthm}}%
+\nwixlogsorted{i}{{\nwixident{Derived.iff{\_}refl}}{Derived.iff:unrefl}}%
+\nwixlogsorted{i}{{\nwixident{Derived.iff{\_}sym}}{Derived.iff:unsym}}%
+\nwixlogsorted{i}{{\nwixident{Derived.iff{\_}trans}}{Derived.iff:untrans}}%
+\nwixlogsorted{i}{{\nwixident{Derived.imp{\_}all}}{Derived.imp:unall}}%
+\nwixlogsorted{i}{{\nwixident{Derived.imp{\_}ex}}{Derived.imp:unex}}%
+\nwixlogsorted{i}{{\nwixident{Derived.imp{\_}is{\_}not{\_}and}}{Derived.imp:unis:unnot:unand}}%
+\nwixlogsorted{i}{{\nwixident{Derived.imp{\_}trans}}{Derived.imp:untrans}}%
+\nwixlogsorted{i}{{\nwixident{Derived.not{\_}all{\_}iff{\_}ex{\_}not}}{Derived.not:unall:uniff:unex:unnot}}%
+\nwixlogsorted{i}{{\nwixident{Derived.not{\_}and}}{Derived.not:unand}}%
+\nwixlogsorted{i}{{\nwixident{Derived.not{\_}disj{\_}to{\_}imp}}{Derived.not:undisj:unto:unimp}}%
+\nwixlogsorted{i}{{\nwixident{Derived.not{\_}or}}{Derived.not:unor}}%
+\nwixlogsorted{i}{{\nwixident{Derived.or{\_}assoc}}{Derived.or:unassoc}}%
+\nwixlogsorted{i}{{\nwixident{Derived.or{\_}comm}}{Derived.or:uncomm}}%
+\nwixlogsorted{i}{{\nwixident{Derived.or{\_}cong{\_}l}}{Derived.or:uncong:unl}}%
+\nwixlogsorted{i}{{\nwixident{Derived.or{\_}cong{\_}r}}{Derived.or:uncong:unr}}%
+\nwixlogsorted{i}{{\nwixident{Derived.uncurry{\_}imp}}{Derived.uncurry:unimp}}%
+\nwixlogsorted{i}{{\nwixident{Derived.weak{\_}not{\_}elim}}{Derived.weak:unnot:unelim}}%
+\nwixlogsorted{i}{{\nwixident{Derived.weaken}}{Derived.weaken}}%
+\nwixlogsorted{i}{{\nwixident{Formula.Dest}}{Formula.Dest}}%
+\nwixlogsorted{i}{{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}}%
+\nwixlogsorted{i}{{\nwixident{Formula.eq}}{Formula.eq}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}%
+\nwixlogsorted{i}{{\nwixident{Formula.serialize}}{Formula.serialize}}%
+\nwixlogsorted{i}{{\nwixident{Formula.t}}{Formula.t}}%
+\nwixlogsorted{i}{{\nwixident{Sort.IND}}{Sort.IND}}%
+\nwixlogsorted{i}{{\nwixident{Term.t}}{Term.t}}%
+\nwixlogsorted{i}{{\nwixident{Thm.assume}}{Thm.assume}}%
+\nwixlogsorted{i}{{\nwixident{Thm.concl}}{Thm.concl}}%
+\nwixlogsorted{i}{{\nwixident{Thm.contr}}{Thm.contr}}%
+\nwixlogsorted{i}{{\nwixident{Thm.disch}}{Thm.disch}}%
+\nwixlogsorted{i}{{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}}%
+\nwixlogsorted{i}{{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}}%
+\nwixlogsorted{i}{{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}}%
+\nwixlogsorted{i}{{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}}%
+\nwixlogsorted{i}{{\nwixident{Thm.iff{\_}elim{\_}l}}{Thm.iff:unelim:unl}}%
+\nwixlogsorted{i}{{\nwixident{Thm.iff{\_}elim{\_}r}}{Thm.iff:unelim:unr}}%
+\nwixlogsorted{i}{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}%
+\nwixlogsorted{i}{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}%
+\nwixlogsorted{i}{{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}}%
+\nwixlogsorted{i}{{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}}%
+\nwixlogsorted{i}{{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}}%
+\nwixlogsorted{i}{{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}}%
+\nwixlogsorted{i}{{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}}%
+\nwixlogsorted{i}{{\nwixident{Thm.t}}{Thm.t}}%
+\nwixlogsorted{i}{{\nwixident{Thm.undisch}}{Thm.undisch}}%
+

@@ -1,0 +1,749 @@
+\nwfilename{nw/classical.nw}\nwbegindocs{0}% -*- mode: poly-noweb; noweb-code-mode: sml-mode; -*-% ===> this file was generated automatically by noweave --- better not edit it
+%%
+%% classical.nw
+%% 
+%% Made by Alex Nelson <pqnelson@gmail.com>
+%% Login   <alex@lisp>
+%% 
+%% Started on  2026-04-21T12:45:57-0700
+%% Last update 2026-04-21T12:45:57-0700
+%% 
+
+\section{Classical tableaux}
+
+\begin{node}
+We want to investigate if certain $FS_{0}$ formulas are theorems, had
+we used Classical logic instead of Intuitionistic logic. After all,
+every Intuitionistically valid formula is also valid Classically (but
+not all Classically valid formulas are Intuitionistically acceptable).
+Tableaux is one way to investigate this question.
+\end{node}
+
+\nwenddocs{}\nwbegincode{1}\sublabel{NW1mR7zJ-3NMRe1-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1mR7zJ-3NMRe1-1}}}\moddef{Classical.sig~{\nwtagstyle{}\subpageref{NW1mR7zJ-3NMRe1-1}}}\endmoddef\nwstartdeflinemarkup\nwenddeflinemarkup
+signature Classical = sig
+  val nnf : Formula.t -> Formula.t;
+  val askolemize : Formula.t -> Formula.t;
+  val tab : Formula.t -> int -> int;
+end;
+\nwnotused{Classical.sig}\nwidentuses{\\{{\nwixident{Formula.t}}{Formula.t}}}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW1mR7zJ-3NMRe1-1}\nwendcode{}\nwbegindocs{2}\nwdocspar
+
+\nwenddocs{}\nwbegincode{3}\sublabel{NW1mR7zJ-l5jX3-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1mR7zJ-l5jX3-1}}}\moddef{Classical.sml~{\nwtagstyle{}\subpageref{NW1mR7zJ-l5jX3-1}}}\endmoddef\nwstartdeflinemarkup\nwenddeflinemarkup
+structure Classical :> Classical = struct
+\LA{}Transform formula to negation normal form~{\nwtagstyle{}\subpageref{NW1mR7zJ-4TkWUc-1}}\RA{}
+
+\LA{}Simplify formulas using classical tautologies~{\nwtagstyle{}\subpageref{NW1mR7zJ-2RorhN-1}}\RA{}
+
+\LA{}Skolemization~{\nwtagstyle{}\subpageref{NW1mR7zJ-4QrsTb-1}}\RA{}
+
+\LA{}Tableaux refuter~{\nwtagstyle{}\subpageref{NW1mR7zJ-yCIr5-1}}\RA{}
+end;
+\nwnotused{Classical.sml}\nwendcode{}\nwbegindocs{4}\nwdocspar
+
+\begin{node}
+Signed formulas $T\phi$ and $F\phi$ encode whether we have to prove
+$\phi$ is true or false, respectively. Tableaux constructs a tree from
+signed formulas. For example $T(A\land B)$ can extend the current
+branch of the Tableaux with two new signed formulas $TA$ and $TB$. But
+$F(A\land B)$ creates two new branches in the tableaux, one starts
+with $FA$ and the other starts with $FB$.
+
+Continuing in this manner, we continue writing a branch until a
+contradiction has been found. More precisely, we have $TA$ and $FA$
+occur within the same branch. In this situation, the branch ``closes''
+and we write $\times$ to indicate this. What this means is that we
+can stop working on this branch, and we can go to the next branch. If
+there are no more branches to work on, then the Tableaux refutes the formula.
+\end{node}
+
+
+\begin{definition}
+A \define{Literal} is a formula such that it is either an atomic formula
+(a predicate, or equality between terms [if working in first-order logic
+  with equality])
+or the negation of an atomic formula.
+\end{definition}
+
+\begin{definition}
+A formula $\Phi$ is said to be in \define{Negation Normal Form} if
+\begin{enumerate}
+\item $\Phi$ is a literal, or
+\item $\Phi=A\land B$ where $A$ and $B$ are in negation normal form,
+  or
+\item $\Phi=A\lor B$ where $A$ and $B$ are in negation normal form, or
+\item $\Phi=\forall x\ldotp A$ or $\Phi=\exists x\ldotp A$, where $A$ is again in negation normal form.
+\end{enumerate}
+In Classical logic, we can always transform \emph{any} formula to be
+in negation normal form.
+\end{definition}
+
+\begin{node}
+The basic gambit for classical tableaux is:
+\begin{enumerate}
+\item Given a formula $\phi$, transform it to negation normal form $\psi$;
+\item Skolemize $\psi$ to obtain $\chi$;
+\item Perform the tableaux method on $\chi$.
+\end{enumerate}
+\end{node}
+
+\begin{node}%163
+We transform a formula into negation normal form by replacing
+$A\implies B$ by $(\neg A)\lor B$ and so on. We begin by transforming
+the basic connectives and quantifiers by applying the transformation
+to the immediate subformulas, using the rules:
+\begin{enumerate}
+\item $NNF(A\land B)=NNF(A)\land NNF(B)$
+\item $NNF(A\lor B)=NNF(A)\lor NNF(B)$
+\item $NNF(A\implies B)=NNF(\neg A)\lor NNF(B)$
+\item $NNF(A\iff B)=(NNF(A)\land NNF(B))\lor(NNF(\neg A)\land NNF(\neg B))$
+\item $NNF(\exists x\ldotp A)=\exists x\ldotp NNF(A)$
+\item $NNF(\forall x\ldotp A)=\forall x\ldotp NNF(A)$
+\end{enumerate}
+\end{node}
+
+\nwenddocs{}\nwbegincode{5}\sublabel{NW1mR7zJ-4TkWUc-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1mR7zJ-4TkWUc-1}}}\moddef{Transform formula to negation normal form~{\nwtagstyle{}\subpageref{NW1mR7zJ-4TkWUc-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1mR7zJ-l5jX3-1}}\nwenddeflinemarkup
+(* nnf : Formula.t -> Formula.t *)
+fun nnf fm =
+  if Formula.is_and fm
+  then let val (A,B) = Formula.dest_and fm
+       in Formula.mk_and(nnf A, nnf B) end
+  else if Formula.is_or fm
+  then let val (A,B) = Formula.dest_or fm
+       in Formula.mk_or(nnf A, nnf B) end
+  else if Formula.is_imp fm
+  then let val (A,B) = Formula.dest_imp fm
+       in Formula.mk_or(nnf (Formula.mk_not A),
+                        nnf B) end
+  else if Formula.is_iff fm
+  then let val (A,B) = Formula.dest_iff fm
+       in Formula.mk_or(Formula.mk_and(nnf A, nnf B),
+                        Formula.mk_and(nnf(Formula.mk_not(A)), nnf(Formula.mk_not(B)))) end
+  else if Formula.is_forall fm
+  then let val(x,A) = Formula.dest_forall fm
+       in Formula.mk_forall(x, nnf A) end
+  else if Formula.is_exists fm
+  then let val(x,A) = Formula.dest_exists fm
+       in Formula.mk_exists(x, nnf A) end
+  \LA{}Negation normal form for negated formulas~{\nwtagstyle{}\subpageref{NW1mR7zJ-4HwyeF-1}}\RA{}
+
+\nwused{\\{NW1mR7zJ-l5jX3-1}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}}\\{{\nwixident{Formula.dest{\_}iff}}{Formula.dest:uniff}}\\{{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}}\\{{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}}\\{{\nwixident{Formula.is{\_}and}}{Formula.is:unand}}\\{{\nwixident{Formula.is{\_}iff}}{Formula.is:uniff}}\\{{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}}\\{{\nwixident{Formula.is{\_}or}}{Formula.is:unor}}\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}\\{{\nwixident{Formula.t}}{Formula.t}}}\nwindexuse{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}{NW1mR7zJ-4TkWUc-1}\nwindexuse{\nwixident{Formula.dest{\_}iff}}{Formula.dest:uniff}{NW1mR7zJ-4TkWUc-1}\nwindexuse{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}{NW1mR7zJ-4TkWUc-1}\nwindexuse{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}{NW1mR7zJ-4TkWUc-1}\nwindexuse{\nwixident{Formula.is{\_}and}}{Formula.is:unand}{NW1mR7zJ-4TkWUc-1}\nwindexuse{\nwixident{Formula.is{\_}iff}}{Formula.is:uniff}{NW1mR7zJ-4TkWUc-1}\nwindexuse{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}{NW1mR7zJ-4TkWUc-1}\nwindexuse{\nwixident{Formula.is{\_}or}}{Formula.is:unor}{NW1mR7zJ-4TkWUc-1}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1mR7zJ-4TkWUc-1}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1mR7zJ-4TkWUc-1}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1mR7zJ-4TkWUc-1}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW1mR7zJ-4TkWUc-1}\nwindexuse{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}{NW1mR7zJ-4TkWUc-1}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW1mR7zJ-4TkWUc-1}\nwendcode{}\nwbegindocs{6}\nwdocspar
+
+\begin{node}
+The rules for transforming a negated formula into negation normal form
+are:
+\begin{enumerate}
+\item $NNF(\neg\neg A)=NNF(A)$
+\item $NNF(\neg(A\land B))=NNF(\neg A)\lor NNF(\neg B)$
+\item $NNF(\neg(A\lor B))=NNF(\neg A)\land NNF(\neg B)$
+\item $NNF(\neg(A\implies B))=NNF(A)\land NNF(\neg B)$
+\item $NNF(\neg(A\iff B))=(NNF(A)\land NNF(\neg B))\lor(NNF(\neg A)\land NNF(B))$
+\item $NNF(\neg\exists x\ldotp A)=\forall x\ldotp NNF(\neg A)$
+\item $NNF(\neg\forall x\ldotp A)=\exists x\ldotp NNF(\neg A)$
+\end{enumerate}
+\end{node}
+
+\nwenddocs{}\nwbegincode{7}\sublabel{NW1mR7zJ-4HwyeF-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1mR7zJ-4HwyeF-1}}}\moddef{Negation normal form for negated formulas~{\nwtagstyle{}\subpageref{NW1mR7zJ-4HwyeF-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1mR7zJ-4TkWUc-1}}\nwenddeflinemarkup
+else if Formula.is_not fm
+then let val fm' = Formula.dest_not fm
+     in if Formula.is_not fm'
+        then let val A = Formula.dest_not fm'
+             in nnf A end
+        else if Formula.is_and fm'
+        then let val (A,B) = Formula.dest_and fm'
+             in Formula.mk_or(nnf(Formula.mk_not(A)),
+                              nnf(Formula.mk_not(B))) end
+        else if Formula.is_or fm'
+        then let val (A,B) = Formula.dest_or fm'
+             in Formula.mk_and(nnf(Formula.mk_not(A)),
+                              nnf(Formula.mk_not(B))) end
+        else if Formula.is_imp fm'
+        then let val (A,B) = Formula.dest_imp fm'
+             in Formula.mk_and(nnf A,
+                               nnf(Formula.mk_not(B))) end
+        else if Formula.is_iff fm'
+        then let val (A,B) = Formula.dest_iff fm'
+             in Formula.mk_or(Formula.mk_and(nnf A,
+                                             nnf(Formula.mk_not(B))),
+                              Formula.mk_and(nnf(Formula.mk_not(A)),
+                                             nnf B))
+             end
+        else if Formula.is_exists fm'
+        then let val (x,A) = Formula.dest_exists fm'
+             in Formula.mk_forall(x, nnf(Formula.mk_not(A))) end
+        else if Formula.is_forall fm'
+        then let val (x,A) = Formula.dest_forall fm'
+             in Formula.mk_exists(x, nnf(Formula.mk_not(A))) end
+        else fm
+     end
+else fm;
+\nwused{\\{NW1mR7zJ-4TkWUc-1}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}}\\{{\nwixident{Formula.dest{\_}iff}}{Formula.dest:uniff}}\\{{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}}\\{{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}}\\{{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}}\\{{\nwixident{Formula.is{\_}and}}{Formula.is:unand}}\\{{\nwixident{Formula.is{\_}iff}}{Formula.is:uniff}}\\{{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}}\\{{\nwixident{Formula.is{\_}not}}{Formula.is:unnot}}\\{{\nwixident{Formula.is{\_}or}}{Formula.is:unor}}\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}}\nwindexuse{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}{NW1mR7zJ-4HwyeF-1}\nwindexuse{\nwixident{Formula.dest{\_}iff}}{Formula.dest:uniff}{NW1mR7zJ-4HwyeF-1}\nwindexuse{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}{NW1mR7zJ-4HwyeF-1}\nwindexuse{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}{NW1mR7zJ-4HwyeF-1}\nwindexuse{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}{NW1mR7zJ-4HwyeF-1}\nwindexuse{\nwixident{Formula.is{\_}and}}{Formula.is:unand}{NW1mR7zJ-4HwyeF-1}\nwindexuse{\nwixident{Formula.is{\_}iff}}{Formula.is:uniff}{NW1mR7zJ-4HwyeF-1}\nwindexuse{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}{NW1mR7zJ-4HwyeF-1}\nwindexuse{\nwixident{Formula.is{\_}not}}{Formula.is:unnot}{NW1mR7zJ-4HwyeF-1}\nwindexuse{\nwixident{Formula.is{\_}or}}{Formula.is:unor}{NW1mR7zJ-4HwyeF-1}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1mR7zJ-4HwyeF-1}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1mR7zJ-4HwyeF-1}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1mR7zJ-4HwyeF-1}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW1mR7zJ-4HwyeF-1}\nwindexuse{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}{NW1mR7zJ-4HwyeF-1}\nwendcode{}\nwbegindocs{8}\nwdocspar
+
+\begin{node}
+Skolemization eliminates existentially quantified variables by making
+them functions of universally quantified formulas. The idea is that
+the following are equivalent:
+\begin{enumerate}
+\item $\forall x\ldotp\exists y\ldotp P[x,y]$
+\item $\forall x\ldotp P[x, f(x)]$ where $f$ is a ``skolemization function''.
+\end{enumerate}
+This is typically understood as requiring the axiom of choice (since
+$f$ is choosing ``some'' constant, in some unprescribed way).
+\end{node}
+
+\begin{node}
+We need to name Skolem functions to be something new and fresh. We
+gather the name of all the functions currently used.
+\end{node}
+
+\nwenddocs{}\nwbegincode{9}\sublabel{NW1mR7zJ-43eePE-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1mR7zJ-43eePE-1}}}\moddef{Gather all the functions used~{\nwtagstyle{}\subpageref{NW1mR7zJ-43eePE-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1mR7zJ-4B0sXE-1}}\nwenddeflinemarkup
+(* funcs : Term.t -> (string * Sort.t * int) list *)
+fun funcs (Term.Var _) = []
+  | funcs (Term.Fun(f,s,args)) =
+      List.foldr (fn (arg, acc) =>
+                   (funcs arg)@acc)
+                 [(f,s,length args)]
+                 args;
+
+(* functions : Formula.t -> (string * Sort.t * int) list *)
+fun functions fm =
+  Formula.atom_union
+    (fn p => let val (_,args) = Formula.dest_pred p
+             in List.foldr (fn (arg, acc) => (funcs arg)@acc)
+                           []
+                           args
+             end)
+    fm;
+\nwused{\\{NW1mR7zJ-4B0sXE-1}}\nwidentuses{\\{{\nwixident{Formula.atom{\_}union}}{Formula.atom:ununion}}\\{{\nwixident{Formula.dest{\_}pred}}{Formula.dest:unpred}}\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Sort.t}}{Sort.t}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Formula.atom{\_}union}}{Formula.atom:ununion}{NW1mR7zJ-43eePE-1}\nwindexuse{\nwixident{Formula.dest{\_}pred}}{Formula.dest:unpred}{NW1mR7zJ-43eePE-1}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW1mR7zJ-43eePE-1}\nwindexuse{\nwixident{Sort.t}}{Sort.t}{NW1mR7zJ-43eePE-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1mR7zJ-43eePE-1}\nwendcode{}\nwbegindocs{10}\nwdocspar
+
+\begin{node}
+We will want to take the variant of an identifier to make sure it is
+not currently used for a function. We ignore the arity of the function
+name, we just need a ``fresh'' function name.
+\end{node}
+
+\nwenddocs{}\nwbegincode{11}\sublabel{NW1mR7zJ-2QPys7-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1mR7zJ-2QPys7-1}}}\moddef{Variant of an identifier~{\nwtagstyle{}\subpageref{NW1mR7zJ-2QPys7-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1mR7zJ-4B0sXE-1}}\nwenddeflinemarkup
+(* variant : string -> Sort.t -> (string * Sort.t * int) list -> string *)
+local
+  fun iter n name sort funcs =
+    if List.exists (fn (x,s,_) =>
+                       s = sort andalso
+                       (name ^ (Int.toString n)) = x)
+                   funcs
+    then iter (n + 1) name sort funcs
+    else (name ^ (Int.toString n), sort);
+in
+fun variant name sort funcs : string * Sort.t =
+  if List.exists (fn (x,s,_) => s = sort andalso name = x)
+                 funcs
+  then iter 0 name sort funcs
+  else (name, sort);
+end;
+\nwused{\\{NW1mR7zJ-4B0sXE-1}}\nwidentuses{\\{{\nwixident{Sort.t}}{Sort.t}}}\nwindexuse{\nwixident{Sort.t}}{Sort.t}{NW1mR7zJ-2QPys7-1}\nwendcode{}\nwbegindocs{12}\nwdocspar
+
+\begin{node}
+Skolemization acts on closed formulas in negation normal form.
+So negation has been pulled down to the literals. The basic steps in the procedure is:
+\begin{enumerate}
+\item Given $\exists x\ldotp A[x]$, collect the distinct free
+  variables in a list $(x_{1},\dots,x_{n})$ (which, since we assumed
+  the given formula is closed, means the free variables are
+  universally quantified and this is being recursively called on a
+  subformula), then introduce the Skolem
+  function $f(x_{1},\dots,x_{n})$ and return $A[f(x_{1},\dots,x_{n})]$
+\item Given $A\land B$, simply return the conjunction of the
+  {\Tt{}skolem\nwendquote} function applied to $A$ and $B$
+\item Given $A\lor B$, simply return the disjunction of the
+  {\Tt{}skolem\nwendquote} function applied to $A$ and $B$
+\item Given $\forall x\ldotp A[x]$, recursively apply {\Tt{}skolem\nwendquote} to
+  $A$ to obtain $A'[x]$, then return $\forall x\ldotp A'[x]$.
+\end{enumerate}
+\end{node}
+
+\nwenddocs{}\nwbegincode{13}\sublabel{NW1mR7zJ-4B0sXE-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1mR7zJ-4B0sXE-1}}}\moddef{Skolemize a formula~{\nwtagstyle{}\subpageref{NW1mR7zJ-4B0sXE-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1mR7zJ-4QrsTb-1}}\nwenddeflinemarkup
+\LA{}Gather all the functions used~{\nwtagstyle{}\subpageref{NW1mR7zJ-43eePE-1}}\RA{}
+
+\LA{}Variant of an identifier~{\nwtagstyle{}\subpageref{NW1mR7zJ-2QPys7-1}}\RA{}
+
+local
+  fun iter [] acc = acc
+    | iter (x::xs) acc = if List.exists (Term.eq x) xs
+                         then iter xs acc
+                         else iter xs (x::acc);
+in
+fun dedupe vars = iter vars []
+end;
+
+(* skolem : Formula.t ->  (string * Sort.t * int) list ->
+     Formula.t * (string * Sort.t * int) list
+
+REQUIRES: given formula is in NNF
+ENSURES: resulting formula is Skolemized, and produces the
+         list of Skolem functions/constants. *)
+fun skolem (fm : Formula.t) (fns : (string * Sort.t * int) list)
+  : Formula.t * ((string * Sort.t * int) list) =
+  if Formula.is_exists fm
+  then let val((var as (Term.Var(y,s))), A) = Formula.dest_exists fm;
+           val xs = dedupe(Formula.fv fm);
+           val (const as (f,s')) = variant (if List.null xs
+                                 then ("c_"^y)
+                                 else ("f_"^y))
+                                s
+                                fns;
+           val fx = Term.Fun(f,s,xs);
+       in skolem (Formula.subst var fx A) ((f,s',length xs)::fns) end
+  else if Formula.is_forall fm
+  then let val (x, A) = Formula.dest_forall fm;
+           val (A', fns') = skolem A fns;
+       in (Formula.mk_forall(x, A'), fns') end
+  else if Formula.is_and fm
+  then let val (A,B) = Formula.dest_and fm
+       in skolem2 Formula.mk_and (A,B) fns end
+  else if Formula.is_or fm
+  then let val (A,B) = Formula.dest_or fm
+       in skolem2 Formula.mk_or (A,B) fns end
+  else (fm,fns)
+and skolem2 conn (A,B) fns =
+    let val (A',fns') = skolem A fns;
+        val (B',fns'') = skolem B fns';
+    in (conn(A', B'), fns'') end;
+\nwused{\\{NW1mR7zJ-4QrsTb-1}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}}\\{{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}}\\{{\nwixident{Formula.fv}}{Formula.fv}}\\{{\nwixident{Formula.is{\_}and}}{Formula.is:unand}}\\{{\nwixident{Formula.is{\_}or}}{Formula.is:unor}}\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}\\{{\nwixident{Formula.subst}}{Formula.subst}}\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Sort.t}}{Sort.t}}\\{{\nwixident{Term.eq}}{Term.eq}}}\nwindexuse{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}{NW1mR7zJ-4B0sXE-1}\nwindexuse{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}{NW1mR7zJ-4B0sXE-1}\nwindexuse{\nwixident{Formula.fv}}{Formula.fv}{NW1mR7zJ-4B0sXE-1}\nwindexuse{\nwixident{Formula.is{\_}and}}{Formula.is:unand}{NW1mR7zJ-4B0sXE-1}\nwindexuse{\nwixident{Formula.is{\_}or}}{Formula.is:unor}{NW1mR7zJ-4B0sXE-1}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1mR7zJ-4B0sXE-1}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1mR7zJ-4B0sXE-1}\nwindexuse{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}{NW1mR7zJ-4B0sXE-1}\nwindexuse{\nwixident{Formula.subst}}{Formula.subst}{NW1mR7zJ-4B0sXE-1}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW1mR7zJ-4B0sXE-1}\nwindexuse{\nwixident{Sort.t}}{Sort.t}{NW1mR7zJ-4B0sXE-1}\nwindexuse{\nwixident{Term.eq}}{Term.eq}{NW1mR7zJ-4B0sXE-1}\nwendcode{}\nwbegindocs{14}\nwdocspar
+
+\begin{node}
+We also want to simplify formulas using various identities. The basic
+structure of simplification amounts to performing these
+transformations once using the {\Tt{}simplify1\nwendquote} function, and propagate
+them down subformulas using the {\Tt{}simplify\nwendquote} function.
+\end{node}
+
+\nwenddocs{}\nwbegincode{15}\sublabel{NW1mR7zJ-2RorhN-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1mR7zJ-2RorhN-1}}}\moddef{Simplify formulas using classical tautologies~{\nwtagstyle{}\subpageref{NW1mR7zJ-2RorhN-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1mR7zJ-l5jX3-1}}\nwenddeflinemarkup
+local
+  fun simplify1 fm =
+    \LA{}Simplify the body of a quantified formula~{\nwtagstyle{}\subpageref{NW1mR7zJ-3pvELX-1}}\RA{}
+    \LA{}Simplify double negation~{\nwtagstyle{}\subpageref{NW1mR7zJ-tCoNW-1}}\RA{}
+    \LA{}Simplify conjunction~{\nwtagstyle{}\subpageref{NW1mR7zJ-19fhtN-1}}\RA{}
+    \LA{}Simplify disjunction~{\nwtagstyle{}\subpageref{NW1mR7zJ-4ZXXl0-1}}\RA{}
+    \LA{}Simplify implication~{\nwtagstyle{}\subpageref{NW1mR7zJ-3HyT53-1}}\RA{}
+    \LA{}Simplify logical equivalence~{\nwtagstyle{}\subpageref{NW1mR7zJ-48args-1}}\RA{}
+    else fm;
+in
+fun simplify fm =
+  if Formula.is_not fm
+  then let val A = Formula.dest_not fm
+       in simplify1(Formula.mk_not(simplify A)) end
+  else if Formula.is_and fm
+  then let val (A,B) = Formula.dest_and fm
+       in simplify1(Formula.mk_and(simplify A,simplify B)) end
+  else if Formula.is_or fm
+  then let val (A,B) = Formula.dest_or fm
+       in simplify1(Formula.mk_or(simplify A,simplify B)) end
+  else if Formula.is_imp fm
+  then let val (A,B) = Formula.dest_imp fm
+       in simplify1(Formula.mk_imp(simplify A,simplify B)) end
+  else if Formula.is_iff fm
+  then let val (A,B) = Formula.dest_iff fm
+       in simplify1(Formula.mk_iff(simplify A,simplify B)) end
+  else if Formula.is_exists fm
+  then let val (x,A) = Formula.dest_exists fm
+       in simplify1(Formula.mk_exists(x, simplify A)) end
+  else if Formula.is_forall fm
+  then let val (x,A) = Formula.dest_forall fm
+       in simplify1(Formula.mk_forall(x, simplify A)) end
+  else fm (* falsum or predicates are already simplified *)
+end;
+\nwused{\\{NW1mR7zJ-l5jX3-1}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}}\\{{\nwixident{Formula.dest{\_}iff}}{Formula.dest:uniff}}\\{{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}}\\{{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}}\\{{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}}\\{{\nwixident{Formula.is{\_}and}}{Formula.is:unand}}\\{{\nwixident{Formula.is{\_}iff}}{Formula.is:uniff}}\\{{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}}\\{{\nwixident{Formula.is{\_}not}}{Formula.is:unnot}}\\{{\nwixident{Formula.is{\_}or}}{Formula.is:unor}}\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}}\nwindexuse{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}{NW1mR7zJ-2RorhN-1}\nwindexuse{\nwixident{Formula.dest{\_}iff}}{Formula.dest:uniff}{NW1mR7zJ-2RorhN-1}\nwindexuse{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}{NW1mR7zJ-2RorhN-1}\nwindexuse{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}{NW1mR7zJ-2RorhN-1}\nwindexuse{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}{NW1mR7zJ-2RorhN-1}\nwindexuse{\nwixident{Formula.is{\_}and}}{Formula.is:unand}{NW1mR7zJ-2RorhN-1}\nwindexuse{\nwixident{Formula.is{\_}iff}}{Formula.is:uniff}{NW1mR7zJ-2RorhN-1}\nwindexuse{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}{NW1mR7zJ-2RorhN-1}\nwindexuse{\nwixident{Formula.is{\_}not}}{Formula.is:unnot}{NW1mR7zJ-2RorhN-1}\nwindexuse{\nwixident{Formula.is{\_}or}}{Formula.is:unor}{NW1mR7zJ-2RorhN-1}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1mR7zJ-2RorhN-1}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1mR7zJ-2RorhN-1}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1mR7zJ-2RorhN-1}\nwindexuse{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}{NW1mR7zJ-2RorhN-1}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1mR7zJ-2RorhN-1}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW1mR7zJ-2RorhN-1}\nwindexuse{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}{NW1mR7zJ-2RorhN-1}\nwendcode{}\nwbegindocs{16}\nwdocspar
+
+\begin{node}
+We simplify $\forall x\ldotp A[x]$ by simplifying $A[x]$ to $A'[x]$
+(whatever that might be), then returning $\forall x\ldotp A'[x]$.
+Similar simplification applies to existentially quantified formulas.
+\end{node}
+
+\nwenddocs{}\nwbegincode{17}\sublabel{NW1mR7zJ-3pvELX-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1mR7zJ-3pvELX-1}}}\moddef{Simplify the body of a quantified formula~{\nwtagstyle{}\subpageref{NW1mR7zJ-3pvELX-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1mR7zJ-2RorhN-1}}\nwenddeflinemarkup
+if Formula.is_forall fm
+then let val (x,A) = Formula.dest_forall fm
+     in if List.exists (Term.eq x) (Formula.fv A)
+        then fm
+        else A
+     end
+else if Formula.is_exists fm
+then let val (x,A) = Formula.dest_exists fm
+     in if List.exists (Term.eq x) (Formula.fv A)
+        then fm
+        else A
+     end
+\nwused{\\{NW1mR7zJ-2RorhN-1}}\nwidentuses{\\{{\nwixident{Formula.fv}}{Formula.fv}}\\{{\nwixident{Term.eq}}{Term.eq}}}\nwindexuse{\nwixident{Formula.fv}}{Formula.fv}{NW1mR7zJ-3pvELX-1}\nwindexuse{\nwixident{Term.eq}}{Term.eq}{NW1mR7zJ-3pvELX-1}\nwendcode{}\nwbegindocs{18}\nwdocspar
+
+\begin{node}
+We simplify $\neg\neg A$ to be just $A$.
+\end{node}
+
+\nwenddocs{}\nwbegincode{19}\sublabel{NW1mR7zJ-tCoNW-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1mR7zJ-tCoNW-1}}}\moddef{Simplify double negation~{\nwtagstyle{}\subpageref{NW1mR7zJ-tCoNW-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1mR7zJ-2RorhN-1}}\nwenddeflinemarkup
+else if Formula.is_not fm
+then let val A = Formula.dest_not fm
+     in if Formula.is_not A
+        then Formula.dest_not A
+        else fm
+     end
+\nwused{\\{NW1mR7zJ-2RorhN-1}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}}\\{{\nwixident{Formula.is{\_}not}}{Formula.is:unnot}}}\nwindexuse{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}{NW1mR7zJ-tCoNW-1}\nwindexuse{\nwixident{Formula.is{\_}not}}{Formula.is:unnot}{NW1mR7zJ-tCoNW-1}\nwendcode{}\nwbegindocs{20}\nwdocspar
+
+\begin{node}
+We simplify $\bot\land B$ and $A\land\bot$ to $\bot$. In the cases
+where neither conjunct is falsum: 
+$\top\land B$ (i.e., $A=\top$) simplifies to $B$, and $A\land\top$
+(i.e., $B=\top$) simplifies to $A$.
+\end{node}
+
+\nwenddocs{}\nwbegincode{21}\sublabel{NW1mR7zJ-19fhtN-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1mR7zJ-19fhtN-1}}}\moddef{Simplify conjunction~{\nwtagstyle{}\subpageref{NW1mR7zJ-19fhtN-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1mR7zJ-2RorhN-1}}\nwenddeflinemarkup
+else if Formula.is_and fm
+then let val (A,B) = Formula.dest_and fm
+     in if Formula.is_falsum A orelse Formula.is_falsum B
+        then Formula.mk_falsum ()
+        else if Formula.is_verum A
+        then B
+        else if Formula.is_verum B
+        then A
+        else fm
+     end
+\nwused{\\{NW1mR7zJ-2RorhN-1}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}}\\{{\nwixident{Formula.is{\_}and}}{Formula.is:unand}}\\{{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}}\\{{\nwixident{Formula.is{\_}verum}}{Formula.is:unverum}}\\{{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}}}\nwindexuse{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}{NW1mR7zJ-19fhtN-1}\nwindexuse{\nwixident{Formula.is{\_}and}}{Formula.is:unand}{NW1mR7zJ-19fhtN-1}\nwindexuse{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}{NW1mR7zJ-19fhtN-1}\nwindexuse{\nwixident{Formula.is{\_}verum}}{Formula.is:unverum}{NW1mR7zJ-19fhtN-1}\nwindexuse{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}{NW1mR7zJ-19fhtN-1}\nwendcode{}\nwbegindocs{22}\nwdocspar
+
+\begin{node}
+We simplify $\bot\lor A$ and $A\lor\bot$ to $A$, and $\top\lor A$
+and $A\lor\top$ to $\top$. Otherwise we don't touch the formula.
+\end{node}
+
+\nwenddocs{}\nwbegincode{23}\sublabel{NW1mR7zJ-4ZXXl0-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1mR7zJ-4ZXXl0-1}}}\moddef{Simplify disjunction~{\nwtagstyle{}\subpageref{NW1mR7zJ-4ZXXl0-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1mR7zJ-2RorhN-1}}\nwenddeflinemarkup
+else if Formula.is_or fm
+then let val (A,B) = Formula.dest_or fm
+     in if Formula.is_falsum A orelse Formula.is_verum B
+        then B
+        else if Formula.is_falsum B orelse Formula.is_verum A
+        then A
+        else fm
+     end
+\nwused{\\{NW1mR7zJ-2RorhN-1}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}}\\{{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}}\\{{\nwixident{Formula.is{\_}or}}{Formula.is:unor}}\\{{\nwixident{Formula.is{\_}verum}}{Formula.is:unverum}}}\nwindexuse{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}{NW1mR7zJ-4ZXXl0-1}\nwindexuse{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}{NW1mR7zJ-4ZXXl0-1}\nwindexuse{\nwixident{Formula.is{\_}or}}{Formula.is:unor}{NW1mR7zJ-4ZXXl0-1}\nwindexuse{\nwixident{Formula.is{\_}verum}}{Formula.is:unverum}{NW1mR7zJ-4ZXXl0-1}\nwendcode{}\nwbegindocs{24}\nwdocspar
+
+\begin{node}
+We simplify $\bot\implies A$ and $A\implies\top$ both to just $\top$.
+We similarly simplify $\top\implies B$ to just $B$. Otherwise we leave
+the formula alone.
+\end{node}
+
+\nwenddocs{}\nwbegincode{25}\sublabel{NW1mR7zJ-3HyT53-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1mR7zJ-3HyT53-1}}}\moddef{Simplify implication~{\nwtagstyle{}\subpageref{NW1mR7zJ-3HyT53-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1mR7zJ-2RorhN-1}}\nwenddeflinemarkup
+else if Formula.is_imp fm
+then let val (A,B) = Formula.dest_imp fm
+     in if Formula.is_falsum A orelse Formula.is_verum B
+        then Formula.mk_verum ()
+        else if Formula.is_verum A
+        then B
+        else fm
+     end
+\nwused{\\{NW1mR7zJ-2RorhN-1}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}}\\{{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}}\\{{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}}\\{{\nwixident{Formula.is{\_}verum}}{Formula.is:unverum}}\\{{\nwixident{Formula.mk{\_}verum}}{Formula.mk:unverum}}}\nwindexuse{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}{NW1mR7zJ-3HyT53-1}\nwindexuse{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}{NW1mR7zJ-3HyT53-1}\nwindexuse{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}{NW1mR7zJ-3HyT53-1}\nwindexuse{\nwixident{Formula.is{\_}verum}}{Formula.is:unverum}{NW1mR7zJ-3HyT53-1}\nwindexuse{\nwixident{Formula.mk{\_}verum}}{Formula.mk:unverum}{NW1mR7zJ-3HyT53-1}\nwendcode{}\nwbegindocs{26}\nwdocspar
+
+\begin{node}
+We simplify $A\iff B$ according to the following rules:
+\begin{enumerate}
+\item $\top\iff B$ becomes $B$
+\item $A\iff\top$ becomes $A$
+\item $\bot\iff B$ becomes $\neg B$
+\item $A\iff\bot$ becomes $\neg A$
+\end{enumerate}
+Otherwise, we just leave the formula alone.
+\end{node}
+
+\nwenddocs{}\nwbegincode{27}\sublabel{NW1mR7zJ-48args-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1mR7zJ-48args-1}}}\moddef{Simplify logical equivalence~{\nwtagstyle{}\subpageref{NW1mR7zJ-48args-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1mR7zJ-2RorhN-1}}\nwenddeflinemarkup
+else if Formula.is_iff fm
+then let val (A,B) = Formula.dest_iff fm
+     in if Formula.is_verum A
+        then B
+        else if Formula.is_verum B
+        then A
+        else if Formula.is_falsum A
+        then Formula.mk_not B
+        else if Formula.is_falsum B
+        then Formula.mk_not A
+        else fm
+     end
+\nwused{\\{NW1mR7zJ-2RorhN-1}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}iff}}{Formula.dest:uniff}}\\{{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}}\\{{\nwixident{Formula.is{\_}iff}}{Formula.is:uniff}}\\{{\nwixident{Formula.is{\_}verum}}{Formula.is:unverum}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}}\nwindexuse{\nwixident{Formula.dest{\_}iff}}{Formula.dest:uniff}{NW1mR7zJ-48args-1}\nwindexuse{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}{NW1mR7zJ-48args-1}\nwindexuse{\nwixident{Formula.is{\_}iff}}{Formula.is:uniff}{NW1mR7zJ-48args-1}\nwindexuse{\nwixident{Formula.is{\_}verum}}{Formula.is:unverum}{NW1mR7zJ-48args-1}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW1mR7zJ-48args-1}\nwendcode{}\nwbegindocs{28}\nwdocspar
+
+\begin{node}
+Skolemization then applies the algorithm to replace existentially
+quantified variables with skolem constants, to the negation normal
+form of the given formula (after simplifying the formula).
+\end{node}
+
+\nwenddocs{}\nwbegincode{29}\sublabel{NW1mR7zJ-4QrsTb-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1mR7zJ-4QrsTb-1}}}\moddef{Skolemization~{\nwtagstyle{}\subpageref{NW1mR7zJ-4QrsTb-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1mR7zJ-l5jX3-1}}\nwenddeflinemarkup
+\LA{}Skolemize a formula~{\nwtagstyle{}\subpageref{NW1mR7zJ-4B0sXE-1}}\RA{}
+
+(* askolemize : Formula.t -> Formula.t
+
+REQUIRES: The given formula is a closed formula.
+ENSURES: The resulting formula is in Negation Normal Form with
+         all existential quantifiers replaced by Skolem
+         functions/constants. *)
+fun askolemize fm =
+  let val (result, _) = skolem (nnf(simplify(fm))) (functions fm)
+  in result end;
+\nwused{\\{NW1mR7zJ-l5jX3-1}}\nwidentuses{\\{{\nwixident{Formula.t}}{Formula.t}}}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW1mR7zJ-4QrsTb-1}\nwendcode{}\nwbegindocs{30}\nwdocspar
+
+\section{Tableaux}
+
+\begin{node}
+Most tableaux methods follows \leanTAP's algorithm~\cite{beckert1995leantap}.
+The basic tableaux method works as follows:
+\begin{enumerate}
+\item for $A\land B$, separately assume $A$ and $B$; this amounts to
+  working through $A$, then working through $B$, then working through
+  the remaining unexplored subformulas.
+\item for $A\lor B$, we ``branch'' --- that is to say, we perform two
+  separate refutations, one for $A$, and another for $B$;
+\item for $\forall x\ldotp A[x]$, introduce a fresh variable $y$ and
+  assume $A[y]$, but we keep the original $\forall x\ldotp A[x]$
+  in case multiple instances are needed.
+\item for a literal $L$, try to refute it based on the literals
+  already encountered (which is the only way to close the branch);
+  otherwise, we add $L$ to the ``database'' of
+  literals, and look at the next unexpanded formula.
+\end{enumerate}
+There is no ordering to the subformulas being explored. Smullyan noted
+that it's probably more optimal to explore the conjunctions first,
+then the disjunctions. This would probably be low hanging fruit.
+\end{node}
+
+\nwenddocs{}\nwbegincode{31}\sublabel{NW1mR7zJ-1k5nOE-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1mR7zJ-1k5nOE-1}}}\moddef{Tableau method~{\nwtagstyle{}\subpageref{NW1mR7zJ-1k5nOE-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1mR7zJ-yCIr5-1}}\nwenddeflinemarkup
+fun tryfind f [] = raise Fail "tryfind"
+  | tryfind f (x::xs) = (f x
+                         handle _ => tryfind f xs);
+
+(* tableau : (Formula.t list * Formula.t list * int) ->
+                (Unif.Env.t * int -> 'a) ->
+                Unif.Env.t * int -> 'a *)
+fun tableau (fms, lits, n) (cont : Unif.Env.t * int -> 'a) (env, k) =
+  if n < 0 then raise Fail "no proof at this level"
+  else
+    (case fms of
+      [] => raise Fail "tableau: no proof"
+    | (phi::unexp) =>
+        if Formula.is_and phi
+        then let val (A,B) = Formula.dest_and phi
+             in tableau (A::B::unexp,lits,n) cont (env, k) end
+        else if Formula.is_or phi
+        then let val (A,B) = Formula.dest_or phi
+             in tableau (A::unexp,lits,n)
+                        (tableau (B::unexp,lits,n) cont)
+                        (env, k)
+             end
+        else if Formula.is_forall phi
+        then let val(x,A) = Formula.dest_forall phi;
+                 val y = Term.Var("_"^(Int.toString k), Term.sort(x));
+                 val A' = Formula.subst x y A;
+             in tableau (A'::unexp@[Formula.mk_forall(x,A)],lits,n-1) cont (env, k+1) end
+        else
+         (tryfind (fn l => cont(Unif.y_complements env (phi,l),k))
+                  lits
+         handle _ => tableau(unexp,phi::lits,n) cont (env,k)));
+\nwused{\\{NW1mR7zJ-yCIr5-1}}\nwidentuses{\\{{\nwixident{Env.t}}{Env.t}}\\{{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}}\\{{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}}\\{{\nwixident{Formula.is{\_}and}}{Formula.is:unand}}\\{{\nwixident{Formula.is{\_}or}}{Formula.is:unor}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.subst}}{Formula.subst}}\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Term.sort}}{Term.sort}}\\{{\nwixident{Unif.y{\_}complements}}{Unif.y:uncomplements}}}\nwindexuse{\nwixident{Env.t}}{Env.t}{NW1mR7zJ-1k5nOE-1}\nwindexuse{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}{NW1mR7zJ-1k5nOE-1}\nwindexuse{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}{NW1mR7zJ-1k5nOE-1}\nwindexuse{\nwixident{Formula.is{\_}and}}{Formula.is:unand}{NW1mR7zJ-1k5nOE-1}\nwindexuse{\nwixident{Formula.is{\_}or}}{Formula.is:unor}{NW1mR7zJ-1k5nOE-1}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1mR7zJ-1k5nOE-1}\nwindexuse{\nwixident{Formula.subst}}{Formula.subst}{NW1mR7zJ-1k5nOE-1}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW1mR7zJ-1k5nOE-1}\nwindexuse{\nwixident{Term.sort}}{Term.sort}{NW1mR7zJ-1k5nOE-1}\nwindexuse{\nwixident{Unif.y{\_}complements}}{Unif.y:uncomplements}{NW1mR7zJ-1k5nOE-1}\nwendcode{}\nwbegindocs{32}\nwdocspar
+
+\begin{node}
+The basic idea is to proving a formula $\phi$ classically with method
+of tableaux amounts to refuting $\neg\phi$ with tableaux. We need to
+universally quantify free variables, then negate the result, then
+Skolemize the result, before applying the tableaux method.
+\end{node}
+
+\nwenddocs{}\nwbegincode{33}\sublabel{NW1mR7zJ-3SEP5w-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1mR7zJ-3SEP5w-1}}}\moddef{Tableaux refutation~{\nwtagstyle{}\subpageref{NW1mR7zJ-3SEP5w-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1mR7zJ-yCIr5-1}}\nwenddeflinemarkup
+fun deepen f n maxiter =
+  (print("Searching with depth limit "^
+         (Int.toString n)^"\\n");
+   f n)
+  handle (Fail _) => if n < maxiter then deepen f (n + 1) maxiter
+                     else raise Fail "maximum iterations encountered";
+
+local
+  fun id x = x;
+in
+fun tabrefute fms maxiter =
+  deepen (fn n =>
+             (tableau (fms,[],n)
+                      id
+                      (Unif.Env.undefined (),0);
+              n))
+         0
+         maxiter
+end;
+\nwused{\\{NW1mR7zJ-yCIr5-1}}\nwidentuses{\\{{\nwixident{Env.undefined}}{Env.undefined}}}\nwindexuse{\nwixident{Env.undefined}}{Env.undefined}{NW1mR7zJ-3SEP5w-1}\nwendcode{}\nwbegindocs{34}\nwdocspar
+
+\begin{node}
+We can combine everything to give the user {\Tt{}\nwlinkedidentq{Classical.tab}{NW1mR7zJ-yCIr5-1}\nwendquote}, which
+attempts to prove the validity of the given formula by refuting its
+negation. The integer parameter supplied limits the number of
+iterations performed, to guarantee it will terminate.
+
+One possibly optimization is to transform the Skolemized formula into
+Disjunctive normal form, then applying the tableaux method to each
+disjunct.
+\end{node}
+
+\nwenddocs{}\nwbegincode{35}\sublabel{NW1mR7zJ-yCIr5-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1mR7zJ-yCIr5-1}}}\moddef{Tableaux refuter~{\nwtagstyle{}\subpageref{NW1mR7zJ-yCIr5-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1mR7zJ-l5jX3-1}}\nwenddeflinemarkup
+\LA{}Tableau method~{\nwtagstyle{}\subpageref{NW1mR7zJ-1k5nOE-1}}\RA{}
+
+\LA{}Tableaux refutation~{\nwtagstyle{}\subpageref{NW1mR7zJ-3SEP5w-1}}\RA{}
+
+(* generalize : Formula.t -> Formula.t *)
+fun generalize fm =
+  List.foldr Formula.mk_forall fm (dedupe (Formula.fv fm));
+
+fun tab fm maxiter =
+  let val fm' = askolemize(Formula.mk_not(generalize fm))
+  in if Formula.is_falsum fm' then 0
+     else tabrefute [fm'] maxiter
+  end;
+\nwindexdefn{\nwixident{Classical.tab}}{Classical.tab}{NW1mR7zJ-yCIr5-1}\eatline
+\nwused{\\{NW1mR7zJ-l5jX3-1}}\nwidentdefs{\\{{\nwixident{Classical.tab}}{Classical.tab}}}\nwidentuses{\\{{\nwixident{Formula.fv}}{Formula.fv}}\\{{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Formula.t}}{Formula.t}}}\nwindexuse{\nwixident{Formula.fv}}{Formula.fv}{NW1mR7zJ-yCIr5-1}\nwindexuse{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}{NW1mR7zJ-yCIr5-1}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1mR7zJ-yCIr5-1}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW1mR7zJ-yCIr5-1}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW1mR7zJ-yCIr5-1}\nwendcode{}\nwbegindocs{36}\nwdocspar
+\begin{node}
+As a couple of unit tests, we should check that the simpler problems
+found in Pelletier's problem set ``work''.
+\end{node}
+
+\nwenddocs{}\nwbegincode{37}\sublabel{NW1mR7zJ-4QAFgj-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1mR7zJ-4QAFgj-1}}}\moddef{Unit tests for \code{}Classical\edoc{}~{\nwtagstyle{}\subpageref{NW1mR7zJ-4QAFgj-1}}}\endmoddef\nwstartdeflinemarkup\nwenddeflinemarkup
+local
+  val A = Formula.mk_pred("A", []);
+  val B = Formula.mk_pred("B", []);
+  infixr ==> <=>;
+  fun (p ==> q) = Formula.mk_imp(p, q);
+  fun (p <=> q) = Formula.mk_iff(p, q);
+  infixr &;
+  fun (p & q) = Formula.mk_and(p, q);
+
+  fun ~ p = Formula.mk_not(p);
+
+  fun exists(x, p) = Formula.mk_exists(x, p);
+  fun all(x, p) = Formula.mk_forall(x, p);
+in
+val p1 = \nwlinkedidentc{Classical.tab}{NW1mR7zJ-yCIr5-1} ((A ==> B) <=> ((~ B) ==> (~ A))) 1;
+val p2 = \nwlinkedidentc{Classical.tab}{NW1mR7zJ-yCIr5-1} ((~(~ A)) <=> A) 1;
+val p3 = \nwlinkedidentc{Classical.tab}{NW1mR7zJ-yCIr5-1} ((~(A ==> B)) ==> (A ==> B)) 1;
+val p4 = \nwlinkedidentc{Classical.tab}{NW1mR7zJ-yCIr5-1} (((~ A) ==> B) <=> ((~ B) ==> A)) 1;
+val p5 = \nwlinkedidentc{Classical.tab}{NW1mR7zJ-yCIr5-1} (Formula.mk_or(A, ~ A)) 1;
+
+(* Expected: 2 iterations *)
+val p18 = let val x = Term.Var("x",Sort.IND);
+    val y = Term.Var("y",Sort.IND);
+    fun P t = Formula.mk_pred("P", [t]);
+in \nwlinkedidentc{Classical.tab}{NW1mR7zJ-yCIr5-1} (exists(y, all(x, (P y) ==> (P x)))) 3 end;
+
+(* expected: 2 iteration *)
+val p19 =
+  let val x = Term.Var("x",Sort.IND);
+      val y = Term.Var("y",Sort.IND);
+      val z = Term.Var("z",Sort.IND);
+      fun P t = Formula.mk_pred("P", [t]);
+      fun Q t = Formula.mk_pred("Q", [t]);
+  in \nwlinkedidentc{Classical.tab}{NW1mR7zJ-yCIr5-1} (exists(x,
+                           all(y,
+                               all(z, ((P y) ==> (Q z)) ==> (P x) ==> (Q x)))))
+                   3
+  end;
+
+end;
+\nwnotused{Unit tests for [[Classical]]}\nwidentuses{\\{{\nwixident{Classical.tab}}{Classical.tab}}\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Sort.IND}}{Sort.IND}}}\nwindexuse{\nwixident{Classical.tab}}{Classical.tab}{NW1mR7zJ-4QAFgj-1}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1mR7zJ-4QAFgj-1}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1mR7zJ-4QAFgj-1}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1mR7zJ-4QAFgj-1}\nwindexuse{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}{NW1mR7zJ-4QAFgj-1}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1mR7zJ-4QAFgj-1}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW1mR7zJ-4QAFgj-1}\nwindexuse{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}{NW1mR7zJ-4QAFgj-1}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1mR7zJ-4QAFgj-1}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1mR7zJ-4QAFgj-1}\nwendcode{}\nwbegindocs{38}\nwdocspar
+
+\begin{node}
+I am curious whether the claim ``$\forall x\ldotp x=0\lor\exists
+y,z\ldotp x=(y,z)$'' is provable in $FS_{0}$. The relevant axioms
+conjoined together as the premises for the claim:
+\begin{multline*}
+(\forall x_{1},x_{2}\ldotp 0\neq(x_{1},x_{2}))\land
+(\forall x_{3},x_{4}\ldotp P_{1}(x_{3},x_{4})=x_{3})\land
+(\forall x_{4},x_{6}\ldotp P_{2}(x_{5},x_{6})=x_{6})\land\\
+(0\in U)\land(\forall x_{7},x_{8}\ldotp x_{7}\in U\land x_{8}\in U\implies (x_{7},x_{8})\in U)\land\\
+(\forall X\ldotp 0\in X\land\forall x_{9},x_{10}\ldotp(x_{9}\in X\land x_{10}\in X\implies(x_{9},x_{10})\in X)\implies\forall x_{11}\ldotp x_{11}\in X)\\
+(\forall t_{1},t_{2}\ldotp t_{1}=t_{2}\implies t_{2}=t_{1})\land(\forall t_{3},t_{4},t_{5}\ldotp t_{3}=t_{4}\land t_{4}=t_{5}\implies t_{3}=t_{5})\\
+(\forall t_{6},t_{7},f\ldotp t_{6}=t_{7}\implies ft_{6}=ft_{7})\implies\\
+  \implies(\forall x_{12}\ldotp 0=x_{12}\lor\exists x_{13},x_{14}\ldotp x_{12}=(x_{13},x_{14}))
+\end{multline*}
+The Skolemized version of this formula is
+\begin{align*}
+(\forall x_{1},x_{2}\ldotp 0\neq(x_{1},x_{2}))\land\\
+(\forall x_{3},x_{4}\ldotp P_{1}(x_{3},x_{4})=x_{3})\land\\
+(\forall x_{4},x_{6}\ldotp P_{2}(x_{5},x_{6})=x_{6})\land\\
+(0\in U)\land\\
+  (\forall x_{7},x_{8}\ldotp x_{7}\notin U\lor x_{8}\notin U\lor(x_{7},x_{8})\in U)\land\\
+(0\notin X\lor\bigl(f_{x}(X)\in X\land f_{y}(X)\in X\land(f_{x}(X),f_{y}(X))\notin X\bigr)\lor(\forall x\ldotp x\in X))\land\\
+  (\forall t_{1},t_{2}\ldotp t_{1}\neq t_{2}\lor t_{2}=t_{1})\land\\
+  (\forall t_{3},t_{4},t_{5}\ldotp t_{3}\neq t_{4}\lor t_{4}\neq t_{5}\lor t_{3}=t_{5})\land\\
+(\forall t_{6},t_{7},f\ldotp t_{6}\neq t_{7}\lor ft_{6}=ft_{7})\land\\
+  \land(0\neq c_{x_{12}}\land\forall x_{13},x_{14}\ldotp c_{x_{12}}\neq(x_{13},x_{14}))
+\end{align*}
+
+
+
+%% And(
+%%   And(Forall(Var(x1, IND), Forall(Var(x2, IND), Not(Pred(=[Fun(cons, IND, [Var(x1, IND), Var(x2, IND)]), Fun(0, IND, [])])))),
+%%   And(Forall(Var(x3, IND), Forall(Var(x4, IND), Pred(=[Fun(apply, IND, [Fun(P1, FUN, []), Fun(cons, IND, [Var(x3, IND), Var(x4, IND)])]), Var(x3, IND)]))),
+%%   And(Forall(Var(x5, IND), Forall(Var(x6, IND), Pred(=[Fun(apply, IND, [Fun(P2, FUN, []), Fun(cons, IND, [Var(x5, IND), Var(x6, IND)])]), Var(x6, IND)]))),
+%%   And(Pred(in[Fun(0, IND, []), Fun(U, CLASS, [])]),
+%%   And(Forall(Var(x7, IND), Forall(Var(x8, IND), Or(Or(Not(Pred(in[Var(x7, IND), Fun(U, CLASS, [])])), Not(Pred(in[Var(x8, IND), Fun(U, CLASS, [])]))), Pred(in[Fun(cons, IND, [Var(x7, IND), Var(x8, IND)]), Fun(U, CLASS, [])])))),
+%%   And(Forall(Var(X, CLASS), Or(Or(Not(Pred(in[Fun(0, IND, []), Var(X, CLASS)])), And(And(Pred(in[Fun(f_x, IND, [Var(X, CLASS)]), Var(X, CLASS)]), Pred(in[Fun(f_y, IND, [Var(X, CLASS)]), Var(X, CLASS)])), Not(Pred(in[Fun(cons, IND, [Fun(f_x, IND, [Var(X, CLASS)]), Fun(f_y, IND, [Var(X, CLASS)])]), Var(X, CLASS)])))), Forall(Var(x, IND), Pred(in[Var(x, IND), Var(X, CLASS)])))),
+%%   And(Forall(Var(x9, IND), Forall(Var(x10, IND), Or(Not(Pred(=[Var(x9, IND), Var(x10, IND)])), Pred(=[Var(x10, IND), Var(x9, IND)])))),
+%%   And(Forall(Var(x12, IND), Forall(Var(x13, IND), Forall(Var(x11, IND), Or(Or(Not(Pred(=[Var(x11, IND), Var(x12, IND)])), Not(Pred(=[Var(x12, IND), Var(x13, IND)]))), Pred(=[Var(x11, IND), Var(x13, IND)]))))),
+%%       Forall(Var(x15, IND), Forall(Var(f, FUN), Forall(Var(x14, IND), Or(Not(Pred(=[Var(x14, IND), Var(x15, IND)])), Pred(=[Fun(apply, IND, [Var(f, FUN), Var(x14, IND)]), Fun(apply, IND, [Var(f, FUN), Var(x15, IND)])]))))))))))))), 
+%% And(Not(Pred(=[Fun(0, IND, []), Fun(c_x16, IND, [])])),
+%%     Forall(Var(x17, IND), Forall(Var(x18, IND), Not(Pred(=[Fun(c_x16, IND, []), Fun(cons, IND, [Var(x17, IND), Var(x18, IND)])]))))))
+\end{node}
+\nwenddocs{}
+
+\nwixlogsorted{c}{{Classical.sig}{NW1mR7zJ-3NMRe1-1}{\nwixd{NW1mR7zJ-3NMRe1-1}}}%
+\nwixlogsorted{c}{{Classical.sml}{NW1mR7zJ-l5jX3-1}{\nwixd{NW1mR7zJ-l5jX3-1}}}%
+\nwixlogsorted{c}{{Gather all the functions used}{NW1mR7zJ-43eePE-1}{\nwixd{NW1mR7zJ-43eePE-1}\nwixu{NW1mR7zJ-4B0sXE-1}}}%
+\nwixlogsorted{c}{{Negation normal form for negated formulas}{NW1mR7zJ-4HwyeF-1}{\nwixu{NW1mR7zJ-4TkWUc-1}\nwixd{NW1mR7zJ-4HwyeF-1}}}%
+\nwixlogsorted{c}{{Simplify conjunction}{NW1mR7zJ-19fhtN-1}{\nwixu{NW1mR7zJ-2RorhN-1}\nwixd{NW1mR7zJ-19fhtN-1}}}%
+\nwixlogsorted{c}{{Simplify disjunction}{NW1mR7zJ-4ZXXl0-1}{\nwixu{NW1mR7zJ-2RorhN-1}\nwixd{NW1mR7zJ-4ZXXl0-1}}}%
+\nwixlogsorted{c}{{Simplify double negation}{NW1mR7zJ-tCoNW-1}{\nwixu{NW1mR7zJ-2RorhN-1}\nwixd{NW1mR7zJ-tCoNW-1}}}%
+\nwixlogsorted{c}{{Simplify formulas using classical tautologies}{NW1mR7zJ-2RorhN-1}{\nwixu{NW1mR7zJ-l5jX3-1}\nwixd{NW1mR7zJ-2RorhN-1}}}%
+\nwixlogsorted{c}{{Simplify implication}{NW1mR7zJ-3HyT53-1}{\nwixu{NW1mR7zJ-2RorhN-1}\nwixd{NW1mR7zJ-3HyT53-1}}}%
+\nwixlogsorted{c}{{Simplify logical equivalence}{NW1mR7zJ-48args-1}{\nwixu{NW1mR7zJ-2RorhN-1}\nwixd{NW1mR7zJ-48args-1}}}%
+\nwixlogsorted{c}{{Simplify the body of a quantified formula}{NW1mR7zJ-3pvELX-1}{\nwixu{NW1mR7zJ-2RorhN-1}\nwixd{NW1mR7zJ-3pvELX-1}}}%
+\nwixlogsorted{c}{{Skolemization}{NW1mR7zJ-4QrsTb-1}{\nwixu{NW1mR7zJ-l5jX3-1}\nwixd{NW1mR7zJ-4QrsTb-1}}}%
+\nwixlogsorted{c}{{Skolemize a formula}{NW1mR7zJ-4B0sXE-1}{\nwixd{NW1mR7zJ-4B0sXE-1}\nwixu{NW1mR7zJ-4QrsTb-1}}}%
+\nwixlogsorted{c}{{Tableau method}{NW1mR7zJ-1k5nOE-1}{\nwixd{NW1mR7zJ-1k5nOE-1}\nwixu{NW1mR7zJ-yCIr5-1}}}%
+\nwixlogsorted{c}{{Tableaux refutation}{NW1mR7zJ-3SEP5w-1}{\nwixd{NW1mR7zJ-3SEP5w-1}\nwixu{NW1mR7zJ-yCIr5-1}}}%
+\nwixlogsorted{c}{{Tableaux refuter}{NW1mR7zJ-yCIr5-1}{\nwixu{NW1mR7zJ-l5jX3-1}\nwixd{NW1mR7zJ-yCIr5-1}}}%
+\nwixlogsorted{c}{{Transform formula to negation normal form}{NW1mR7zJ-4TkWUc-1}{\nwixu{NW1mR7zJ-l5jX3-1}\nwixd{NW1mR7zJ-4TkWUc-1}}}%
+\nwixlogsorted{c}{{Unit tests for \code{}Classical\edoc{}}{NW1mR7zJ-4QAFgj-1}{\nwixd{NW1mR7zJ-4QAFgj-1}}}%
+\nwixlogsorted{c}{{Variant of an identifier}{NW1mR7zJ-2QPys7-1}{\nwixd{NW1mR7zJ-2QPys7-1}\nwixu{NW1mR7zJ-4B0sXE-1}}}%
+\nwixlogsorted{i}{{\nwixident{Classical.tab}}{Classical.tab}}%
+\nwixlogsorted{i}{{\nwixident{Env.t}}{Env.t}}%
+\nwixlogsorted{i}{{\nwixident{Env.undefined}}{Env.undefined}}%
+\nwixlogsorted{i}{{\nwixident{Formula.atom{\_}union}}{Formula.atom:ununion}}%
+\nwixlogsorted{i}{{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}}%
+\nwixlogsorted{i}{{\nwixident{Formula.dest{\_}iff}}{Formula.dest:uniff}}%
+\nwixlogsorted{i}{{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}}%
+\nwixlogsorted{i}{{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}}%
+\nwixlogsorted{i}{{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}}%
+\nwixlogsorted{i}{{\nwixident{Formula.dest{\_}pred}}{Formula.dest:unpred}}%
+\nwixlogsorted{i}{{\nwixident{Formula.fv}}{Formula.fv}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}and}}{Formula.is:unand}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}iff}}{Formula.is:uniff}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}not}}{Formula.is:unnot}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}or}}{Formula.is:unor}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}verum}}{Formula.is:unverum}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}verum}}{Formula.mk:unverum}}%
+\nwixlogsorted{i}{{\nwixident{Formula.subst}}{Formula.subst}}%
+\nwixlogsorted{i}{{\nwixident{Formula.t}}{Formula.t}}%
+\nwixlogsorted{i}{{\nwixident{Sort.IND}}{Sort.IND}}%
+\nwixlogsorted{i}{{\nwixident{Sort.t}}{Sort.t}}%
+\nwixlogsorted{i}{{\nwixident{Term.eq}}{Term.eq}}%
+\nwixlogsorted{i}{{\nwixident{Term.sort}}{Term.sort}}%
+\nwixlogsorted{i}{{\nwixident{Term.t}}{Term.t}}%
+\nwixlogsorted{i}{{\nwixident{Unif.y{\_}complements}}{Unif.y:uncomplements}}%
+

@@ -1,0 +1,299 @@
+% -*- mode: poly-noweb; noweb-code-mode: sml-mode; -*-
+%%
+%% many-sorted-term.nw
+%% 
+%% Made by Alex Nelson <pqnelson@gmail.com>
+%% Login   <alex@lisp>
+%% 
+%% Started on  2026-04-04T18:09:28-0700
+%% Last update 2026-04-04T18:09:28-0700
+%% 
+
+\section{Syntax for terms}
+
+\begin{node}
+Since a proof assistant resembles an interpreter in many ways, it
+should not be surprising that we will first focus on implement
+abstract syntax trees for terms and formulas for three-sorted
+first-order logic. 
+\end{node}
+
+\begin{node}
+The grammar for a term in $FS_{0}$'s three-sorted logic is, more or
+less, the same as in single-sorted logic. Since we are working with
+\emph{three} sorts, we isolate it in is own module. We would have the
+BNF for such things be:
+\begin{center}
+\begin{tabular}{rcl}
+$\langle$\textit{sort}$\rangle$ & $::=$ & \texttt{Ind} $\mid$ \texttt{Fun} $\mid$ \texttt{Class}\\
+$\langle$\textit{term}$\rangle$ & $::=$ & $\langle$\textit{variable}$\rangle$ \\
+& $\mid$ & $\langle$\textit{function}$\rangle$
+\end{tabular}
+\end{center}
+Remember, a ``function'' here should be thought of as a ``term constructor''.
+
+We've abstracted away the ``concrete syntax'' for the sorted
+first-order logic, so we can treat variables as an ordered pair
+consisting of a lexeme (string representation of its identifier) and
+its sort. Similarly, we can treat a function as an ordered triple
+consisting of a lexeme, its sort, and a list of terms for its
+arguments.
+
+Before getting too far ahead of ourselves, let us implement a simple
+encoding for the sort. We will just make everything public, because
+there's not much to hide. There are three data constructors (one for
+each sort), a comparison function, and a function to get the string
+representation for the sort.
+
+Also we should bear in mind the user may have a ``mismatch'' between
+the sorts expected for arguments of predicates and functions, and the
+arguments supplied for them. This situation should raise an
+exception. We will create a [[Sort.Mismatch]] exception, with a string
+message for what went wrong.
+\end{node}
+
+<<Sort.sml>>=
+structure Sort = struct
+exception Mismatch of string;
+datatype t = IND | FUN | CLASS;
+
+(* compare : Sort.t * Sort.t -> order *)
+fun compare(IND,IND) = EQUAL
+  | compare(IND, _) = LESS
+  | compare(FUN,IND) = GREATER
+  | compare(FUN,FUN) = EQUAL
+  | compare(FUN, _) = LESS
+  | compare(CLASS, CLASS) = EQUAL
+  | compare(CLASS, _) = GREATER;
+
+(* to_string : Sort.t -> string *)
+fun to_string (IND) = "IND"
+  | to_string (FUN) = "FUN"
+  | to_string (CLASS) = "CLASS";
+end;
+@ %def Sort.t Sort.compare Sort.to_string Sort.IND Sort.FUN Sort.CLASS
+
+\begin{node}
+Now, a three-sorted term is either a variable (which is a string and a
+sort) or a function (which is a string, a sort, and a list of arguments).
+We do not ``hardcode'' any of the primitive notions from $FS_{0}$ in
+this representation. Instead, they will be ``initialized'' in the
+state of the kernel.
+\end{node}
+
+<<Term.sml>>=
+structure Term = struct
+datatype t = Var of string * Sort.t
+           | Fun of string * Sort.t * t list;
+
+<<Test if two terms have the same sort>>
+
+<<Predicates of terms about their sorts>>
+
+<<Free variables in a term>>
+
+<<Substitution of a term for a variable in a term>>
+
+<<Comparing two terms>>
+
+<<Equality of two terms>>
+
+<<Test if term contains subterm>>
+
+<<Determine a fresh variable given some free variables>>
+
+<<Serialize a term>>
+end;
+@ %def Term.t
+
+\begin{node}
+We provide a minimal abstraction for terms. As it stands now, without
+any ``helper'' or ``uniform'' constructors, it is about 44 lines of
+code. If we ``hardcoded'' the $FS_{0}$ primitives, that would require
+about 412 lines of code --- about $9.36$ times as much code.
+\end{node}
+
+\begin{node}
+We provide a uniform way to access the sort of a term, and test if two
+terms have the same sort.
+\end{node}
+
+<<Test if two terms have the same sort>>=
+(* sort : Term.t -> Sort.t *)
+fun sort (Var (_, s)) = s
+  | sort (Fun (_, s, _)) = s;
+
+(* have_same_sort : Term.t -> Term.t -> bool *)
+fun have_same_sort (lhs : t) (rhs : t) =
+  (sort lhs) = (sort rhs);
+@ %def Term.sort Term.have_same_sort
+
+\begin{node}
+We have some helper functions for common predicates.
+\end{node}
+
+<<Predicates of terms about their sorts>>=
+(* is_var : Term.t -> bool *)
+fun is_var (Var _) = true
+  | is_var _ = false;
+
+(* is_ind : Term.t -> bool *)
+fun is_ind (tm : t) = (Sort.IND = sort tm);
+
+(* is_fun : Term.t -> bool *)
+fun is_fun (tm : t) = (Sort.FUN = sort tm);
+
+(* is_class : Term.t -> bool *)
+fun is_class (tm : t) = (Sort.CLASS = sort tm);
+@ %def Term.is_ind Term.is_fun Term.is_class
+
+\begin{node}
+The free variables of a term are just \emph{all} the variables
+appearing in the term. Later, formulas will remove the bound variables.
+\end{node}
+
+<<Free variables in a term>>=
+(* fv : Term.t -> Term.t list *)
+fun fv (x as (Var _)) = [x]
+  | fv (Fun (_, _, args)) = List.foldr (fn (arg, fvs) => (fv arg) @ fvs)
+                                       []
+                                       args;
+@ %def Term.fv
+
+\begin{node}
+Substitution amounts to replacing a variable \emph{of a given sort}
+with a term \emph{of the same sort} in a term recursively by:
+\begin{enumerate}
+\item $x[t/x]=t$ 
+\item $y[t/x]=y$ if $y\neq x$
+\item $(f(t_{1},\dots,t_{n}))[t/x]=(f(t_{1}[t/x],\dots,t_{n}[t/x]))$
+\end{enumerate}
+Although we \emph{should} restrict our focus to the situation where
+$x$ is a variable, I suspect there might be situations where we want
+to replace \emph{entire subterms}.
+\end{node}
+
+<<Substitution of a term for a variable in a term>>=
+(* subst : Term.t -> Term.t -> Term.t -> Term.t *)
+fun subst (x : t) (replacement : t) (tm : t) =
+  if not (have_same_sort x replacement)
+  then raise Sort.Mismatch "Term.subst: variable and replacement have different sorts"
+  else if x = tm then replacement
+  else (case tm of
+         (Var _) => if x = tm then replacement else tm
+       | (Fun(f,s,args)) => Fun(f,s,map (subst x replacement) args));
+@ %def Term.subst
+
+\begin{node}
+Comparing two terms follows the following rules:
+\begin{enumerate}
+\item First compare the sort of both sides; if they differ, then this
+  is the result
+\item Variables are less than or equal to everything
+\item Functions are greater than or equal to everything
+\item Variables are compared by sort, then by name
+\item Functions are compared by sort, then by name, then
+  lexicographically on the arguments
+\end{enumerate}
+\end{node}
+
+
+<<Comparing two terms>>=
+(* compare : Term.t * Term.t -> order *)
+fun compare(Var(x1,s1), Var(x2,s2)) =
+    (case Sort.compare(s1, s2) of
+      EQUAL => String.compare(x1, x2)
+    | r => r)
+  | compare(Var _, _) = LESS
+  | compare(Fun _, Var _) = GREATER
+  | compare(Fun(f1,s1,args1), Fun(f2,s2,args2)) =
+    (case Sort.compare(s1,s2) of
+      EQUAL => (case String.compare(f1, f2) of
+                 EQUAL => compare_lists args1 args2
+               | r => r)
+    | r => r)
+(* compare_lists : Term.t list -> Term.t list -> order *)
+and compare_lists [] [] = EQUAL
+  | compare_lists [] ys = LESS
+  | compare_lists xs [] = GREATER
+  | compare_lists (x::xs) (y::ys) =
+     (case compare(x,y) of
+       EQUAL => compare_lists xs ys
+     | r => r);
+@ %def Term.compare Term.compare_lists
+
+\begin{node}
+The \emph{syntactic} equality of terms can be determined in a more
+performant manner. Two variables are equal if their payload are equal
+(i.e., they have the same sort and the same lexeme). Two functions are
+equal if they have the same name, same sort, and their arguments are
+syntactically equal (determined by recursively invoking [[Term.eq]]
+pairwise on the arguments).
+\end{node}
+
+<<Equality of two terms>>=
+(* eq : Term.t -> Term.t -> bool *)
+fun eq (Var(x1,s1)) (Var(x2,s2)) = (s1 = s2) andalso (x1 = x2)
+  | eq (Fun(f1,s1,args1)) (Fun(f2,s2,args2)) =
+      (s1 = s2) andalso (f1 = f2) andalso (eq_lists args1 args2)
+  | eq _ _ = false
+(* eq_lists : Term.t list -> Term.t list -> bool *)
+and eq_lists [] [] = true
+  | eq_lists (x::xs) (y::ys) = (eq x y) andalso (eq_lists xs ys)
+  | eq_lists _ _ = false;
+@ %def Term.eq Term.eq_lists
+
+\begin{node}
+We also want to check if a term contains a subterm. This is not a
+``strict'' comparison: any term occurs in itself.
+Our intuition should be thinking of $x\leq y$ rather than $x<y$. 
+\end{node}
+
+<<Test if term contains subterm>>=
+(* occurs_in : Term.t -> Term.t -> bool *)
+fun occurs_in (subtm : t) (tm : t) : bool =
+  (eq subtm tm) orelse
+  (case tm of
+    (Var _) => false
+  | (Fun(_,_,args)) => List.exists (occurs_in subtm) args);
+@ %def Term.occurs_in
+
+\begin{node}
+We will want to find a fresh variable which does not appear in a list
+of variables.
+\end{node}
+
+<<Determine a fresh variable given some free variables>>=
+local
+  fun fresh_var_iter (x : string) (s : Sort.t) (vars : t list) n = 
+    let val var = Var(x ^ (Int.toString n), s)
+    in if List.exists (eq var) vars
+       then fresh_var_iter x s vars (n + 1)
+       else var
+    end;
+in
+
+fun fresh_var (x : string) (s : Sort.t) (vars : t list) = 
+  let val var = Var(x, s)
+  in if List.exists (eq var) vars
+     then fresh_var_iter x s vars 0
+     else var
+  end;
+
+end;
+@ %def Term.fresh_var
+
+\begin{node}
+For debugging purposes, it will be useful to ``serialize'' a term (to
+produce a string representation of the code needed to construct it).
+\end{node}
+
+<<Serialize a term>>=
+fun serialize (Var(x,s)) = "Var("^x^", "^(Sort.to_string s)^")"
+  | serialize (Fun(f, s, args)) = "Fun("^f^
+                                  ", "^
+                                  (Sort.to_string s)^
+                                  ", ["^
+                                  (String.concatWith ", " (map serialize args))^
+                                  "])";
+@ %def Term.serialize

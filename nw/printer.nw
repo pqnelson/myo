@@ -1,0 +1,213 @@
+% -*- mode: poly-noweb; noweb-code-mode: sml-mode; -*-
+%%
+%% printer.nw
+%% 
+%% Made by Alex Nelson <pqnelson@gmail.com>
+%% Login   <alex@lisp>
+%% 
+%% Started on  2026-04-18T12:17:53-0700
+%% Last update 2026-04-18T12:17:53-0700
+%% 
+
+\section{Pretty printer}
+
+\begin{node}
+Eventually, it will get rather tedious to look at the raw serialization of
+terms and formulas (and theorems and goals and\dots). We want to
+support the user's ability to \emph{prettyprint} these things, which
+is to say: we want to create a string representation of these things
+closer to what might be found in a textbook. A pretty printer is a
+collection of four functions to produce ``pretty'' string
+representations for terms, formulas, theorems, and goals (given as the
+collection of subgoals).
+\end{node}
+
+<<Printer.sig>>=
+signature Printer = sig
+  val term : Term.t -> string;
+  val formula : Formula.t -> string;
+  val thm : Thm.t -> string;
+  val goals : ((string * Formula.t) list * Formula.t) list -> string;
+end;
+@
+
+\begin{node}
+We will have a [[TBPrinter]] (``\underline{t}ext\underline{b}ook
+pretty printer'').
+\end{node}
+
+<<TBPrinter.sml>>=
+structure TBPrinter : Printer = struct
+<<TBPrinter for a term>>
+
+<<TBPrinter for a formula>>
+
+<<TBPrinter for a theorem>>
+
+<<TBPrinter for goals>>
+end;
+@
+
+\begin{node}
+Printing terms is fairly straightforward: variables are just
+themselves, and functions are of the form $f(t_{1},\dots,t_{n})$.
+Constants (``nullary functions'') are written as just $f$ and not $f()$.
+\end{node}
+
+<<TBPrinter for a term>>=
+fun term (Term.Var(x,_)) = x
+  | term (Term.Fun(f, _, args)) =
+      if List.null args
+      then f
+      else f^"("^(String.concatWith ", "
+                                    (map term args))^
+           ")";
+@ %def TBPrinter.term
+
+\begin{node}
+Formulas are a bit tricky. We need to print parentheses when
+precedence causes ambiguities. For example $A\implies B\implies C$
+is read as $A\implies(B\implies C)$ and not $(A\implies B)\implies C$.
+Similarly $A\lor B\land C$ means $A\lor(B\land C)$.
+
+We wish to be careful: for implications and logical equivalence, if
+either subformula is another implication (or logical equivalence),
+then we include the parentheses for clarity.
+\end{node}
+
+<<TBPrinter for a formula>>=
+(* "∀" (* U+2200 *)
+   "∃" (* U+2203 *)
+"∧" U+2227
+"∨"; (* U+2228 *)
+"⇔" U+21D4
+ *)
+<<Gathering bound variables for pretty printing>>
+fun formula fm =
+  if Formula.is_falsum fm
+  then "⊥" (* U+22A5 *)
+  else if Formula.is_pred fm
+  then let val (P,args) = Formula.dest_pred fm
+       in P^"["^(String.concatWith ", " (map term args))^"]" end
+  else if Formula.is_not fm
+  then let val A = Formula.dest_not fm;
+           val conn = "¬"; (* U+00AC *)
+       in conn ^ (paren_form A fm) end
+  else if Formula.is_and fm
+  then let val (A, B) = Formula.dest_and fm;
+           val conn = "∧"; (* U+2227 *)
+       in (paren_form A fm) ^ conn ^ (paren_form B fm) end
+  else if Formula.is_or fm
+  then let val (A, B) = Formula.dest_or fm;
+           val conn = "∨"; (* U+2228 *)
+       in (paren_form A fm) ^ conn ^ (paren_form B fm) end
+  else if Formula.is_imp fm
+  then let val (A, B) = Formula.dest_imp fm;
+           val conn = "⟹"; (* U+27F9 for long version, U+21D2 *)
+       in (paren_form A fm) ^ conn ^ (paren_form B fm) end
+  else if Formula.is_iff fm
+  then let val (A, B) = Formula.dest_iff fm;
+           val conn = "⟺"; (* U+27FA for long version, U+21D4 *)
+       in (paren_form A fm) ^ conn ^ (paren_form B fm) end
+  else if Formula.is_forall fm
+  then let
+    val (var, body) = Formula.dest_forall fm
+    val (prefix, A) = gather_bvars Formula.is_forall
+                                   Formula.dest_forall
+                                   ("∀" ^ (* U+2200 *)
+                                    (term var))
+                                   body
+  in prefix ^ "." ^ (formula body) end
+  else if Formula.is_exists fm
+  then let
+    val (var, body) = Formula.dest_exists fm
+    val (prefix, A) = gather_bvars Formula.is_exists
+                                   Formula.dest_exists
+                                   ("∃" ^ (* U+2203 *)
+                                    (term var))
+                                   body
+  in prefix ^ "." ^ (formula body) end
+  else raise Fail("unknown connective: "^(Formula.serialize fm))
+and paren_form sub fm =
+    (case Formula.precedence sub fm of
+      LESS => "("^(formula sub)^")"
+    | EQUAL => if (Formula.is_imp fm orelse Formula.is_iff fm) andalso
+                  (Formula.is_imp sub orelse Formula.is_iff sub)
+               then "("^(formula sub)^")"
+               else formula sub
+    | _ => formula sub);
+@ %def TBPrinter.formula
+
+\begin{node}
+We have our pretty printer gather comma-separated variables when we
+have the same binder nested multiple times. For example, $\forall
+x\ldotp\forall y\ldotp\forall z\ldotp P[x,y,z]$ would be pretty
+printed as $\forall x,y,z\ldotp P[x,y,z]$. To support this, we have a
+helper function to accumulate the bound variables, separating them by
+commas. We assume the printer has encountered the first quantifier,
+and has made its bound variable the initial [[acc]] value. The body
+for the quantifier is the initial [[fm]].
+\end{node}
+
+<<Gathering bound variables for pretty printing>>=
+fun gather_bvars is_q dest_q acc fm =
+  if not(is_q fm) then (acc, fm)
+  else let val (var, body) = dest_q fm
+       in gather_bvars is_q dest_q (acc^", "^(term var)) body
+       end;
+@ 
+
+\begin{node}
+Theorems are just a bunch of formulas separated by a turnstile.
+\end{node}
+
+<<TBPrinter for a theorem>>=
+(* NB: "⊦" U+22A6 is assertion
+ "⊢" U+22A2 is just right tack *)
+fun thm th =
+  let
+    val hyps = Thm.hyps th;
+    val concl = Thm.concl th;
+    val turnstile = if List.null hyps
+                    then "⊢ "
+                    else " ⊢ ";
+  in
+    (String.concatWith ", " (map formula hyps)) ^
+    turnstile ^
+    (formula concl)
+  end;
+@ %def TBPrinter.thm
+
+\begin{node}
+A goal is similar to a theorem, but the hypotheses may be labeled.
+\end{node}
+
+<<TBPrinter for goals>>=
+local
+  fun turnstile [] = "⊢ "
+    | turnstile _ = " ⊢ ";
+  fun single (asl, fm) =
+    (String.concatWith
+       ", "
+       (map (fn (label, p) =>
+                if "" = label then formula p
+                else "\""^label^"\": "^(formula p))
+            asl)) ^
+    (turnstile asl) ^ 
+    (formula fm);
+  fun iter n acc [] = acc
+    | iter n acc ((asl, fm)::gls) =
+        iter (n + 1)
+             (acc ^
+              "Subgoal "^
+              (Int.toString n)^
+              ": " ^
+              (single (asl, fm)) ^
+              (if List.null gls then "" else "\n"))
+             gls;
+in
+fun goals [] = "No more goals"
+  | goals [g] = single g
+  | goals gls = iter 1 "" gls
+end;
+@ %def TBPrinter.goals

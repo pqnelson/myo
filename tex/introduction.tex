@@ -1,0 +1,149 @@
+%%
+%% introduction.tex
+%% 
+%% Made by Alex Nelson <pqnelson@gmail.com>
+%% Login   <alex@lisp>
+%% 
+%% Started on  2026-03-25T09:38:49-0700
+%% Last update 2026-03-25T09:38:49-0700
+%% 
+
+\section{Introduction}
+
+\begin{node}
+We implement a proof assistant which allows us to reason about metatheory.
+Among our inspirations, we follow the \emph{spirit} of Hilbert's
+programme and provide a proof assistant roughly corresponding to
+Hilbert's ``finitary metatheory''.\footnote{More precisely, our proof assistant
+is strictly not stronger than Hilbert's finitary metatheory. Tait~\cite{tait2002remarks} argues that Hilbert's finitary metatheory was precisely \PRA,
+others disagree and assert that Hilbert's finitary metatheory extended
+slightly beyond \PRA---for example, Zach points
+out~\cite{zach2003practice} that Ackermann's consistency proofs
+involved ordinals like $\omega^{\omega^{\omega}}$ which were
+accepted as ``finitary'' by Hilbert and friends despite \PRA\ having a
+proof ordinal strength of $\omega^{\omega}$. Since $FS_{0}$ is a conservative extension of
+\PRA, whichever perspective one might take, we do not extend
+\emph{beyond} \PRA.}
+We use Feferman's $FS_{0}$ set theory atop Intuitionistic first-order
+logic, preserving the constructive \emph{and} finitary character of
+Hilbert's metatheory.
+
+Our intention is to build a tool to facilitate \emph{exploring the
+design space for proof assistants} which allows us to formally prove
+results concerning our exploration. Will adding a new feature to a
+proof assistant ruin the soundness of that proof assistant? Usually
+such questions are proven informally, we wanted to provide
+\emph{formal proofs} for them. Here we depart from Hilbert's programme
+by making the informal finitary metatheory a formal proof
+assistant. What is more, we provide a proof assistant which is
+a \emph{metalogical framework}.
+\end{node}
+
+\begin{node}[Metalogical frameworks]
+Metalogical frameworks~\cite{basin1991metalogical,basin2004reflective} allow us to state and prove metatheorems
+concerning logics and proof calculi.
+%A logic's syntax and proofs are built inductively from syntax and proof constructors.
+Logical frameworks use these to allow us to ``reason within the logic'' and
+build derivations of the object logic as objects of the metalogic. But a
+metalogical framework needs \emph{more}: if the representation
+preserves the inductive structure of the object logic's syntax and
+proof constructors, then we can perform inductive proofs in the
+metalogical framework to prove properties about the object logic.
+
+However, the ``exact criteria'' for a metalogical framework remains
+elusive. This naturally raises the concern whether ``metalogical
+frameworks'' are a well-defined notion or not. The reader may rest
+assured, this is well-defined because we have several examples of metalogical frameworks
+like \HOL, $FS_{0}$~\cite{matthews1992experience,matthews1993theory}, and membership equational logic. How will we
+recognize a metalogical framework ``in the wild''? One sufficient
+criteria has been offered~\cite{basin2004reflective} as any reflective
+logical framework qualifies as a metalogical framework.
+
+Really, the critical property required for a logical framework to be a
+metalogical framework is the ability to state inductive definitions
+\emph{and} prove properties about inductive definitions. Moreover, we
+must have the ability to do induction \emph{over} object logics. The
+intuition we should have: metalogical frameworks are logical
+frameworks for doing metamathematics.
+\end{node}
+
+\begin{node}[$FS_{0}$ as a metalogical framework]
+Feferman's set theory $FS_{0}$ can serve as a metalogical framework.
+The basic idea is that inductive definitions are terms in $FS_{0}$,
+which have induction rules for reasoning about such terms. This
+requires ``only'' a (three-sorted) first-order logic to state the
+axioms for $FS_{0}$ and, although Feferman allowed Classical logic, we
+will use an Intuitionistic logic.
+
+This has been explored quite thoroughly in Se\'{a}n Matthews's PhD
+dissertation~\cite{matthews1992metatheoretic} and related work~\cite{matthews1992experience,matthews1993theory}.
+The basic idea may be found sketched out in Feferman~\cite[\S21]{feferman1989finitary}.
+
+The major advantage favoring $FS_{0}$ as a metalogical framework is
+its simplicity. \HOL\ requires building quite a bit of infrastructure
+before we get to inductive data types, whereas $FS_{0}$ has them
+\textit{ab initio}.
+
+However, several major disadvantages are noted in Matthews, Smaill,
+and Basin~\cite[\S5.1]{matthews1992experience}:
+\begin{quote}
+One obvious question to ask is `how important is the fact that we have 
+implemented our system directly in Prolog?'; i.e., would $FS_{0}$ be a usable 
+system if it was instead implemented using another framework such as
+Isabelle or the ELF? We would argue that such an implementation would 
+probably not be very useful for the following reason: $FS_{0}$ is itself intended 
+as a framework theory, so if it were implemented on top of another system 
+then any work done in a logic declared in it would have to work through 
+two levels of encoding to get to the machine level. Further, special care was 
+taken to provide an efficient evaluation mechanism for function applications, 
+and this might not be available in other approaches. 
+\end{quote}
+Furthermore, Pfenning~\cite{pfenning2001logical} notes the
+difficulties using first-order logic (plus some adequate addition like 
+$FS_{0}$) as just a \emph{logical framework}. For example, determining
+if a string is a well-formed formula requires quite a bit more work
+than if we used \HOL.
+\end{node}
+
+\begin{node}
+We are largely inspired by Lawrence Paulson's Isabelle~\cite{paulson1989foundation,paulson1990isabelle,paulson1994isabelle}.
+However, whereas Isabelle is a logical framework which serves as the
+``engine'' for any foundations of Mathematics, we will be interested
+in a logical framework suitable for Metamathematics. The irate reader
+may wonder, ``Then in what sense is Isabelle an
+inspiration?''\footnote{A wag may say that our endeavour is, as
+Paulson writes~\cite{paulson1990isabelle}, ``a tale of errors, not grand design.''}
+
+Isabelle's abstractions are inspired by communication metaphors (e.g.,
+scripts are \emph{documents} or \emph{articles}, comments are \emph{text}, 
+\LaTeX\ is autogenerated suitable for publication, etc.). Since our
+goal is to report results from exploring the design space,
+communication is critically important.
+
+Markus Wenzel's PhD dissertation~\cite{wenzel2002isabelle} offers a
+principled manner of constructing ``structured'' declarative-style
+proofs atop such a proof assistant. This actually spurred us on to
+start this project, since Wenzel's thesis provides a specification for
+Isar, and we were thinking about Mario Carneiro's
+comment~\cite{carneiro2023reimplementing} that ``there is no `spec' for the Mizar language''.
+What qualifies as a ``spec''? How do we communicate it? How can we
+prove a proof assistant implements its specification? Trying to answer
+these questions led us to this project.
+\end{node}
+
+\begin{node}[Outline of document]
+We begin by implementing the abstract syntax trees for terms and
+formulas for three-sorted first-order logic. Then we abstract away the
+constructors for primitive notions appearing in $FS_{0}$ by providing
+an \texttt{FS0} module consisting of constructors. This work
+constitutes the first 30 pages or so of work.
+
+Then we implement an LCF-style kernel for Intuitionistic natural
+deduction. This includes providing the axioms for $FS_{0}$. The kernel
+alone (i.e., the \texttt{Thm} module) consists of about 320 lines of
+code. Since the kernel is minimal, we provide a larger
+\textit{r\'{e}pertoire} of theorems and derived inference
+rules. Altogether, this constitutes the next 54 pages or so.
+
+We then implement the LCF-style tactics for proving theorems.
+\end{node}

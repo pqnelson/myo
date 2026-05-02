@@ -1,0 +1,866 @@
+% -*- mode: poly-noweb; noweb-code-mode: sml-mode; -*-
+%%
+%% Term.nw
+%% 
+%% Made by Alex Nelson <pqnelson@gmail.com>
+%% Login   <alex@lisp>
+%% 
+%% Started on  2026-04-02T10:39:35-0700
+%% Last update 2026-04-02T10:39:35-0700
+%% 
+
+\section{Syntax for terms}
+
+\begin{node}[Grammar of terms]
+Feferman's $FS_{0}$ requires a three-sorted logic. We can implement
+that either as a single-sorted logic with unary predicates for the
+sorts (i.e., $\textsf{Ind}[-]$, $\textsf{Fun}[-]$, $\textsf{Class}[-]$),
+or we can implement three-sorted terms. We will opt for the latter.
+
+Feferman (\S16) gives the following inductive definitions for the syntax of
+these terms:
+\begin{enumerate}
+\item ``Individuals''
+\begin{enumerate}
+\item Each ``individual variable'' is in $\textit{InTm}$
+\item The constant $\overline{0}$ is in $\textit{InTm}$
+\item If $t_{1}\in\textit{InTm}$ and $t_{2}\in\textit{InTm}$, then
+  their ordered pair $(t_{1},t_{2})\in\textit{InTm}$
+\item If $F\in\textit{FnTm}$ and $t\in\textit{InTm}$, then $Ft\in\textit{InTm}$
+\end{enumerate}
+\item Functions
+\begin{enumerate}
+\item Each ``function variable'' is in $\textit{FnTm}$
+\item The constants $\operatorname{I}$, $\operatorname{D}$,
+  $\operatorname{P}_{1}$, and $\operatorname{P}_{2}$ are in $\textit{FnTm}$
+\item If $t\in\textit{InTm}$ then $\operatorname{K}(t)\in\textit{FnTm}$
+\item If $F\in\textit{FnTm}$ and $G\in\textit{FnTm}$, then
+  $\mathcal{P}(F,G)\in\textit{FnTm}$ and
+  $\mathcal{C}(F,G)\in\textit{FnTm}$ and $\mathcal{R}(F,G)\in\textit{FnTm}$
+\end{enumerate}
+\item Classes
+\begin{enumerate}
+\item Each ``class variable'' is in $\textit{ClTm}$
+\item The singleton $\{\overline{0}\}\in\textit{ClTm}$
+\item If $F\in\textit{FnTm}$ and if $S\in\textit{ClTm}$, then the
+  preimage $F^{-1}S\in\textit{ClTm}$
+\item If $S\in\textit{ClTm}$ and $T\in\textit{ClTm}$, then $S\cup T\in\textit{ClTm}$
+  and $S\cap T\in\textit{ClTm}$ and $\mathcal{I}(S,T)\in\textit{ClTm}$
+\end{enumerate}
+\end{enumerate}
+Set comprehension works in a restricted sense (Feferman \S19).
+
+\textbf{Caution:} Note that we need to extend this to support definitions. These would
+be ``functions'' (in the usual single-sorted sense --- terms
+parametrized by finitely many terms), and each sort would have them.
+This makes things really complicated if we leave it at this level of
+generality: can we have an individual which depends on a class?
+Certainly! We can have a function depend on a class (its
+\emph{indicator} function). So we have $\textit{Tm}=\textit{InTm}\cup\textit{FnTm}\cup\textit{ClTm}$
+and functions which may depend on finitely many elements of
+$\textit{Tm}$. 
+\end{node}
+
+\begin{node}
+I think the fixed grammar would be:
+\begin{enumerate}
+\item ``Individuals''
+\begin{enumerate}
+\item Each ``individual variable'' is in $\textit{InTm}$
+\item The constant $\overline{0}$ is in $\textit{InTm}$
+\item If $t_{1}\in\textit{InTm}$ and $t_{2}\in\textit{InTm}$, then
+  their ordered pair $(t_{1},t_{2})\in\textit{InTm}$
+\item If $F\in\textit{FnTm}$ and $t\in\textit{InTm}$, then $Ft\in\textit{InTm}$
+\item If $t$ is an arity $n$ constructor of an individual and
+  $t_{1},\dots,t_{n}\in\textit{Tm}$, then $t(t_{1},\dots,t_{n})\in\textit{InTm}$
+\end{enumerate}
+\item Functions
+\begin{enumerate}
+\item Each ``function variable'' is in $\textit{FnTm}$
+\item The constants $\operatorname{I}$, $\operatorname{D}$,
+  $\operatorname{P}_{1}$, and $\operatorname{P}_{2}$ are in $\textit{FnTm}$
+\item If $t\in\textit{InTm}$ then $\operatorname{K}(t)\in\textit{FnTm}$
+\item If $F\in\textit{FnTm}$ and $G\in\textit{FnTm}$, then
+  $\mathcal{P}(F,G)\in\textit{FnTm}$ and
+  $\mathcal{C}(F,G)\in\textit{FnTm}$ and $\mathcal{R}(F,G)\in\textit{FnTm}$
+\item If $F$ is an arity $n$ constructor of a function and
+  $t_{1},\dots,t_{n}\in\textit{Tm}$, then $F(t_{1},\dots,t_{n})\in\textit{FnTm}$
+\end{enumerate}
+\item Classes
+\begin{enumerate}
+\item Each ``class variable'' is in $\textit{ClTm}$
+\item The singleton $\{\overline{0}\}\in\textit{ClTm}$
+\item If $F\in\textit{FnTm}$ and if $S\in\textit{ClTm}$, then the
+  preimage $F^{-1}S\in\textit{ClTm}$
+\item If $S\in\textit{ClTm}$ and $T\in\textit{ClTm}$, then $S\cup T\in\textit{ClTm}$
+  and $S\cap T\in\textit{ClTm}$ and $\mathcal{I}(S,T)\in\textit{ClTm}$
+\item If $C$ is an arity $n$ constructor of a class and
+  $t_{1},\dots,t_{n}\in\textit{Tm}$, then $C(t_{1},\dots,t_{n})\in\textit{ClTm}$
+\end{enumerate}
+\end{enumerate}
+This means we \emph{cannot} have the ``separated'' data structures describing
+the three sorts. It must be one giant data structure with 22 data constructors.
+The [[compare]] function requires 127 lines of code, alas.
+\end{node}
+
+<<Type for [[Term.t]]>>=
+@
+
+<<Substitution>>=
+fun subst x t tm =
+  if not(is_var x)
+  then raise Fail "Term.subst: first argument must be a variable"
+  else if not(are_same_sort x t)
+  then raise Fail "Term.subst: variable and replacement must be same sort"
+  else (case tm of
+   (InVar _) => if x = tm then t else tm
+ | (InZero) => tm
+ | (InPair(t1,t2)) => Ind.mk_pair(subst x t t1, subst x t t2)
+ | (InApp(f, t')) => Ind.mk_app(subst x t f, subst x t t')
+ | (InFun(f, args)) => Ind.mk_fun(f, map (subst x t) args)
+ | (FnVar _) => if x = tm then t else tm
+ | (FnConst(ind)) => Fun.mk_const(subst x t ind)
+ | (FnJuxt(f1,f2)) => Fun.mk_juxt(subst x t f1, subst x t f2)
+ | (FnComp(f1,f2)) => Fun.mk_comp(subst x t f1, subst x t f2)
+ | (FnRec(f1,f2)) => Fun.mk_rec(subst x t f1, subst x t f2)
+ | (FnFun(f, args)) => Fun.mk_fun(f, map (subst x t) args)
+ | (ClVar _) => if x = tm then t else tm
+ | (ClSingleton ind) => Class.mk_singleton(subst x t ind)
+ | (ClPreimage(f,c)) => Class.mk_preimage(subst x t f, subst x t c)
+ | (ClUnion(c1,c2)) => Class.mk_union(subst x t c1, subst x t c2)
+ | (ClIntersection(c1,c2)) => Class.mk_intersection(subst x t c1, subst x t c2)
+ | (ClInduct(c1,c2)) => Class.mk_ind(subst x t c1, subst x t c2)
+ | (ClFun(f,args)) => Class.mk_fun(f, map (subst x t) args)
+ | _ => tm);
+@ 
+
+\begin{node}
+We need to decide whether we want to keep the implementation
+abstracted away from the user, providing constructors (like
+[[mk_var]], [[mk_app]], etc.) and predicates ([[is_var]], [[is_fun]], etc.)
+and destructuring functions; or if we want to make it all transparent. 
+My intuition says transparency may lead to difficulties with
+sufficiently clever users.
+
+We will also borrow some names from Clojure. For example,
+$\mathcal{P}(f,g)$ will be called ``juxt $f$ $g$'', $\mathcal{C}(f,g)$
+is ``comp $f$ $g$''.
+\end{node}
+
+<<Term.sig>>=
+signature Term = sig
+  exception Dest of string;
+  type t;
+  val is_ind : t -> bool;
+  val is_fun : t -> bool;
+  val is_class : t -> bool;
+  val is_var : t -> bool;
+  val are_same_sort : t -> t -> bool;
+  val compare : t * t -> order;
+  val compare_list : t list -> t list -> order;
+  val eq : t -> t -> bool;
+  val fv : t -> t list;
+  val subst : t -> t -> t -> t;
+  structure Ind : sig
+              exception AppE;
+              exception PairE;
+              val mk_var : string -> t;
+              val mk_zero : unit -> t;
+              val mk_pair : t * t -> t;
+              val mk_app : t * t -> t;
+              val mk_fun : string * t list -> t;
+
+              val dest_var : t -> string;
+              val dest_pair : t -> t * t;
+              val dest_app : t -> t * t;
+              val dest_fun : t -> string * t list;
+
+              val is_var : t -> bool;
+              val is_zero : t -> bool;
+              val is_pair : t -> bool;
+              val is_app : t -> bool;
+              val is_fun : t -> bool;
+            end;
+  structure Fun : sig
+              exception ConstE;
+              exception JuxtE;
+              exception CompE;
+              exception RecE;
+              val mk_var : string -> t;
+              (* constants *)
+              val id : unit -> t;
+              val cond : unit -> t;
+              val fst : unit -> t;
+              val snd : unit -> t;
+              (* constructors *)
+              val mk_const : t -> t;
+              val mk_juxt : t*t -> t;
+              val mk_comp : t*t -> t;
+              val mk_rec : t*t -> t;
+              val mk_fun : string * t list -> t;
+
+              val dest_var : t -> string;
+              val dest_const : t -> t;
+              val dest_juxt : t -> t*t;
+              val dest_comp : t -> t*t;
+              val dest_rec : t -> t*t;
+              val dest_fun : t -> string * t list;
+
+              val is_var : t -> bool;
+              val is_id : t -> bool;
+              val is_cond : t -> bool;
+              val is_fst : t -> bool;
+              val is_snd : t -> bool;
+              val is_const : t -> bool;
+              val is_juxt : t -> bool;
+              val is_comp : t -> bool;
+              val is_rec : t -> bool;
+              val is_fun : t -> bool;
+            end;
+  structure Class : sig
+              exception SingletonE;
+              exception PreimageE;
+              exception UnionE;
+              exception IntersectionE;
+              exception IndE;
+              val mk_var : string -> t;
+              val mk_singleton : t -> t;
+              val mk_preimage : t * t -> t;
+              val mk_union : t * t -> t;
+              val mk_intersection : t * t -> t;
+              val mk_ind : t * t -> t;
+              val mk_fun : string * t list -> t;
+              
+              val dest_var : t -> string;
+              val dest_singleton : t -> t;
+              val dest_preimage : t -> t * t;
+              val dest_union : t -> t * t;
+              val dest_intersection : t -> t * t;
+              val dest_ind : t -> t * t;
+              val dest_fun : t -> string * t list;
+
+              val is_var : t -> bool;
+              val is_singleton : t -> bool;
+              val is_preimage : t -> bool;
+              val is_union : t -> bool;
+              val is_intersection : t -> bool;
+              val is_ind : t -> bool;
+              val is_fun : t -> bool;
+            end;
+end;
+@ 
+
+\begin{node}
+The implementation is a little subtle because we have two
+simultaneously defined datatypes: one for individuals, and another for
+functions. 
+\end{node}
+
+<<Term.sml>>=
+<<Term structure>>
+@
+
+\begin{node}
+We have the basic exception for when the user attempts to destructure
+a term incorrectly (e.g., they try invoking [[Term.Ind.dest_var]] on a
+function term, or something). We also have the ``unifying'' encoding
+of the [[Term.t]] type.
+
+There are a handful of useful functions, which deserve to be discussed
+piecemeal, as well as the substructures for each of the three sorts
+appearing in the logic: individuals, functions, and classes.
+\end{node}
+
+<<Term structure>>=
+structure Term :> Term = struct
+exception Dest of string;
+
+datatype t = InVar of string
+           | InZero
+           | InPair of t * t
+           | InApp of t * t
+           | InFun of string * t list
+           | FnVar of string
+           | FnId
+           | FnCond
+           | FnFst
+           | FnSnd
+           | FnConst of t
+           | FnJuxt of t * t
+           | FnComp of t * t
+           | FnRec of t * t
+           | FnFun of string * t list
+           | ClVar of string
+           | ClSingleton of t
+           | ClPreimage of t * t
+           | ClUnion of t * t
+           | ClIntersection of t * t
+           | ClInduct of t * t
+           | ClFun of string * t list;
+
+<<Term predicates>>
+
+<<Comparing terms>>
+
+<<Test if two terms are of the same sort>>
+
+<<Free variables in a term>>
+
+<<Individual substructure>>;
+
+<<Function substructure>>;
+
+<<Class substructure>>;
+
+<<Substituting a term for a variable in a term>>
+end
+@ %def Term.Dest Term.t
+
+\begin{node}
+Substitution recursively works its way down through subterms until it
+finds a matching variable, in which case it replaces the variable with
+the term [[t]]. However, before we try doing this, we need to check
+that the variable has the same sort as its replacement.
+\end{node}
+
+<<Substituting a term for a variable in a term>>=
+fun subst x t tm =
+  if not(is_var x)
+  then raise Fail "Term.subst: first argument must be a variable"
+  else if not(are_same_sort x t)
+  then raise Fail "Term.subst: variable and replacement must be same sort"
+  else (case tm of
+   (InVar _) => if x = tm then t else tm
+ | (InZero) => tm
+ | (InPair(t1,t2)) => Ind.mk_pair(subst x t t1, subst x t t2)
+ | (InApp(f, t')) => Ind.mk_app(subst x t f, subst x t t')
+ | (InFun(f, args)) => Ind.mk_fun(f, map (subst x t) args)
+ | (FnVar _) => if x = tm then t else tm
+ | (FnConst(ind)) => Fun.mk_const(subst x t ind)
+ | (FnJuxt(f1,f2)) => Fun.mk_juxt(subst x t f1, subst x t f2)
+ | (FnComp(f1,f2)) => Fun.mk_comp(subst x t f1, subst x t f2)
+ | (FnRec(f1,f2)) => Fun.mk_rec(subst x t f1, subst x t f2)
+ | (FnFun(f, args)) => Fun.mk_fun(f, map (subst x t) args)
+ | (ClVar _) => if x = tm then t else tm
+ | (ClSingleton ind) => Class.mk_singleton(subst x t ind)
+ | (ClPreimage(f,c)) => Class.mk_preimage(subst x t f, subst x t c)
+ | (ClUnion(c1,c2)) => Class.mk_union(subst x t c1, subst x t c2)
+ | (ClIntersection(c1,c2)) => Class.mk_intersection(subst x t c1, subst x t c2)
+ | (ClInduct(c1,c2)) => Class.mk_ind(subst x t c1, subst x t c2)
+ | (ClFun(f,args)) => Class.mk_fun(f, map (subst x t) args)
+ | _ => tm);
+@ %def Term.subst
+
+\begin{node}
+Determining free variables is done recursively:
+\begin{itemize}
+\item $FV(x)=\{x\}$
+\item $FV(0)=\emptyset$
+\item $FV((t_{1},t_{2}))=FV(t_{1})\cup FV(t_{2})$
+\item function application: $FV(ft)=FV(f)\cup FV(t)$
+\item $FV(\operatorname{I})=FV(\operatorname{D})=FV(\operatorname{P}_{1})=FV(\operatorname{P}_{2})=\emptyset$
+\item $FV(\operatorname{K}(t))=FV(t)$
+\item $FV(\mathcal{P}(F,G))=FV(F)\cup FV(G)$
+\item $FV(\mathcal{C}(F,G))=FV(F)\cup FV(G)$
+\item $FV(\mathcal{R}(F,G))=FV(F)\cup FV(G)$
+\item $FV(\{0\})=\emptyset$
+\item $FV(F^{-1}S)=FV(F)\cup FV(S)$
+\item $FV(S\cup T)=FV(S)\cup FV(T)$
+\item $FV(S\cap T)=FV(S)\cup FV(T)$
+\item $FV(\mathcal{I}(S, T))=FV(S)\cup FV(T)$
+\end{itemize}
+\end{node}
+
+<<Free variables in a term>>=
+fun fv (x as (InVar _)) = [x]
+  | fv (InZero) = []
+  | fv (InPair(x,y)) = (fv x) @ (fv y)
+  | fv (InApp(f,x)) = (fv f) @ (fv x)
+  | fv (InFun(_, args)) = List.foldr (fn (arg, fvs) => (fv arg) @ fvs) 
+                                     []
+                                     args
+  | fv (f as (FnVar _)) = [f]
+  | fv (FnId) = []
+  | fv (FnCond) = []
+  | fv (FnFst) = []
+  | fv (FnSnd) = []
+  | fv (FnConst ind) = fv(ind)
+  | fv (FnJuxt(f1,f2)) = (fv f1) @ (fv f2)
+  | fv (FnComp(f1,f2)) = (fv f1) @ (fv f2)
+  | fv (FnRec(f1,f2)) = (fv f1) @ (fv f2)
+  | fv (FnFun(_, args)) = List.foldr (fn (arg, fvs) => (fv arg) @ fvs) 
+                                     []
+                                     args
+  | fv (x as (ClVar _)) = [x]
+  | fv (ClSingleton(ind)) = fv ind
+  | fv (ClPreimage(f,c)) = (fv f) @ (fv c)
+  | fv (ClUnion(c1, c2)) = (fv c1) @ (fv c2)
+  | fv (ClIntersection(c1, c2)) = (fv c1) @ (fv c2)
+  | fv (ClInduct(c1, c2)) = (fv c1) @ (fv c2)
+  | fv (ClFun(_, args)) = List.foldr (fn (arg, fvs) => (fv arg) @ fvs) 
+                                     []
+                                     args;
+@ %def Term.fv
+
+<<Term predicates>>=
+fun is_ind (InVar _) = true
+  | is_ind (InZero) = true
+  | is_ind (InPair _) = true
+  | is_ind (InApp _) = true
+  | is_ind (InFun _) = true
+  | is_ind _ = false;
+
+fun is_fun (FnVar _) = true
+  | is_fun (FnId) = true
+  | is_fun (FnCond) = true
+  | is_fun (FnFst) = true
+  | is_fun (FnSnd) = true
+  | is_fun (FnConst _) = true
+  | is_fun (FnJuxt _) = true
+  | is_fun (FnComp _) = true
+  | is_fun (FnRec _) = true
+  | is_fun (FnFun _) = true
+  | is_fun _ = false;
+
+fun is_class (ClVar _) = true
+  | is_class (ClSingleton _) = true
+  | is_class (ClPreimage _) = true
+  | is_class (ClUnion _) = true
+  | is_class (ClIntersection _) = true
+  | is_class (ClInduct _) = true
+  | is_class (ClFun _) = true
+  | is_class _ = false;
+
+fun are_same_sort lhs rhs =
+  if is_ind lhs then is_ind rhs
+  else if is_fun lhs then is_fun rhs
+  else if is_class lhs then is_class rhs
+  else false;
+
+fun is_var (InVar _) = true
+  | is_var (FnVar _) = true
+  | is_var (ClVar _) = true
+  | is_var _ = false;
+@ %def Term.is_ind Term.is_fun Term.is_class Term.is_var Term.are_same_sort
+
+\begin{node}
+We also have the basic constructors, predicates, and destructuring
+functions for individuals.
+\end{node}
+
+<<Individual substructure>>=
+structure Ind = struct
+exception AppE;
+exception PairE;
+
+<<Constructors for individuals>>
+
+<<Destructuring functions for individuals>>
+
+<<Predicates for individuals>>
+end
+@ %def Term.Ind.AppE Term.Ind.PairE
+
+\begin{node}
+Although it has become fashionable to Curry functions everywhere in
+functional programming, there is an advantage to having constructors
+expect the result of destructuring functions.
+\end{node}
+<<Constructors for individuals>>=
+(* mk_var : string -> Term.t *)
+fun mk_var x = (InVar x);
+
+(* mk_zero : unit -> Term.t *)
+fun mk_zero () = InZero;
+
+(* mk_pair : Term.t * Term.t -> Term.t *)
+fun mk_pair (t1, t2) =
+  if not(is_ind t1) then raise PairE
+  else if not(is_ind t2) then raise PairE
+  else InPair(t1,t2);
+
+(* mk_app : Term.t * Term.t -> Term.t *)
+fun mk_app(f, t) =
+  if not(is_fun f) then raise AppE
+  else if not(is_ind t) then raise AppE
+  else InApp(f, t);
+
+fun mk_fun(f, args) = InFun(f, args);
+@ %def Term.Ind.mk_var Term.Ind.mk_zero Term.Ind.mk_pair Term.Ind.mk_app
+
+\begin{node}
+If the user mistakenly tries to destructure a term of a different
+syntactic class (e.g., applies [[Term.Ind.dest_var]] to a pair), then
+a [[Dest]] exception is propagated with the destructuring function's
+name and possibly some debugging information.
+\end{node}
+
+<<Destructuring functions for individuals>>=
+(* dest_var : Term.t -> string *)
+fun dest_var (InVar v) = v
+  | dest_var _ = raise Dest "Ind.dest_var: expects a Ind-sorted variable";
+
+(* dest_pair : Term.t -> Term.t * Term.t *)
+fun dest_pair(InPair args) = args
+  | dest_pair _ = raise Dest "Ind.dest_pair: expects a pair"; 
+
+(* dest_app : Term.t -> Term.t * Term.t *)
+fun dest_app(InApp args) = args
+  | dest_app _ = raise Dest "Ind.dest_app: expects a function application";
+
+fun dest_fun(InFun args) = args
+  | dest_fun _ = raise Dest "Ind.dest_fun: expects a function";
+@ %def Term.Ind.dest_var Term.Ind.dest_pair Term.Ind.dest_app
+
+\begin{node}
+Predicates for individuals are straightforward tests.
+\end{node}
+
+<<Predicates for individuals>>=
+(* is_var : Term.t -> bool *)
+fun is_var (InVar _) = true
+  | is_var _ = false;
+
+(* is_zero : Term.t -> bool *)
+fun is_zero (InZero) = true
+  | is_zero _ = false;
+
+(* is_pair : Term.t -> bool *)
+fun is_pair (InPair _) = true
+  | is_pair _ = false;
+
+(* is_app : Term.t -> bool *)
+fun is_app (InApp _) = true
+  | is_app _ = false;
+
+fun is_fun (InFun _) = true
+  | is_fun _ = false;
+@ %def Term.Ind.is_var Term.Ind.is_zero Term.Ind.is_pair Term.Ind.is_app
+
+<<Function substructure>>=
+structure Fun = struct
+exception ConstE;
+exception JuxtE;
+exception CompE;
+exception RecE;
+
+fun mk_var x = FnVar x;
+
+fun id () = FnId;
+
+fun cond () = FnCond;
+fun fst () = FnFst;
+fun snd () = FnSnd;
+fun mk_const t = if is_ind t then FnConst t
+                 else raise ConstE; 
+(* constructors *)
+fun mk_juxt (f1, f2) =
+  if not(is_fun f1) then raise JuxtE
+  else if not(is_fun f2) then raise JuxtE
+  else FnJuxt(f1, f2);
+
+fun mk_comp (f1, f2) =
+  if not(is_fun f1) then raise CompE
+  else if not(is_fun f2) then raise CompE
+  else FnComp(f1, f2);
+
+fun mk_rec (f1, f2) =
+  if not(is_fun f1) then raise RecE
+  else if not(is_fun f2) then raise RecE
+  else FnRec(f1,f2);
+
+fun mk_fun (f, args) = FnFun(f, args);
+
+fun dest_var (FnVar x) = x
+  | dest_var _ = raise Dest "Fun.dest_var: expects a Fun-sorted variable";
+
+fun dest_const (FnConst ind) = ind
+  | dest_const _ = raise Dest "Fun.dest_const: expects a constant";
+
+fun dest_juxt (FnJuxt args) = args
+  | dest_juxt _ = raise Dest "Fun.dest_juxt";
+
+fun dest_comp (FnComp args) = args
+  | dest_comp _ = raise Dest "Fun.dest_comp";
+
+fun dest_rec (FnRec args) = args
+  | dest_rec _ = raise Dest "Fun.dest_rec";
+
+fun dest_fun (FnFun args) = args
+  | dest_fun _ = raise Dest "Fun.dest_fun";
+
+fun is_var (FnVar _) = true
+  | is_var _ = false;
+
+fun is_id (FnId) = true
+  | is_id _ = false;
+
+fun is_cond (FnCond) = true
+  | is_cond _ = false;
+
+fun is_fst (FnFst) = true
+  | is_fst _ = false;
+
+fun is_snd (FnSnd) = true
+  | is_snd _ = false;
+
+fun is_const (FnConst _) = true
+  | is_const _ = false;
+
+fun is_juxt (FnJuxt _) = true
+  | is_juxt _ = false;
+
+fun is_comp (FnComp _) = true
+  | is_comp _ = false;
+
+fun is_rec (FnRec _) = true
+  | is_rec _ = false;
+
+fun is_fun (FnFun _) = true
+  | is_fun _ = false;
+end
+@
+
+<<Class substructure>>=
+structure Class = struct
+exception SingletonE;
+exception PreimageE;
+exception UnionE;
+exception IntersectionE;
+exception IndE;
+
+fun mk_var x = (ClVar x);
+
+fun mk_singleton(ind) = if is_ind ind then ClSingleton ind
+                        else raise SingletonE;
+
+fun mk_preimage (f, c) =
+  if not(is_fun f) then raise PreimageE
+  else if not(is_class c) then raise PreimageE
+  else ClPreimage(f,c);
+
+fun mk_union (c1, c2) =
+  if not(is_class c1) orelse not(is_class c2)
+  then raise UnionE
+  else ClUnion(c1,c2);
+
+fun mk_intersection (c1, c2) =
+  if not(is_class c1) orelse not(is_class c2)
+  then raise IntersectionE
+  else ClIntersection(c1,c2);
+
+fun mk_ind (c1, c2) =
+  if not(is_class c1) orelse not(is_class c2)
+  then raise IndE
+  else ClInduct(c1,c2);
+
+fun mk_fun (f, args) = ClFun(f, args);
+
+fun dest_var (ClVar x) = x
+  | dest_var _ = raise Dest "Class.dest_var";
+
+fun dest_singleton (ClSingleton s) = s
+  | dest_singleton _ = raise Dest "Class.dest_singleton";
+
+fun dest_preimage (ClPreimage args) = args
+  | dest_preimage _ = raise Dest "Class.dest_preimage";
+
+fun dest_union (ClUnion args) = args
+  | dest_union _ = raise Dest "Class.dest_union";
+
+fun dest_intersection (ClIntersection args) = args
+  | dest_intersection _ = raise Dest "Class.dest_intersection";
+
+fun dest_ind (ClInduct args) = args
+  | dest_ind _ = raise Dest "Class.dest_ind";
+
+fun dest_fun (ClFun args) = args
+  | dest_fun _ = raise Dest "Class.dest_fun";
+
+fun is_var (ClVar _) = true
+  | is_var _ = false;
+
+fun is_singleton (ClSingleton _) = true
+  | is_singleton _ = false;
+
+fun is_preimage (ClPreimage _) = true
+  | is_preimage _ = false;
+
+fun is_union (ClUnion _) = true
+  | is_union _ = false;
+
+fun is_intersection (ClIntersection _) = true
+  | is_intersection _ = false;
+
+fun is_ind (ClInduct _) = true
+  | is_ind _ = false;
+
+fun is_fun (ClFun _) = true
+  | is_fun _ = false;
+end
+@
+
+\begin{node}
+Comparing two terms delegates a lot of the work to helper
+functions. Broadly speaking: individuals are less than both functions
+and classes, and functions are less than classes.
+\end{node}
+
+<<Comparing terms>>=
+fun compare(InVar x, InVar y) = String.compare(x, y)
+  | compare(InVar _, _) = LESS
+  | compare(InZero, InVar _) = GREATER
+  | compare(InZero, InZero) = EQUAL
+  | compare(InZero, _) = LESS
+  | compare(InPair _, InVar _) = GREATER
+  | compare(InPair _, InZero) = GREATER
+  | compare(InPair(a,b), InPair(x,y)) =
+     (case compare(a, x) of
+       EQUAL => compare(b, y)
+     | r => r)
+  | compare(InPair _, _) = LESS
+  | compare(InApp _, InVar _) = GREATER
+  | compare(InApp _, InZero) = GREATER
+  | compare(InApp _, InPair _) = GREATER
+  | compare(InApp(f,x), InApp(g,y)) =
+     (case compare(f, g) of
+       EQUAL => compare(x, y)
+     | r => r)
+  | compare(InApp _, _) = LESS
+  | compare(InFun _, InVar _) = GREATER
+  | compare(InFun _, InZero) = GREATER
+  | compare(InFun _, InPair _) = GREATER
+  | compare(InFun _, InApp _) = GREATER
+  | compare(InFun(f,args1), InFun(g, args2)) =
+     (case String.compare(f,g) of
+       EQUAL => compare_list args1 args2
+     | r => r)
+  | compare(InFun _, _) = LESS
+  | compare(FnVar x, FnVar y) = String.compare(x,y)
+  | compare(FnVar x, rhs) = if is_ind rhs then GREATER else LESS
+  | compare(FnId, FnVar _) = GREATER
+  | compare(FnId, FnId) = EQUAL
+  | compare(FnId, rhs) = if is_ind rhs then GREATER else LESS
+  | compare(FnCond, FnVar _) = GREATER
+  | compare(FnCond, FnId) = GREATER
+  | compare(FnCond, FnCond) = EQUAL
+  | compare(FnCond, rhs) = if is_ind rhs then GREATER else LESS
+  | compare(FnFst, FnVar _) = GREATER
+  | compare(FnFst, FnId) = GREATER
+  | compare(FnFst, FnCond) = GREATER
+  | compare(FnFst, FnFst) = EQUAL
+  | compare(FnFst, rhs) = if is_ind rhs then GREATER else LESS
+  | compare(FnSnd, FnVar _) = GREATER
+  | compare(FnSnd, FnId) = GREATER
+  | compare(FnSnd, FnCond) = GREATER
+  | compare(FnSnd, FnFst) = GREATER
+  | compare(FnSnd, FnSnd) = EQUAL
+  | compare(FnSnd, rhs) = if is_ind rhs then GREATER else LESS
+  | compare(FnConst _, FnVar _) = GREATER
+  | compare(FnConst _, FnId) = GREATER
+  | compare(FnConst _, FnCond) = GREATER
+  | compare(FnConst _, FnFst) = GREATER
+  | compare(FnConst _, FnSnd) = GREATER
+  | compare(FnConst lhs, FnConst rhs) = compare(lhs, rhs)
+  | compare(FnConst _, rhs) = if is_ind rhs then GREATER else LESS
+  | compare(FnJuxt _, FnVar _) = GREATER
+  | compare(FnJuxt _, FnId) = GREATER
+  | compare(FnJuxt _, FnCond) = GREATER
+  | compare(FnJuxt _, FnFst) = GREATER
+  | compare(FnJuxt _, FnSnd) = GREATER
+  | compare(FnJuxt(f1,f2), FnJuxt(g1,g2)) =
+     (case compare(f1, g1) of
+       EQUAL => compare(f2, g2)
+     | r => r)
+  | compare(FnJuxt _, rhs) = if is_ind rhs then GREATER else LESS
+  | compare(FnComp _, FnVar _) = GREATER
+  | compare(FnComp _, FnId) = GREATER
+  | compare(FnComp _, FnCond) = GREATER
+  | compare(FnComp _, FnFst) = GREATER
+  | compare(FnComp _, FnSnd) = GREATER
+  | compare(FnComp _, FnJuxt _) = GREATER
+  | compare(FnComp(f1,f2), FnComp(g1,g2)) =
+     (case compare(f1, g1) of
+       EQUAL => compare(f2, g2)
+     | r => r)
+  | compare(FnComp _, rhs) = if is_ind rhs then GREATER else LESS
+  | compare(FnRec _, FnVar _) = GREATER
+  | compare(FnRec _, FnId) = GREATER
+  | compare(FnRec _, FnCond) = GREATER
+  | compare(FnRec _, FnFst) = GREATER
+  | compare(FnRec _, FnSnd) = GREATER
+  | compare(FnRec _, FnJuxt _) = GREATER
+  | compare(FnRec _, FnComp _) = GREATER
+  | compare(FnRec(f1,f2), FnRec(g1,g2)) =
+     (case compare(f1, g1) of
+       EQUAL => compare(f2, g2)
+     | r => r)
+  | compare(FnRec _, rhs) = if is_ind rhs then GREATER else LESS
+  | compare(FnFun _, FnVar _) = GREATER
+  | compare(FnFun _, FnId) = GREATER
+  | compare(FnFun _, FnCond) = GREATER
+  | compare(FnFun _, FnFst) = GREATER
+  | compare(FnFun _, FnSnd) = GREATER
+  | compare(FnFun _, FnJuxt _) = GREATER
+  | compare(FnFun _, FnComp _) = GREATER
+  | compare(FnFun _, FnRec _) = GREATER
+  | compare(FnFun(f1,args1), FnFun(f2, args2)) =
+     (case String.compare(f1, f1) of
+       EQUAL => compare_list args1 args2
+     | r => r)
+  | compare(FnFun _, rhs) = if is_ind rhs then GREATER else LESS
+  | compare(ClVar x, ClVar y) = String.compare(x, y)
+  | compare(ClVar _, rhs) = if is_class rhs then LESS else GREATER
+  | compare(ClSingleton _, ClVar _) = GREATER
+  | compare(ClSingleton t1, ClSingleton t2) = compare(t1, t2)
+  | compare(ClSingleton _, rhs) = if is_class rhs then LESS else GREATER
+  | compare(ClPreimage _, ClVar _) = GREATER
+  | compare(ClPreimage _, ClSingleton _) = GREATER
+  | compare(ClPreimage(f1,c1), ClPreimage(f2,c2)) =
+     (case compare(f1, f2) of
+       EQUAL => compare(c1, c2)
+     | r => r)
+  | compare(ClPreimage _, rhs) = if is_class rhs then LESS else GREATER
+  | compare(ClUnion _, ClVar _) = GREATER
+  | compare(ClUnion _, ClSingleton _) = GREATER
+  | compare(ClUnion _, ClPreimage _) = GREATER
+  | compare(ClUnion(c1,c2), ClUnion(d1,d2)) =
+     (case compare(c1, d1) of
+       EQUAL => compare(c2, d2)
+     | r => r)
+  | compare(ClUnion _, rhs) = if is_class rhs then LESS else GREATER
+  | compare(ClIntersection _, ClVar _) = GREATER
+  | compare(ClIntersection _, ClSingleton _) = GREATER
+  | compare(ClIntersection _, ClPreimage _) = GREATER
+  | compare(ClIntersection _, ClUnion _) = GREATER
+  | compare(ClIntersection(c1,c2), ClIntersection(d1,d2)) =
+     (case compare(c1, d1) of
+       EQUAL => compare(c2, d2)
+     | r => r)
+  | compare(ClIntersection _, rhs) = if is_class rhs then LESS else GREATER
+  | compare(ClInduct _, ClVar _) = GREATER
+  | compare(ClInduct _, ClSingleton _) = GREATER
+  | compare(ClInduct _, ClPreimage _) = GREATER
+  | compare(ClInduct _, ClUnion _) = GREATER
+  | compare(ClInduct _, ClIntersection _) = GREATER
+  | compare(ClInduct(c1,c2), ClInduct(d1,d2)) =
+     (case compare(c1, d1) of
+       EQUAL => compare(c2, d2)
+     | r => r)
+  | compare(ClInduct _, rhs) = if is_class rhs then LESS else GREATER
+  | compare(ClFun(f1,args1), ClFun(f2,args2)) = 
+     (case String.compare(f1, f2) of
+       EQUAL => compare_list args1  args2
+     | r => r)
+  | compare(ClFun _, _) = GREATER
+and compare_list [] [] = EQUAL
+  | compare_list [] ys = LESS
+  | compare_list xs [] = GREATER
+  | compare_list (x::xs) (y::ys) =
+     (case compare(x, y) of
+       EQUAL => compare_list xs ys
+     | r => r);
+
+fun eq x y = EQUAL = compare(x,y);
+@ %def Term.compare
+

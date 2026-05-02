@@ -1,0 +1,135 @@
+%%
+%% fs0.tex
+%% 
+%% Made by Alex Nelson <pqnelson@gmail.com>
+%% Login   <alex@lisp>
+%% 
+%% Started on  2026-03-25T09:25:21-0700
+%% Last update 2026-03-25T09:25:21-0700
+%% 
+
+\documentclass{amsart}
+%\documentclass{amsbook}
+
+\usepackage{epigraph}
+\usepackage{proof}
+\usepackage{noweb}
+\usepackage[tagtheorems]{ysg}
+\usepackage{ysg-notation}
+\usepackage{doi}
+
+\noweboptions{longxref,english,breakcode,externalindex,smallcode}
+
+\makeatletter
+\let\og@doi\doi
+\def\doi#1{\texttt{\og@doi{#1}}}
+
+%\def\@upn{\textbf}
+% HACK: make the "theorem numbers" bold
+\def\@upn#1{{{\let\@secnumfont\bfseries\textbf{\bfseries#1}}}}
+%% \def\th@plain{%
+%%   \thm@headfont{\scshape}%
+%%   \itshape%
+%% }
+%% \def\th@definition{%
+%%   \thm@headfont{\rmfamily\scshape}%
+%%   \normalfont%
+%% }
+\makeatother
+
+\DeclareUnicodeCharacter{22A5}{{$\bot$}}
+\DeclareUnicodeCharacter{2200}{{$\forall$}}
+\DeclareUnicodeCharacter{2203}{{$\exists$}}
+\DeclareUnicodeCharacter{2227}{{$\land$}}
+\DeclareUnicodeCharacter{2228}{{$\lor$}}
+\DeclareUnicodeCharacter{21D4}{{$\iff$}}
+\DeclareUnicodeCharacter{27FA}{{$\iff$}}
+\DeclareUnicodeCharacter{27F9}{{$\implies$}}
+\DeclareUnicodeCharacter{22A6}{{$\vdash$}}
+\DeclareUnicodeCharacter{22A2}{{$\vdash$}}
+
+
+
+\swapnumbers
+\newtheoremstyle{empty}%
+                {} % above
+                {} % below
+                {} % body font
+                {\parindent} % indent
+                {} % headfont
+                {} % headpunct
+                {0pt} % headspace
+                {} % custom head spec
+                
+\theoremstyle{empty}
+\newtheorem*{node*}{} % un-numbered 'chunks'
+
+\theoremstyle{definition}
+\newtheorem{node}{}[section]
+\numberwithin{equation}{node}
+
+\newtheorem{definition}[node]{Definition}
+\newtheorem{example}[node]{Example}
+
+\theoremstyle{plain}
+\newtheorem{problem}[node]{Problem}
+\newtheorem{theorem}[node]{Theorem}
+\newtheorem{invariant}[node]{Invariant}
+
+% egreg! https://tex.stackexchange.com/a/568208/14751
+\newcommand{\checkbox}[1]{%
+  \ifnum#1=1
+    \makebox[0pt][l]{\raisebox{0.15ex}{\hspace{0.1em}$\checkmark$}}%
+  \fi
+  $\square$%
+}
+
+\title{Myo: The proof assistant}%Metalogical framework using \texorpdfstring{$FS_{0}$}{FS0}}
+\author{Alex Nelson}
+\date{March 25, 2026}
+\lastupdate{\today}
+\email{yakshaversguild@gmail.com}
+\thanks{This is part of the Yak Shavers' Guild project.}
+\subjclass[2020]{Primary 68N19; % Other programming paradigms (object-oriented, sequential, concurrent, automatic, etc.)
+Secondary 97P40, % Programming languages (educational aspects)
+97P50% Programming techniques (educational aspects)
+}
+
+\begin{document}
+
+\begin{abstract}
+We build a proof assistant for Feferman's
+$FS_{0}$~\cite{feferman1989finitary} atop Intuitionistic first-order logic as a
+metalogical framework. This is largely inspired by Isabelle.
+\end{abstract}
+
+\maketitle
+
+\tableofcontents
+
+%\chapter{Introduction}
+\input{tex/introduction}
+
+%\chapter{Syntax}
+\input{tex/many-sorted-term}
+\input{tex/many-sorted-formula}
+\input{tex/fs0-syntax}
+
+%\chapter{Kernel}
+\input{tex/kernel}
+\input{tex/derived}
+%\input{tex/state}
+\input{tex/goal}
+\input{tex/unification}
+\input{tex/classical}
+
+\appendix
+\input{tex/printer}
+\input{tex/style}
+
+\nocite{robinson2001handbook}
+\bibliographystyle{amsalpha}
+\bibliography{myo}
+
+
+\end{document}

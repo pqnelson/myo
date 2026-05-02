@@ -1,0 +1,248 @@
+\nwfilename{nw/printer.nw}\nwbegindocs{0}% -*- mode: poly-noweb; noweb-code-mode: sml-mode; -*-% ===> this file was generated automatically by noweave --- better not edit it
+%%
+%% printer.nw
+%% 
+%% Made by Alex Nelson <pqnelson@gmail.com>
+%% Login   <alex@lisp>
+%% 
+%% Started on  2026-04-18T12:17:53-0700
+%% Last update 2026-04-18T12:17:53-0700
+%% 
+
+\section{Pretty printer}
+
+\begin{node}
+Eventually, it will get rather tedious to look at the raw serialization of
+terms and formulas (and theorems and goals and\dots). We want to
+support the user's ability to \emph{prettyprint} these things, which
+is to say: we want to create a string representation of these things
+closer to what might be found in a textbook. A pretty printer is a
+collection of four functions to produce ``pretty'' string
+representations for terms, formulas, theorems, and goals (given as the
+collection of subgoals).
+\end{node}
+
+\nwenddocs{}\nwbegincode{1}\sublabel{NW24q7Pv-3x49D5-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW24q7Pv-3x49D5-1}}}\moddef{Printer.sig~{\nwtagstyle{}\subpageref{NW24q7Pv-3x49D5-1}}}\endmoddef\nwstartdeflinemarkup\nwenddeflinemarkup
+signature Printer = sig
+  val term : Term.t -> string;
+  val formula : Formula.t -> string;
+  val thm : Thm.t -> string;
+  val goals : ((string * Formula.t) list * Formula.t) list -> string;
+end;
+\nwnotused{Printer.sig}\nwidentuses{\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW24q7Pv-3x49D5-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW24q7Pv-3x49D5-1}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW24q7Pv-3x49D5-1}\nwendcode{}\nwbegindocs{2}\nwdocspar
+
+\begin{node}
+We will have a {\Tt{}TBPrinter\nwendquote} (``\underline{t}ext\underline{b}ook
+pretty printer'').
+\end{node}
+
+\nwenddocs{}\nwbegincode{3}\sublabel{NW24q7Pv-3JbCWS-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW24q7Pv-3JbCWS-1}}}\moddef{TBPrinter.sml~{\nwtagstyle{}\subpageref{NW24q7Pv-3JbCWS-1}}}\endmoddef\nwstartdeflinemarkup\nwenddeflinemarkup
+structure TBPrinter : Printer = struct
+\LA{}TBPrinter for a term~{\nwtagstyle{}\subpageref{NW24q7Pv-3IZAOd-1}}\RA{}
+
+\LA{}TBPrinter for a formula~{\nwtagstyle{}\subpageref{NW24q7Pv-14xJt9-1}}\RA{}
+
+\LA{}TBPrinter for a theorem~{\nwtagstyle{}\subpageref{NW24q7Pv-2pSwbS-1}}\RA{}
+
+\LA{}TBPrinter for goals~{\nwtagstyle{}\subpageref{NW24q7Pv-3yfJXJ-1}}\RA{}
+end;
+\nwnotused{TBPrinter.sml}\nwendcode{}\nwbegindocs{4}\nwdocspar
+
+\begin{node}
+Printing terms is fairly straightforward: variables are just
+themselves, and functions are of the form $f(t_{1},\dots,t_{n})$.
+Constants (``nullary functions'') are written as just $f$ and not $f()$.
+\end{node}
+
+\nwenddocs{}\nwbegincode{5}\sublabel{NW24q7Pv-3IZAOd-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW24q7Pv-3IZAOd-1}}}\moddef{TBPrinter for a term~{\nwtagstyle{}\subpageref{NW24q7Pv-3IZAOd-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW24q7Pv-3JbCWS-1}}\nwenddeflinemarkup
+fun term (Term.Var(x,_)) = x
+  | term (Term.Fun(f, _, args)) =
+      if List.null args
+      then f
+      else f^"("^(String.concatWith ", "
+                                    (map term args))^
+           ")";
+\nwindexdefn{\nwixident{TBPrinter.term}}{TBPrinter.term}{NW24q7Pv-3IZAOd-1}\eatline
+\nwused{\\{NW24q7Pv-3JbCWS-1}}\nwidentdefs{\\{{\nwixident{TBPrinter.term}}{TBPrinter.term}}}\nwendcode{}\nwbegindocs{6}\nwdocspar
+\begin{node}
+Formulas are a bit tricky. We need to print parentheses when
+precedence causes ambiguities. For example $A\implies B\implies C$
+is read as $A\implies(B\implies C)$ and not $(A\implies B)\implies C$.
+Similarly $A\lor B\land C$ means $A\lor(B\land C)$.
+
+We wish to be careful: for implications and logical equivalence, if
+either subformula is another implication (or logical equivalence),
+then we include the parentheses for clarity.
+\end{node}
+
+\nwenddocs{}\nwbegincode{7}\sublabel{NW24q7Pv-14xJt9-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW24q7Pv-14xJt9-1}}}\moddef{TBPrinter for a formula~{\nwtagstyle{}\subpageref{NW24q7Pv-14xJt9-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW24q7Pv-3JbCWS-1}}\nwenddeflinemarkup
+(* "∀" (* U+2200 *)
+   "∃" (* U+2203 *)
+"∧" U+2227
+"∨"; (* U+2228 *)
+"⇔" U+21D4
+ *)
+\LA{}Gathering bound variables for pretty printing~{\nwtagstyle{}\subpageref{NW24q7Pv-2b9skq-1}}\RA{}
+fun formula fm =
+  if Formula.is_falsum fm
+  then "⊥" (* U+22A5 *)
+  else if Formula.is_pred fm
+  then let val (P,args) = Formula.dest_pred fm
+       in P^"["^(String.concatWith ", " (map term args))^"]" end
+  else if Formula.is_not fm
+  then let val A = Formula.dest_not fm;
+           val conn = "¬"; (* U+00AC *)
+       in conn ^ (paren_form A fm) end
+  else if Formula.is_and fm
+  then let val (A, B) = Formula.dest_and fm;
+           val conn = "∧"; (* U+2227 *)
+       in (paren_form A fm) ^ conn ^ (paren_form B fm) end
+  else if Formula.is_or fm
+  then let val (A, B) = Formula.dest_or fm;
+           val conn = "∨"; (* U+2228 *)
+       in (paren_form A fm) ^ conn ^ (paren_form B fm) end
+  else if Formula.is_imp fm
+  then let val (A, B) = Formula.dest_imp fm;
+           val conn = "⟹"; (* U+27F9 for long version, U+21D2 *)
+       in (paren_form A fm) ^ conn ^ (paren_form B fm) end
+  else if Formula.is_iff fm
+  then let val (A, B) = Formula.dest_iff fm;
+           val conn = "⟺"; (* U+27FA for long version, U+21D4 *)
+       in (paren_form A fm) ^ conn ^ (paren_form B fm) end
+  else if Formula.is_forall fm
+  then let
+    val (var, body) = Formula.dest_forall fm
+    val (prefix, A) = gather_bvars Formula.is_forall
+                                   Formula.dest_forall
+                                   ("∀" ^ (* U+2200 *)
+                                    (term var))
+                                   body
+  in prefix ^ "." ^ (formula body) end
+  else if Formula.is_exists fm
+  then let
+    val (var, body) = Formula.dest_exists fm
+    val (prefix, A) = gather_bvars Formula.is_exists
+                                   Formula.dest_exists
+                                   ("∃" ^ (* U+2203 *)
+                                    (term var))
+                                   body
+  in prefix ^ "." ^ (formula body) end
+  else raise Fail("unknown connective: "^(Formula.serialize fm))
+and paren_form sub fm =
+    (case Formula.precedence sub fm of
+      LESS => "("^(formula sub)^")"
+    | EQUAL => if (Formula.is_imp fm orelse Formula.is_iff fm) andalso
+                  (Formula.is_imp sub orelse Formula.is_iff sub)
+               then "("^(formula sub)^")"
+               else formula sub
+    | _ => formula sub);
+\nwindexdefn{\nwixident{TBPrinter.formula}}{TBPrinter.formula}{NW24q7Pv-14xJt9-1}\eatline
+\nwused{\\{NW24q7Pv-3JbCWS-1}}\nwidentdefs{\\{{\nwixident{TBPrinter.formula}}{TBPrinter.formula}}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}}\\{{\nwixident{Formula.dest{\_}iff}}{Formula.dest:uniff}}\\{{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}}\\{{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}}\\{{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}}\\{{\nwixident{Formula.dest{\_}pred}}{Formula.dest:unpred}}\\{{\nwixident{Formula.is{\_}and}}{Formula.is:unand}}\\{{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}}\\{{\nwixident{Formula.is{\_}iff}}{Formula.is:uniff}}\\{{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}}\\{{\nwixident{Formula.is{\_}not}}{Formula.is:unnot}}\\{{\nwixident{Formula.is{\_}or}}{Formula.is:unor}}\\{{\nwixident{Formula.is{\_}pred}}{Formula.is:unpred}}\\{{\nwixident{Formula.precedence}}{Formula.precedence}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}}\nwindexuse{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}{NW24q7Pv-14xJt9-1}\nwindexuse{\nwixident{Formula.dest{\_}iff}}{Formula.dest:uniff}{NW24q7Pv-14xJt9-1}\nwindexuse{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}{NW24q7Pv-14xJt9-1}\nwindexuse{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}{NW24q7Pv-14xJt9-1}\nwindexuse{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}{NW24q7Pv-14xJt9-1}\nwindexuse{\nwixident{Formula.dest{\_}pred}}{Formula.dest:unpred}{NW24q7Pv-14xJt9-1}\nwindexuse{\nwixident{Formula.is{\_}and}}{Formula.is:unand}{NW24q7Pv-14xJt9-1}\nwindexuse{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}{NW24q7Pv-14xJt9-1}\nwindexuse{\nwixident{Formula.is{\_}iff}}{Formula.is:uniff}{NW24q7Pv-14xJt9-1}\nwindexuse{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}{NW24q7Pv-14xJt9-1}\nwindexuse{\nwixident{Formula.is{\_}not}}{Formula.is:unnot}{NW24q7Pv-14xJt9-1}\nwindexuse{\nwixident{Formula.is{\_}or}}{Formula.is:unor}{NW24q7Pv-14xJt9-1}\nwindexuse{\nwixident{Formula.is{\_}pred}}{Formula.is:unpred}{NW24q7Pv-14xJt9-1}\nwindexuse{\nwixident{Formula.precedence}}{Formula.precedence}{NW24q7Pv-14xJt9-1}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW24q7Pv-14xJt9-1}\nwendcode{}\nwbegindocs{8}\nwdocspar
+\begin{node}
+We have our pretty printer gather comma-separated variables when we
+have the same binder nested multiple times. For example, $\forall
+x\ldotp\forall y\ldotp\forall z\ldotp P[x,y,z]$ would be pretty
+printed as $\forall x,y,z\ldotp P[x,y,z]$. To support this, we have a
+helper function to accumulate the bound variables, separating them by
+commas. We assume the printer has encountered the first quantifier,
+and has made its bound variable the initial {\Tt{}acc\nwendquote} value. The body
+for the quantifier is the initial {\Tt{}fm\nwendquote}.
+\end{node}
+
+\nwenddocs{}\nwbegincode{9}\sublabel{NW24q7Pv-2b9skq-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW24q7Pv-2b9skq-1}}}\moddef{Gathering bound variables for pretty printing~{\nwtagstyle{}\subpageref{NW24q7Pv-2b9skq-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW24q7Pv-14xJt9-1}}\nwenddeflinemarkup
+fun gather_bvars is_q dest_q acc fm =
+  if not(is_q fm) then (acc, fm)
+  else let val (var, body) = dest_q fm
+       in gather_bvars is_q dest_q (acc^", "^(term var)) body
+       end;
+\nwused{\\{NW24q7Pv-14xJt9-1}}\nwendcode{}\nwbegindocs{10}\nwdocspar
+
+\begin{node}
+Theorems are just a bunch of formulas separated by a turnstile.
+\end{node}
+
+\nwenddocs{}\nwbegincode{11}\sublabel{NW24q7Pv-2pSwbS-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW24q7Pv-2pSwbS-1}}}\moddef{TBPrinter for a theorem~{\nwtagstyle{}\subpageref{NW24q7Pv-2pSwbS-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW24q7Pv-3JbCWS-1}}\nwenddeflinemarkup
+(* NB: "⊦" U+22A6 is assertion
+ "⊢" U+22A2 is just right tack *)
+fun thm th =
+  let
+    val hyps = Thm.hyps th;
+    val concl = Thm.concl th;
+    val turnstile = if List.null hyps
+                    then "⊢ "
+                    else " ⊢ ";
+  in
+    (String.concatWith ", " (map formula hyps)) ^
+    turnstile ^
+    (formula concl)
+  end;
+\nwindexdefn{\nwixident{TBPrinter.thm}}{TBPrinter.thm}{NW24q7Pv-2pSwbS-1}\eatline
+\nwused{\\{NW24q7Pv-3JbCWS-1}}\nwidentdefs{\\{{\nwixident{TBPrinter.thm}}{TBPrinter.thm}}}\nwidentuses{\\{{\nwixident{Thm.concl}}{Thm.concl}}\\{{\nwixident{Thm.hyps}}{Thm.hyps}}}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW24q7Pv-2pSwbS-1}\nwindexuse{\nwixident{Thm.hyps}}{Thm.hyps}{NW24q7Pv-2pSwbS-1}\nwendcode{}\nwbegindocs{12}\nwdocspar
+\begin{node}
+A goal is similar to a theorem, but the hypotheses may be labeled.
+\end{node}
+
+\nwenddocs{}\nwbegincode{13}\sublabel{NW24q7Pv-3yfJXJ-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW24q7Pv-3yfJXJ-1}}}\moddef{TBPrinter for goals~{\nwtagstyle{}\subpageref{NW24q7Pv-3yfJXJ-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW24q7Pv-3JbCWS-1}}\nwenddeflinemarkup
+local
+  fun turnstile [] = "⊢ "
+    | turnstile _ = " ⊢ ";
+  fun single (asl, fm) =
+    (String.concatWith
+       ", "
+       (map (fn (label, p) =>
+                if "" = label then formula p
+                else "\\""^label^"\\": "^(formula p))
+            asl)) ^
+    (turnstile asl) ^ 
+    (formula fm);
+  fun iter n acc [] = acc
+    | iter n acc ((asl, fm)::gls) =
+        iter (n + 1)
+             (acc ^
+              "Subgoal "^
+              (Int.toString n)^
+              ": " ^
+              (single (asl, fm)) ^
+              (if List.null gls then "" else "\\n"))
+             gls;
+in
+fun goals [] = "No more goals"
+  | goals [g] = single g
+  | goals gls = iter 1 "" gls
+end;
+\nwindexdefn{\nwixident{TBPrinter.goals}}{TBPrinter.goals}{NW24q7Pv-3yfJXJ-1}\eatline
+
+\nwused{\\{NW24q7Pv-3JbCWS-1}}\nwidentdefs{\\{{\nwixident{TBPrinter.goals}}{TBPrinter.goals}}}\nwendcode{}
+
+\nwixlogsorted{c}{{Gathering bound variables for pretty printing}{NW24q7Pv-2b9skq-1}{\nwixu{NW24q7Pv-14xJt9-1}\nwixd{NW24q7Pv-2b9skq-1}}}%
+\nwixlogsorted{c}{{Printer.sig}{NW24q7Pv-3x49D5-1}{\nwixd{NW24q7Pv-3x49D5-1}}}%
+\nwixlogsorted{c}{{TBPrinter for a formula}{NW24q7Pv-14xJt9-1}{\nwixu{NW24q7Pv-3JbCWS-1}\nwixd{NW24q7Pv-14xJt9-1}}}%
+\nwixlogsorted{c}{{TBPrinter for a term}{NW24q7Pv-3IZAOd-1}{\nwixu{NW24q7Pv-3JbCWS-1}\nwixd{NW24q7Pv-3IZAOd-1}}}%
+\nwixlogsorted{c}{{TBPrinter for a theorem}{NW24q7Pv-2pSwbS-1}{\nwixu{NW24q7Pv-3JbCWS-1}\nwixd{NW24q7Pv-2pSwbS-1}}}%
+\nwixlogsorted{c}{{TBPrinter for goals}{NW24q7Pv-3yfJXJ-1}{\nwixu{NW24q7Pv-3JbCWS-1}\nwixd{NW24q7Pv-3yfJXJ-1}}}%
+\nwixlogsorted{c}{{TBPrinter.sml}{NW24q7Pv-3JbCWS-1}{\nwixd{NW24q7Pv-3JbCWS-1}}}%
+\nwixlogsorted{i}{{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}}%
+\nwixlogsorted{i}{{\nwixident{Formula.dest{\_}iff}}{Formula.dest:uniff}}%
+\nwixlogsorted{i}{{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}}%
+\nwixlogsorted{i}{{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}}%
+\nwixlogsorted{i}{{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}}%
+\nwixlogsorted{i}{{\nwixident{Formula.dest{\_}pred}}{Formula.dest:unpred}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}and}}{Formula.is:unand}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}iff}}{Formula.is:uniff}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}not}}{Formula.is:unnot}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}or}}{Formula.is:unor}}%
+\nwixlogsorted{i}{{\nwixident{Formula.is{\_}pred}}{Formula.is:unpred}}%
+\nwixlogsorted{i}{{\nwixident{Formula.precedence}}{Formula.precedence}}%
+\nwixlogsorted{i}{{\nwixident{Formula.serialize}}{Formula.serialize}}%
+\nwixlogsorted{i}{{\nwixident{Formula.t}}{Formula.t}}%
+\nwixlogsorted{i}{{\nwixident{TBPrinter.formula}}{TBPrinter.formula}}%
+\nwixlogsorted{i}{{\nwixident{TBPrinter.goals}}{TBPrinter.goals}}%
+\nwixlogsorted{i}{{\nwixident{TBPrinter.term}}{TBPrinter.term}}%
+\nwixlogsorted{i}{{\nwixident{TBPrinter.thm}}{TBPrinter.thm}}%
+\nwixlogsorted{i}{{\nwixident{Term.t}}{Term.t}}%
+\nwixlogsorted{i}{{\nwixident{Thm.concl}}{Thm.concl}}%
+\nwixlogsorted{i}{{\nwixident{Thm.hyps}}{Thm.hyps}}%
+\nwixlogsorted{i}{{\nwixident{Thm.t}}{Thm.t}}%
+
