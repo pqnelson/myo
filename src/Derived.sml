@@ -794,4 +794,22 @@ fun ex_imp x C A =
   in
     Thm.exists_elim x th6
   end;
+(* exists_elim : Term.t -> Thm.t -> Thm.t -> Thm.t *)
+fun exists_elim (v : Term.t) (th1 : Thm.t) (th2 : Thm.t) : Thm.t =
+  let
+    val (x,A) = Formula.dest_exists(Thm.conc th1);
+    val Av = Formula.subst x v A;
+    val th3 = weaken Av th2;
+    val th4 = Thm.disch Av th3;
+    val th5 = Thm.exists_elim v th4;
+    (* aside on renaming bound variables *)
+    val lm1 = Thm.assume (Formula.mk_exists(x,A)) [Av];
+    val lm2 = Thm.disch Av lm1;
+    val lm3 = Thm.disch (Formula.mk_exists(x,A)) lm1;
+    val th6 = Thm.modus_ponens lm3 th1;
+    val th7 = hypo_syll lm4 th5;
+  in
+    Thm.modus_ponens th7 th1
+  end;
+
 end;

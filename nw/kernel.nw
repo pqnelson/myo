@@ -421,7 +421,7 @@ fun exists_intro (x : Term.t) (t : Term.t) (phi : Formula.t) (Gamma |- phi_t) =
   else Gamma |- (Formula.mk_exists(x, phi))
 @ %def Thm.exists_intro
 
-\begin{node}
+\begin{node}\label{node:kernel:existential-elimination}
 Existential elimination takes the form
 \begin{equation*}
 \vcenter{\infer[\exists\mbox{-elim}(x)]{\Gamma\vdash(\exists x\ldotp\phi)\implies\psi}{\Gamma\vdash\phi\implies\psi,&x\notin FV(\psi),&x\notin FV(\Gamma)}}
@@ -446,6 +446,16 @@ fun exists_elim (x : Term.t) (Gamma |- A_imp_B) =
           else Gamma |- (Formula.mk_imp(Formula.mk_exists(x, A), B))
        end;
 @ %def Thm.exists_elim
+
+\begin{xca}
+Prove the inference rules provided by the kernel are \textbf{complete}, or find
+a counter-example (a formula $\phi$ such that $\models\phi$ but $\nvdash\phi$).
+\end{xca}
+
+\begin{xca}
+Prove the inference rules provided by the kernel are \textbf{sound}, or find
+a counter-example (a formula $\phi$ such that $\nvDash\phi$ but $\vdash\phi$).
+\end{xca}
 
 \section*{Axioms}
 

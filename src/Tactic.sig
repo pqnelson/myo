@@ -8,4 +8,14 @@ signature Tactic = sig
     val and_elim_r : Formula.t -> t;
     val disch : string -> t;
     val modus_ponens : Formula.t -> t;
+  val mp : Thm.t -> t;
+    val disj_cases : Thm.t -> t;
+  val or_l : t;
+  val or_r : t;
+  val contr : Thm.t -> t;
+  val iff : t;
+  val gen : t;
+  val spec : (Term.t * Term.t) -> t;
+  val choose : Thm.t -> t;
+  val exists : Term.t -> t;
 end;

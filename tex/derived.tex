@@ -1586,17 +1586,17 @@ We also have derived rules for quantifiers:
 \item \checkbox{1} $\vdash(\forall x\ldotp(A[x]\implies C))\iff((\exists x\ldotp A[x])\implies C)$%e(done)
 \item \checkbox{1} $\vdash(\forall x\ldotp\neg A[x])\iff\neg(\exists x\ldotp A[x])$%e'(done)
 \bigbreak
-\item \checkbox{0} $\vdash(\forall x\ldotp(C\implies A[x]))\iff(C\implies\forall x\ldotp A[x])$%f
+\item \checkbox{1} $\vdash(\forall x\ldotp(C\implies A[x]))\iff(C\implies\forall x\ldotp A[x])$%f
 \item \checkbox{1} $\vdash(\exists x\ldotp(A[x]\implies C))\implies((\forall x\ldotp A[x])\implies C)$%g
 \item \checkbox{1} $\vdash(\exists x\ldotp\neg A[x])\implies\neg(\forall x\ldotp A[x])$%g'
-\item \checkbox{0} $\vdash(\exists x\ldotp(C\implies A[x]))\implies(C\implies\exists x\ldotp A[x])$%h
+\item \checkbox{1} $\vdash(\exists x\ldotp(C\implies A[x]))\implies(C\implies\exists x\ldotp A[x])$%h
 \item \checkbox{0} $\vdash(\exists x\ldotp C)\iff C$ and $\vdash(\forall x\ldotp C)\iff C$
 \end{enumerate}
 \end{node}
 
 \nwenddocs{}\nwbegincode{83}\sublabel{NW1NjfzY-uZfts-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}}\moddef{Derived results for Intuitionistic predicate logic~{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{\relax}{NW1NjfzY-uZfts-2}\nwenddeflinemarkup
 
-\nwalsodefined{\\{NW1NjfzY-uZfts-2}\\{NW1NjfzY-uZfts-3}\\{NW1NjfzY-uZfts-4}\\{NW1NjfzY-uZfts-5}\\{NW1NjfzY-uZfts-6}\\{NW1NjfzY-uZfts-7}\\{NW1NjfzY-uZfts-8}\\{NW1NjfzY-uZfts-9}\\{NW1NjfzY-uZfts-A}\\{NW1NjfzY-uZfts-B}}\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwendcode{}\nwbegindocs{84}\nwdocspar
+\nwalsodefined{\\{NW1NjfzY-uZfts-2}\\{NW1NjfzY-uZfts-3}\\{NW1NjfzY-uZfts-4}\\{NW1NjfzY-uZfts-5}\\{NW1NjfzY-uZfts-6}\\{NW1NjfzY-uZfts-7}\\{NW1NjfzY-uZfts-8}\\{NW1NjfzY-uZfts-9}\\{NW1NjfzY-uZfts-A}\\{NW1NjfzY-uZfts-B}\\{NW1NjfzY-uZfts-C}}\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwendcode{}\nwbegindocs{84}\nwdocspar
 
 \begin{node}% all_disj?
 $\vdash(\forall x\ldotp A[x]\lor C)\implies\forall x\ldotp(A[x]\lor C)$
@@ -2267,7 +2267,7 @@ $\vdash(\exists x\ldotp(C\implies A[x]))\implies(C\implies\exists x\ldotp A[x])$
 \end{enumerate}
 \end{proof}
 
-\nwenddocs{}\nwbegincode{120}\sublabel{NW1NjfzY-uZfts-B}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-B}}}\moddef{Derived results for Intuitionistic predicate logic~{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{NW1NjfzY-uZfts-A}{\relax}\nwenddeflinemarkup
+\nwenddocs{}\nwbegincode{120}\sublabel{NW1NjfzY-uZfts-B}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-B}}}\moddef{Derived results for Intuitionistic predicate logic~{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{NW1NjfzY-uZfts-A}{NW1NjfzY-uZfts-C}\nwenddeflinemarkup
 (* ex_imp : Term.t -> Formula.t -> Formula.t -> Thm.t
 
 |- (ex x st C implies A[x]) implies (C implies ex x st A[x]) *)
@@ -2308,7 +2308,57 @@ fun ex_imp_test () =
 $\vdash(\exists x\ldotp C)\iff C$ and $\vdash(\forall x\ldotp C)\iff C$
 \end{node}
 
-\nwenddocs{}
+\begin{node}
+Lastly, we will need to use a modified version of existential
+elimination~(\S\ref{node:kernel:existential-elimination}) for
+LCF-style tactics. We want something of the form:
+\begin{equation*}
+\vcenter{\infer[\exists\mbox{-elim}(v,\Gamma_{1}\vdash\exists x\ldotp A)]%
+  {\Gamma_{1}\cup(\Gamma_{2}\setminus(A[v/x]))\vdash B}%
+  {\Gamma_{1}\vdash\exists x\ldotp A[x], & \Gamma_{2}\vdash B}}
+\end{equation*}
+with the side condition that $v$ is not free in $\Gamma_{2}\setminus\{A[v/x]\}$,
+$A$, or $B$.
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item\textsc{Given:} $\Gamma_{1}\vdash\exists x\ldotp A$%1
+\item\textsc{Given:} $\Gamma_{2}\vdash B$%2
+\item $\{A[v/x]\}\cup\Gamma_{2}\vdash B$ by weakening(2)%3
+\item $\Gamma_{2}\setminus\{A[v/x]\}\vdash A[v]\implies B$ by discharging($A[v]$,3)%4
+\item $\Gamma_{2}\setminus\{A[v/x]\}\vdash \exists v\ldotp A[v]\implies B$
+  by existential elimination(4)%5
+\item $\vdash\exists x\ldotp A[x]\implies\exists v\ldotp A[v]$
+  by renaming bound variable%6
+\item $\Gamma_{2}\setminus\{A[v/x]\}\vdash \exists x\ldotp A[x]\implies B$
+  by hypothetical syllogism(6, 5)%7
+\item $\Gamma_{1}\cup(\Gamma_{2}\setminus\{A[v/x]\})\vdash B$
+  by syllogism(7, 1)\qedhere%8
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{124}\sublabel{NW1NjfzY-uZfts-C}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-C}}}\moddef{Derived results for Intuitionistic predicate logic~{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{NW1NjfzY-uZfts-B}{\relax}\nwenddeflinemarkup
+(* exists_elim : Term.t -> Thm.t -> Thm.t -> Thm.t *)
+fun exists_elim (v : Term.t) (th1 : Thm.t) (th2 : Thm.t) : Thm.t =
+  let
+    val (x,A) = Formula.dest_exists(Thm.conc th1);
+    val Av = Formula.subst x v A;
+    val th3 = weaken Av th2;
+    val th4 = Thm.disch Av th3;
+    val th5 = Thm.exists_elim v th4;
+    (* aside on renaming bound variables *)
+    val lm1 = Thm.assume (Formula.mk_exists(x,A)) [Av];
+    val lm2 = Thm.disch Av lm1;
+    val lm3 = Thm.disch (Formula.mk_exists(x,A)) lm1;
+    val th6 = Thm.modus_ponens lm3 th1;
+    val th7 = hypo_syll lm4 th5;
+  in
+    Thm.modus_ponens th7 th1
+  end;
+\nwindexdefn{\nwixident{Derived.exists{\_}elim}}{Derived.exists:unelim}{NW1NjfzY-uZfts-C}\eatline
+
+\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.exists{\_}elim}}{Derived.exists:unelim}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.subst}}{Formula.subst}}\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-uZfts-C}\nwindexuse{\nwixident{Formula.subst}}{Formula.subst}{NW1NjfzY-uZfts-C}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1NjfzY-uZfts-C}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-C}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-C}\nwindexuse{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}{NW1NjfzY-uZfts-C}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-uZfts-C}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW1NjfzY-uZfts-C}\nwendcode{}
 
 \nwixlogsorted{c}{{$(\neg A)\lor B$ sufficient to prove $A\implies B$}{NW1NjfzY-3NUP7w-1}{\nwixu{NW1NjfzY-4CUt2L-6}\nwixd{NW1NjfzY-3NUP7w-1}}}%
 \nwixlogsorted{c}{{$\vdash A\land(B\lor C)\iff((A\land B)\lor(A\land C))$}{NW1NjfzY-efA9w-1}{\nwixu{NW1NjfzY-4CUt2L-4}\nwixd{NW1NjfzY-efA9w-1}}}%
@@ -2322,7 +2372,7 @@ $\vdash(\exists x\ldotp C)\iff C$ and $\vdash(\forall x\ldotp C)\iff C$
 \nwixlogsorted{c}{{Conjunction tautology $\vdash A\implies(B\implies A\land B)$}{NW1NjfzY-1I5AY8-1}{\nwixu{NW1NjfzY-4CUt2L-3}\nwixd{NW1NjfzY-1I5AY8-1}}}%
 \nwixlogsorted{c}{{Contrapositive derived rules}{NW1NjfzY-4KFbFg-1}{\nwixu{NW1NjfzY-4CUt2L-5}\nwixd{NW1NjfzY-4KFbFg-1}\nwixd{NW1NjfzY-4KFbFg-2}}}%
 \nwixlogsorted{c}{{Curry implication}{NW1NjfzY-1iptma-1}{\nwixu{NW1NjfzY-4CUt2L-5}\nwixd{NW1NjfzY-1iptma-1}}}%
-\nwixlogsorted{c}{{Derived results for Intuitionistic predicate logic}{NW1NjfzY-uZfts-1}{\nwixu{NW1NjfzY-4dPl0p-1}\nwixd{NW1NjfzY-uZfts-1}\nwixd{NW1NjfzY-uZfts-2}\nwixd{NW1NjfzY-uZfts-3}\nwixd{NW1NjfzY-uZfts-4}\nwixd{NW1NjfzY-uZfts-5}\nwixd{NW1NjfzY-uZfts-6}\nwixd{NW1NjfzY-uZfts-7}\nwixd{NW1NjfzY-uZfts-8}\nwixd{NW1NjfzY-uZfts-9}\nwixd{NW1NjfzY-uZfts-A}\nwixd{NW1NjfzY-uZfts-B}}}%
+\nwixlogsorted{c}{{Derived results for Intuitionistic predicate logic}{NW1NjfzY-uZfts-1}{\nwixu{NW1NjfzY-4dPl0p-1}\nwixd{NW1NjfzY-uZfts-1}\nwixd{NW1NjfzY-uZfts-2}\nwixd{NW1NjfzY-uZfts-3}\nwixd{NW1NjfzY-uZfts-4}\nwixd{NW1NjfzY-uZfts-5}\nwixd{NW1NjfzY-uZfts-6}\nwixd{NW1NjfzY-uZfts-7}\nwixd{NW1NjfzY-uZfts-8}\nwixd{NW1NjfzY-uZfts-9}\nwixd{NW1NjfzY-uZfts-A}\nwixd{NW1NjfzY-uZfts-B}\nwixd{NW1NjfzY-uZfts-C}}}%
 \nwixlogsorted{c}{{Derived results for Intuitionistic propositional logic}{NW1NjfzY-4CUt2L-1}{\nwixu{NW1NjfzY-4dPl0p-1}\nwixd{NW1NjfzY-4CUt2L-1}\nwixd{NW1NjfzY-4CUt2L-2}\nwixd{NW1NjfzY-4CUt2L-3}\nwixd{NW1NjfzY-4CUt2L-4}\nwixd{NW1NjfzY-4CUt2L-5}\nwixd{NW1NjfzY-4CUt2L-6}\nwixd{NW1NjfzY-4CUt2L-7}}}%
 \nwixlogsorted{c}{{Derived.sml}{NW1NjfzY-4dPl0p-1}{\nwixd{NW1NjfzY-4dPl0p-1}}}%
 \nwixlogsorted{c}{{Disjunction is associative}{NW1NjfzY-J2rA5-1}{\nwixu{NW1NjfzY-4CUt2L-2}\nwixd{NW1NjfzY-J2rA5-1}}}%
@@ -2365,6 +2415,7 @@ $\vdash(\exists x\ldotp C)\iff C$ and $\vdash(\forall x\ldotp C)\iff C$
 \nwixlogsorted{i}{{\nwixident{Derived.ex{\_}disj{\_}distrib}}{Derived.ex:undisj:undistrib}}%
 \nwixlogsorted{i}{{\nwixident{Derived.ex{\_}imp}}{Derived.ex:unimp}}%
 \nwixlogsorted{i}{{\nwixident{Derived.ex{\_}not}}{Derived.ex:unnot}}%
+\nwixlogsorted{i}{{\nwixident{Derived.exists{\_}elim}}{Derived.exists:unelim}}%
 \nwixlogsorted{i}{{\nwixident{Derived.frege{\_}id}}{Derived.frege:unid}}%
 \nwixlogsorted{i}{{\nwixident{Derived.hypo{\_}syll}}{Derived.hypo:unsyll}}%
 \nwixlogsorted{i}{{\nwixident{Derived.hypo{\_}syll{\_}thm}}{Derived.hypo:unsyll:unthm}}%
@@ -2399,6 +2450,7 @@ $\vdash(\exists x\ldotp C)\iff C$ and $\vdash(\forall x\ldotp C)\iff C$
 \nwixlogsorted{i}{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}%
 \nwixlogsorted{i}{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}%
 \nwixlogsorted{i}{{\nwixident{Formula.serialize}}{Formula.serialize}}%
+\nwixlogsorted{i}{{\nwixident{Formula.subst}}{Formula.subst}}%
 \nwixlogsorted{i}{{\nwixident{Formula.t}}{Formula.t}}%
 \nwixlogsorted{i}{{\nwixident{Sort.IND}}{Sort.IND}}%
 \nwixlogsorted{i}{{\nwixident{Term.t}}{Term.t}}%

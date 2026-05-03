@@ -421,7 +421,7 @@ fun exists_intro (x : Term.t) (t : Term.t) (phi : Formula.t) (Gamma |- phi_t) =
   else Gamma |- (Formula.mk_exists(x, phi))
 \nwindexdefn{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}{NW4ICsJQ-2zKkPU-A}\eatline
 \nwused{\\{NW4ICsJQ-YIPBT-1}}\nwidentdefs{\\{{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}}}\nwidentuses{\\{{\nwixident{Formula.bv}}{Formula.bv}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.free{\_}for}}{Formula.free:unfor}}\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Formula.subst}}{Formula.subst}}\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Term.eq}}{Term.eq}}\\{{\nwixident{Term.have{\_}same{\_}sort}}{Term.have:unsame:unsort}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Formula.bv}}{Formula.bv}{NW4ICsJQ-2zKkPU-A}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW4ICsJQ-2zKkPU-A}\nwindexuse{\nwixident{Formula.free{\_}for}}{Formula.free:unfor}{NW4ICsJQ-2zKkPU-A}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW4ICsJQ-2zKkPU-A}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW4ICsJQ-2zKkPU-A}\nwindexuse{\nwixident{Formula.subst}}{Formula.subst}{NW4ICsJQ-2zKkPU-A}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW4ICsJQ-2zKkPU-A}\nwindexuse{\nwixident{Term.eq}}{Term.eq}{NW4ICsJQ-2zKkPU-A}\nwindexuse{\nwixident{Term.have{\_}same{\_}sort}}{Term.have:unsame:unsort}{NW4ICsJQ-2zKkPU-A}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW4ICsJQ-2zKkPU-A}\nwendcode{}\nwbegindocs{42}\nwdocspar
-\begin{node}
+\begin{node}\label{node:kernel:existential-elimination}
 Existential elimination takes the form
 \begin{equation*}
 \vcenter{\infer[\exists\mbox{-elim}(x)]{\Gamma\vdash(\exists x\ldotp\phi)\implies\psi}{\Gamma\vdash\phi\implies\psi,&x\notin FV(\psi),&x\notin FV(\Gamma)}}
@@ -447,6 +447,16 @@ fun exists_elim (x : Term.t) (Gamma |- A_imp_B) =
        end;
 \nwindexdefn{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}{NW4ICsJQ-2zKkPU-B}\eatline
 \nwused{\\{NW4ICsJQ-YIPBT-1}}\nwidentdefs{\\{{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}}\\{{\nwixident{Formula.fv}}{Formula.fv}}\\{{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}}\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Term.eq}}{Term.eq}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}{NW4ICsJQ-2zKkPU-B}\nwindexuse{\nwixident{Formula.fv}}{Formula.fv}{NW4ICsJQ-2zKkPU-B}\nwindexuse{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}{NW4ICsJQ-2zKkPU-B}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW4ICsJQ-2zKkPU-B}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW4ICsJQ-2zKkPU-B}\nwindexuse{\nwixident{Term.eq}}{Term.eq}{NW4ICsJQ-2zKkPU-B}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW4ICsJQ-2zKkPU-B}\nwendcode{}\nwbegindocs{46}\nwdocspar
+\begin{xca}
+Prove the inference rules provided by the kernel are \textbf{complete}, or find
+a counter-example (a formula $\phi$ such that $\models\phi$ but $\nvdash\phi$).
+\end{xca}
+
+\begin{xca}
+Prove the inference rules provided by the kernel are \textbf{sound}, or find
+a counter-example (a formula $\phi$ such that $\nvDash\phi$ but $\vdash\phi$).
+\end{xca}
+
 \section*{Axioms}
 
 \begin{node}

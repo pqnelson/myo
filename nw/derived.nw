@@ -1586,10 +1586,10 @@ We also have derived rules for quantifiers:
 \item \checkbox{1} $\vdash(\forall x\ldotp(A[x]\implies C))\iff((\exists x\ldotp A[x])\implies C)$%e(done)
 \item \checkbox{1} $\vdash(\forall x\ldotp\neg A[x])\iff\neg(\exists x\ldotp A[x])$%e'(done)
 \bigbreak
-\item \checkbox{0} $\vdash(\forall x\ldotp(C\implies A[x]))\iff(C\implies\forall x\ldotp A[x])$%f
+\item \checkbox{1} $\vdash(\forall x\ldotp(C\implies A[x]))\iff(C\implies\forall x\ldotp A[x])$%f
 \item \checkbox{1} $\vdash(\exists x\ldotp(A[x]\implies C))\implies((\forall x\ldotp A[x])\implies C)$%g
 \item \checkbox{1} $\vdash(\exists x\ldotp\neg A[x])\implies\neg(\forall x\ldotp A[x])$%g'
-\item \checkbox{0} $\vdash(\exists x\ldotp(C\implies A[x]))\implies(C\implies\exists x\ldotp A[x])$%h
+\item \checkbox{1} $\vdash(\exists x\ldotp(C\implies A[x]))\implies(C\implies\exists x\ldotp A[x])$%h
 \item \checkbox{0} $\vdash(\exists x\ldotp C)\iff C$ and $\vdash(\forall x\ldotp C)\iff C$
 \end{enumerate}
 \end{node}
@@ -2308,3 +2308,52 @@ fun ex_imp_test () =
 $\vdash(\exists x\ldotp C)\iff C$ and $\vdash(\forall x\ldotp C)\iff C$
 \end{node}
 
+\begin{node}
+Lastly, we will need to use a modified version of existential
+elimination~(\S\ref{node:kernel:existential-elimination}) for
+LCF-style tactics. We want something of the form:
+\begin{equation*}
+\vcenter{\infer[\exists\mbox{-elim}(v,\Gamma_{1}\vdash\exists x\ldotp A)]%
+  {\Gamma_{1}\cup(\Gamma_{2}\setminus(A[v/x]))\vdash B}%
+  {\Gamma_{1}\vdash\exists x\ldotp A[x], & \Gamma_{2}\vdash B}}
+\end{equation*}
+with the side condition that $v$ is not free in $\Gamma_{2}\setminus\{A[v/x]\}$,
+$A$, or $B$.
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item\textsc{Given:} $\Gamma_{1}\vdash\exists x\ldotp A$%1
+\item\textsc{Given:} $\Gamma_{2}\vdash B$%2
+\item $\{A[v/x]\}\cup\Gamma_{2}\vdash B$ by weakening(2)%3
+\item $\Gamma_{2}\setminus\{A[v/x]\}\vdash A[v]\implies B$ by discharging($A[v]$,3)%4
+\item $\Gamma_{2}\setminus\{A[v/x]\}\vdash \exists v\ldotp A[v]\implies B$
+  by existential elimination(4)%5
+\item $\vdash\exists x\ldotp A[x]\implies\exists v\ldotp A[v]$
+  by renaming bound variable%6
+\item $\Gamma_{2}\setminus\{A[v/x]\}\vdash \exists x\ldotp A[x]\implies B$
+  by hypothetical syllogism(6, 5)%7
+\item $\Gamma_{1}\cup(\Gamma_{2}\setminus\{A[v/x]\})\vdash B$
+  by syllogism(7, 1)\qedhere%8
+\end{enumerate}
+\end{proof}
+
+<<Derived results for Intuitionistic predicate logic>>=
+(* exists_elim : Term.t -> Thm.t -> Thm.t -> Thm.t *)
+fun exists_elim (v : Term.t) (th1 : Thm.t) (th2 : Thm.t) : Thm.t =
+  let
+    val (x,A) = Formula.dest_exists(Thm.conc th1);
+    val Av = Formula.subst x v A;
+    val th3 = weaken Av th2;
+    val th4 = Thm.disch Av th3;
+    val th5 = Thm.exists_elim v th4;
+    (* aside on renaming bound variables *)
+    val lm1 = Thm.assume (Formula.mk_exists(x,A)) [Av];
+    val lm2 = Thm.disch Av lm1;
+    val lm3 = Thm.disch (Formula.mk_exists(x,A)) lm1;
+    val th6 = Thm.modus_ponens lm3 th1;
+    val th7 = hypo_syll lm4 th5;
+  in
+    Thm.modus_ponens th7 th1
+  end;
+@ %def Derived.exists_elim
