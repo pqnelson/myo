@@ -102,10 +102,10 @@ The other inference rules for connectives are straightforward
 \end{node}
 
 <<Specification for inference rules>>=
-  val assume : Formula.t -> Formula.t list -> t;
-  val disch : Formula.t -> t -> t;
-  val undisch : t -> t;
-  val modus_ponens : t -> t -> t;
+val assume : Formula.t -> Formula.t list -> t;
+val disch : Formula.t -> t -> t;
+val undisch : t -> t;
+val modus_ponens : t -> t -> t;
 @ 
 <<Inference rules>>=
 fun assume phi Gamma = (phi::Gamma) |- phi;
@@ -144,9 +144,9 @@ The rules for conjunction
 \end{node}
 
 <<Specification for inference rules>>=
-  val and_intro : t -> t -> t;
-  val and_elim_l : t -> t;
-  val and_elim_r : t -> t;
+val and_intro : t -> t -> t;
+val and_elim_l : t -> t;
+val and_elim_r : t -> t;
 @ 
 
 <<Inference rules>>=
@@ -190,9 +190,9 @@ exception is raised.
 \end{node}
 
 <<Specification for inference rules>>=
-  val or_intro_l : Formula.t -> t -> t;
-  val or_intro_r : Formula.t -> t -> t;
-  val or_elim : t -> t -> t;
+val or_intro_l : Formula.t -> t -> t;
+val or_intro_r : Formula.t -> t -> t;
+val or_elim : t -> t -> t;
 @ 
 
 <<Inference rules>>=
@@ -228,8 +228,8 @@ Negation-related rules
 \end{node}
 
 <<Specification for inference rules>>=
-  val not_intro : t -> t;
-  val not_elim : t -> t;
+val not_intro : t -> t;
+val not_elim : t -> t;
 @
 
 <<Inference rules>>=
@@ -262,7 +262,7 @@ The Intuitionistic rule for eliminating contradictions
 \end{node}
 
 <<Specification for inference rules>>=
-  val contr : Formula.t -> t -> t;
+val contr : Formula.t -> t -> t;
 @
 
 <<Inference rules>>=
@@ -288,9 +288,9 @@ rules correspond to the derived rules for the abbreviation.
 \end{node}
 
 <<Specification for inference rules>>=
-  val iff_intro : t -> t -> t;
-  val iff_elim_l : t -> t;
-  val iff_elim_r : t -> t;
+val iff_intro : t -> t -> t;
+val iff_elim_l : t -> t;
+val iff_elim_r : t -> t;
 @
 <<Inference rules>>=
 fun iff_intro (Gamma1 |- A_imp_B) (Gamma2 |- B_imp_A) =
@@ -340,7 +340,7 @@ We have the inference rule for generalization
 \end{node}
 
 <<Specification for inference rules>>=
-  val forall_intro : Term.t -> t -> t;
+val forall_intro : Term.t -> t -> t;
 @
 
 <<Inference rules>>=
@@ -363,7 +363,7 @@ for $x$ in $\phi[-]$ (i.e., no free variable will become bound in $\phi[t]$):
 \end{node}
 
 <<Specification for inference rules>>=
-  val forall_elim : Term.t -> t -> t;
+val forall_elim : Term.t -> t -> t;
 @
 
 <<Inference rules>>=
@@ -398,7 +398,7 @@ as to avoid this collision.
 \end{node}
 
 <<Specification for inference rules>>=
-  val exists_intro : Term.t -> Term.t -> Formula.t -> t -> t;
+val exists_intro : Term.t -> Term.t -> Formula.t -> t -> t;
 @
 
 <<Inference rules>>=
@@ -429,7 +429,7 @@ Existential elimination takes the form
 \end{node}
 
 <<Specification for inference rules>>=
-  val exists_elim : Term.t -> t -> t;
+val exists_elim : Term.t -> t -> t;
 @
 <<Inference rules>>=
 fun exists_elim (x : Term.t) (Gamma |- A_imp_B) =
@@ -1013,7 +1013,7 @@ fun axiom_fun_eq lhs rhs =
   then raise Fail "axiom_fun_eq: left-hand side is not a function"
   else if not(Term.is_fun rhs)
   then raise Fail "axiom_fun_eq: right-hand side is not a function"
-  else let val vars = (Term.fv lhs)@(Term.fv rhs);
+  else let val vars = (Term.fv lhs) @ (Term.fv rhs);
            val x = Term.fresh_var "x" Sort.IND vars;
            val iff = Formula.mk_iff;
            val forall = Formula.mk_forall;
@@ -1033,10 +1033,10 @@ val axiom_class_eq : Term.t -> Term.t -> t;
 (* axiom_class_eq : Term.t -> Term.t -> Thm.t *)
 fun axiom_class_eq lhs rhs =
   if not(Term.is_class lhs)
-  then raise Fail "axiom_class_eq: left-hand side is not a function"
+  then raise Fail "axiom_class_eq: left-hand side is not a class"
   else if not(Term.is_class rhs)
-  then raise Fail "axiom_class_eq: right-hand side is not a function"
-  else let val vars = (Term.fv lhs)@(Term.fv rhs);
+  then raise Fail "axiom_class_eq: right-hand side is not a class"
+  else let val vars = (Term.fv lhs) @ (Term.fv rhs);
            val x = Term.fresh_var "x" Sort.IND vars;
            val iff = Formula.mk_iff;
            val forall = Formula.mk_forall;

@@ -102,10 +102,10 @@ The other inference rules for connectives are straightforward
 \end{node}
 
 \nwenddocs{}\nwbegincode{7}\sublabel{NW4ICsJQ-1XQlFy-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-1}}}\moddef{Specification for inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-2cY0B1-1}}\nwprevnextdefs{\relax}{NW4ICsJQ-1XQlFy-2}\nwenddeflinemarkup
-  val assume : Formula.t -> Formula.t list -> t;
-  val disch : Formula.t -> t -> t;
-  val undisch : t -> t;
-  val modus_ponens : t -> t -> t;
+val assume : Formula.t -> Formula.t list -> t;
+val disch : Formula.t -> t -> t;
+val undisch : t -> t;
+val modus_ponens : t -> t -> t;
 \nwalsodefined{\\{NW4ICsJQ-1XQlFy-2}\\{NW4ICsJQ-1XQlFy-3}\\{NW4ICsJQ-1XQlFy-4}\\{NW4ICsJQ-1XQlFy-5}\\{NW4ICsJQ-1XQlFy-6}\\{NW4ICsJQ-1XQlFy-7}\\{NW4ICsJQ-1XQlFy-8}\\{NW4ICsJQ-1XQlFy-9}\\{NW4ICsJQ-1XQlFy-A}}\nwused{\\{NW4ICsJQ-2cY0B1-1}}\nwidentuses{\\{{\nwixident{Formula.t}}{Formula.t}}}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW4ICsJQ-1XQlFy-1}\nwendcode{}\nwbegindocs{8}\nwdocspar
 \nwenddocs{}\nwbegincode{9}\sublabel{NW4ICsJQ-2zKkPU-2}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-2zKkPU-2}}}\moddef{Inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-2zKkPU-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-YIPBT-1}}\nwprevnextdefs{NW4ICsJQ-2zKkPU-1}{NW4ICsJQ-2zKkPU-3}\nwenddeflinemarkup
 fun assume phi Gamma = (phi::Gamma) |- phi;
@@ -144,9 +144,9 @@ The rules for conjunction
 \end{node}
 
 \nwenddocs{}\nwbegincode{11}\sublabel{NW4ICsJQ-1XQlFy-2}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-2}}}\moddef{Specification for inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-2cY0B1-1}}\nwprevnextdefs{NW4ICsJQ-1XQlFy-1}{NW4ICsJQ-1XQlFy-3}\nwenddeflinemarkup
-  val and_intro : t -> t -> t;
-  val and_elim_l : t -> t;
-  val and_elim_r : t -> t;
+val and_intro : t -> t -> t;
+val and_elim_l : t -> t;
+val and_elim_r : t -> t;
 \nwused{\\{NW4ICsJQ-2cY0B1-1}}\nwendcode{}\nwbegindocs{12}\nwdocspar
 
 \nwenddocs{}\nwbegincode{13}\sublabel{NW4ICsJQ-2zKkPU-3}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-2zKkPU-3}}}\moddef{Inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-2zKkPU-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-YIPBT-1}}\nwprevnextdefs{NW4ICsJQ-2zKkPU-2}{NW4ICsJQ-2zKkPU-4}\nwenddeflinemarkup
@@ -190,9 +190,9 @@ exception is raised.
 \end{node}
 
 \nwenddocs{}\nwbegincode{15}\sublabel{NW4ICsJQ-1XQlFy-3}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-3}}}\moddef{Specification for inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-2cY0B1-1}}\nwprevnextdefs{NW4ICsJQ-1XQlFy-2}{NW4ICsJQ-1XQlFy-4}\nwenddeflinemarkup
-  val or_intro_l : Formula.t -> t -> t;
-  val or_intro_r : Formula.t -> t -> t;
-  val or_elim : t -> t -> t;
+val or_intro_l : Formula.t -> t -> t;
+val or_intro_r : Formula.t -> t -> t;
+val or_elim : t -> t -> t;
 \nwused{\\{NW4ICsJQ-2cY0B1-1}}\nwidentuses{\\{{\nwixident{Formula.t}}{Formula.t}}}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW4ICsJQ-1XQlFy-3}\nwendcode{}\nwbegindocs{16}\nwdocspar
 
 \nwenddocs{}\nwbegincode{17}\sublabel{NW4ICsJQ-2zKkPU-4}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-2zKkPU-4}}}\moddef{Inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-2zKkPU-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-YIPBT-1}}\nwprevnextdefs{NW4ICsJQ-2zKkPU-3}{NW4ICsJQ-2zKkPU-5}\nwenddeflinemarkup
@@ -228,8 +228,8 @@ Negation-related rules
 \end{node}
 
 \nwenddocs{}\nwbegincode{19}\sublabel{NW4ICsJQ-1XQlFy-4}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-4}}}\moddef{Specification for inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-2cY0B1-1}}\nwprevnextdefs{NW4ICsJQ-1XQlFy-3}{NW4ICsJQ-1XQlFy-5}\nwenddeflinemarkup
-  val not_intro : t -> t;
-  val not_elim : t -> t;
+val not_intro : t -> t;
+val not_elim : t -> t;
 \nwused{\\{NW4ICsJQ-2cY0B1-1}}\nwendcode{}\nwbegindocs{20}\nwdocspar
 
 \nwenddocs{}\nwbegincode{21}\sublabel{NW4ICsJQ-2zKkPU-5}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-2zKkPU-5}}}\moddef{Inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-2zKkPU-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-YIPBT-1}}\nwprevnextdefs{NW4ICsJQ-2zKkPU-4}{NW4ICsJQ-2zKkPU-6}\nwenddeflinemarkup
@@ -262,7 +262,7 @@ The Intuitionistic rule for eliminating contradictions
 \end{node}
 
 \nwenddocs{}\nwbegincode{23}\sublabel{NW4ICsJQ-1XQlFy-5}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-5}}}\moddef{Specification for inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-2cY0B1-1}}\nwprevnextdefs{NW4ICsJQ-1XQlFy-4}{NW4ICsJQ-1XQlFy-6}\nwenddeflinemarkup
-  val contr : Formula.t -> t -> t;
+val contr : Formula.t -> t -> t;
 \nwused{\\{NW4ICsJQ-2cY0B1-1}}\nwidentuses{\\{{\nwixident{Formula.t}}{Formula.t}}}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW4ICsJQ-1XQlFy-5}\nwendcode{}\nwbegindocs{24}\nwdocspar
 
 \nwenddocs{}\nwbegincode{25}\sublabel{NW4ICsJQ-2zKkPU-6}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-2zKkPU-6}}}\moddef{Inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-2zKkPU-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-YIPBT-1}}\nwprevnextdefs{NW4ICsJQ-2zKkPU-5}{NW4ICsJQ-2zKkPU-7}\nwenddeflinemarkup
@@ -288,9 +288,9 @@ rules correspond to the derived rules for the abbreviation.
 \end{node}
 
 \nwenddocs{}\nwbegincode{27}\sublabel{NW4ICsJQ-1XQlFy-6}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-6}}}\moddef{Specification for inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-2cY0B1-1}}\nwprevnextdefs{NW4ICsJQ-1XQlFy-5}{NW4ICsJQ-1XQlFy-7}\nwenddeflinemarkup
-  val iff_intro : t -> t -> t;
-  val iff_elim_l : t -> t;
-  val iff_elim_r : t -> t;
+val iff_intro : t -> t -> t;
+val iff_elim_l : t -> t;
+val iff_elim_r : t -> t;
 \nwused{\\{NW4ICsJQ-2cY0B1-1}}\nwendcode{}\nwbegindocs{28}\nwdocspar
 \nwenddocs{}\nwbegincode{29}\sublabel{NW4ICsJQ-2zKkPU-7}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-2zKkPU-7}}}\moddef{Inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-2zKkPU-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-YIPBT-1}}\nwprevnextdefs{NW4ICsJQ-2zKkPU-6}{NW4ICsJQ-2zKkPU-8}\nwenddeflinemarkup
 fun iff_intro (Gamma1 |- A_imp_B) (Gamma2 |- B_imp_A) =
@@ -340,7 +340,7 @@ We have the inference rule for generalization
 \end{node}
 
 \nwenddocs{}\nwbegincode{31}\sublabel{NW4ICsJQ-1XQlFy-7}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-7}}}\moddef{Specification for inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-2cY0B1-1}}\nwprevnextdefs{NW4ICsJQ-1XQlFy-6}{NW4ICsJQ-1XQlFy-8}\nwenddeflinemarkup
-  val forall_intro : Term.t -> t -> t;
+val forall_intro : Term.t -> t -> t;
 \nwused{\\{NW4ICsJQ-2cY0B1-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW4ICsJQ-1XQlFy-7}\nwendcode{}\nwbegindocs{32}\nwdocspar
 
 \nwenddocs{}\nwbegincode{33}\sublabel{NW4ICsJQ-2zKkPU-8}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-2zKkPU-8}}}\moddef{Inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-2zKkPU-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-YIPBT-1}}\nwprevnextdefs{NW4ICsJQ-2zKkPU-7}{NW4ICsJQ-2zKkPU-9}\nwenddeflinemarkup
@@ -363,7 +363,7 @@ for $x$ in $\phi[-]$ (i.e., no free variable will become bound in $\phi[t]$):
 \end{node}
 
 \nwenddocs{}\nwbegincode{35}\sublabel{NW4ICsJQ-1XQlFy-8}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-8}}}\moddef{Specification for inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-2cY0B1-1}}\nwprevnextdefs{NW4ICsJQ-1XQlFy-7}{NW4ICsJQ-1XQlFy-9}\nwenddeflinemarkup
-  val forall_elim : Term.t -> t -> t;
+val forall_elim : Term.t -> t -> t;
 \nwused{\\{NW4ICsJQ-2cY0B1-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW4ICsJQ-1XQlFy-8}\nwendcode{}\nwbegindocs{36}\nwdocspar
 
 \nwenddocs{}\nwbegincode{37}\sublabel{NW4ICsJQ-2zKkPU-9}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-2zKkPU-9}}}\moddef{Inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-2zKkPU-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-YIPBT-1}}\nwprevnextdefs{NW4ICsJQ-2zKkPU-8}{NW4ICsJQ-2zKkPU-A}\nwenddeflinemarkup
@@ -398,7 +398,7 @@ as to avoid this collision.
 \end{node}
 
 \nwenddocs{}\nwbegincode{39}\sublabel{NW4ICsJQ-1XQlFy-9}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-9}}}\moddef{Specification for inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-2cY0B1-1}}\nwprevnextdefs{NW4ICsJQ-1XQlFy-8}{NW4ICsJQ-1XQlFy-A}\nwenddeflinemarkup
-  val exists_intro : Term.t -> Term.t -> Formula.t -> t -> t;
+val exists_intro : Term.t -> Term.t -> Formula.t -> t -> t;
 \nwused{\\{NW4ICsJQ-2cY0B1-1}}\nwidentuses{\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW4ICsJQ-1XQlFy-9}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW4ICsJQ-1XQlFy-9}\nwendcode{}\nwbegindocs{40}\nwdocspar
 
 \nwenddocs{}\nwbegincode{41}\sublabel{NW4ICsJQ-2zKkPU-A}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-2zKkPU-A}}}\moddef{Inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-2zKkPU-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-YIPBT-1}}\nwprevnextdefs{NW4ICsJQ-2zKkPU-9}{NW4ICsJQ-2zKkPU-B}\nwenddeflinemarkup
@@ -429,7 +429,7 @@ Existential elimination takes the form
 \end{node}
 
 \nwenddocs{}\nwbegincode{43}\sublabel{NW4ICsJQ-1XQlFy-A}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-A}}}\moddef{Specification for inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-2cY0B1-1}}\nwprevnextdefs{NW4ICsJQ-1XQlFy-9}{\relax}\nwenddeflinemarkup
-  val exists_elim : Term.t -> t -> t;
+val exists_elim : Term.t -> t -> t;
 \nwused{\\{NW4ICsJQ-2cY0B1-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW4ICsJQ-1XQlFy-A}\nwendcode{}\nwbegindocs{44}\nwdocspar
 \nwenddocs{}\nwbegincode{45}\sublabel{NW4ICsJQ-2zKkPU-B}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-2zKkPU-B}}}\moddef{Inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-2zKkPU-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-YIPBT-1}}\nwprevnextdefs{NW4ICsJQ-2zKkPU-A}{\relax}\nwenddeflinemarkup
 fun exists_elim (x : Term.t) (Gamma |- A_imp_B) =
@@ -1013,7 +1013,7 @@ fun axiom_fun_eq lhs rhs =
   then raise Fail "axiom_fun_eq: left-hand side is not a function"
   else if not(Term.is_fun rhs)
   then raise Fail "axiom_fun_eq: right-hand side is not a function"
-  else let val vars = (Term.fv lhs)@(Term.fv rhs);
+  else let val vars = (Term.fv lhs) @ (Term.fv rhs);
            val x = Term.fresh_var "x" Sort.IND vars;
            val iff = Formula.mk_iff;
            val forall = Formula.mk_forall;
@@ -1033,10 +1033,10 @@ val axiom_class_eq : Term.t -> Term.t -> t;
 (* axiom_class_eq : Term.t -> Term.t -> \nwlinkedidentc{Thm.t}{NW4ICsJQ-YIPBT-1} *)
 fun axiom_class_eq lhs rhs =
   if not(Term.is_class lhs)
-  then raise Fail "axiom_class_eq: left-hand side is not a function"
+  then raise Fail "axiom_class_eq: left-hand side is not a class"
   else if not(Term.is_class rhs)
-  then raise Fail "axiom_class_eq: right-hand side is not a function"
-  else let val vars = (Term.fv lhs)@(Term.fv rhs);
+  then raise Fail "axiom_class_eq: right-hand side is not a class"
+  else let val vars = (Term.fv lhs) @ (Term.fv rhs);
            val x = Term.fresh_var "x" Sort.IND vars;
            val iff = Formula.mk_iff;
            val forall = Formula.mk_forall;

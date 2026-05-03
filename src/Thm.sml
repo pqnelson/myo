@@ -432,39 +432,44 @@ fun Class_ind P =
     mk_axiom (Formula.mk_imp(premises, conc))
   end;
 (* axiom_class_comp : Formula.t -> Term.t list -> Thm.t *)
-fun axiom_class_comp (P : Formula.t) (vars : Term.t list) =
-  let
-    fun not_in_vars y = List.all (not o (Term.eq y)) vars;
-    val (h::hs) = List.rev vars;
-    val xs : Term.t = List.foldr (fn (x,acc) => FS0.pair acc x)
-                                 h
-                                 (List.rev hs);
-    val S = Term.Fun("S_{("^
-                     (String.concatWith "," (map (fn (Term.Var(x,_)) => x)
-                                                 vars))
-                     ^")|"^(Formula.serialize P)^"}",
-                     Sort.CLASS,
-                     []);
-  in
-    if List.exists not_in_vars (Formula.fv P)
-    then raise Fail("axiom_class_comp: not all free variables of predicate "^
-                    "contained in given list of variables")
-    else if List.exists (not o Term.is_var) vars
-    then raise Fail "axiom_class_comp: given list of variables contains a function"
-    else if List.exists (not o Term.is_ind) vars
-    then raise Fail "axiom_class_comp: given list of variables not all individual-sorted"
-    else [] |- (List.foldr Formula.mk_forall
-                           (Formula.mk_iff (FS0.In xs S,
-                                            P))
-                           vars)
-  end;
+fun axiom_class_comp (P : Formula.t) ([] : Term.t list) =
+      (* return empty set *)
+      (FS0.preimage (FS0.const (FS0.pair FS0.zero FS0.zero))
+                    (FS0.singleton FS0.zero))
+  | axiom_class_comp P ((vars as (h::hs)) : Term.t list) =
+      let
+        fun not_in_vars y = List.all (not o (Term.eq y)) vars;
+        val xs : Term.t = List.foldl (fn (x,acc) => FS0.pair acc x)
+                                     h
+                                     hs;
+        val S = Term.Fun("S_{("^
+                         (String.concatWith "," (map (fn (Term.Var(x,_)) => x)
+                                                     vars))
+                         ^")|"^(Formula.serialize P)^"}",
+                         Sort.CLASS,
+                         []);
+      in
+        if not(Formula.is_e_plus P)
+        then raise Fail("axiom_class_comp: formula is not E+")
+        else if List.exists not_in_vars (Formula.fv P)
+        then raise Fail("axiom_class_comp: not all free variables of predicate "^
+                        "contained in given list of variables")
+        else if List.exists (not o Term.is_var) vars
+        then raise Fail "axiom_class_comp: given list of variables contains a function"
+        else if List.exists (not o Term.is_ind) vars
+        then raise Fail "axiom_class_comp: given list of variables not all individual-sorted"
+        else [] |- (List.foldr Formula.mk_forall
+                               (Formula.mk_iff (FS0.In xs S,
+                                                P))
+                               vars)
+      end;
 (* axiom_fun_eq : Term.t -> Term.t -> Thm.t *)
 fun axiom_fun_eq lhs rhs =
   if not(Term.is_fun lhs)
   then raise Fail "axiom_fun_eq: left-hand side is not a function"
   else if not(Term.is_fun rhs)
   then raise Fail "axiom_fun_eq: right-hand side is not a function"
-  else let val vars = (Term.fv lhs)@(Term.fv rhs);
+  else let val vars = (Term.fv lhs) @ (Term.fv rhs);
            val x = Term.fresh_var "x" Sort.IND vars;
            val iff = Formula.mk_iff;
            val forall = Formula.mk_forall;
@@ -475,10 +480,10 @@ fun axiom_fun_eq lhs rhs =
 (* axiom_class_eq : Term.t -> Term.t -> Thm.t *)
 fun axiom_class_eq lhs rhs =
   if not(Term.is_class lhs)
-  then raise Fail "axiom_class_eq: left-hand side is not a function"
+  then raise Fail "axiom_class_eq: left-hand side is not a class"
   else if not(Term.is_class rhs)
-  then raise Fail "axiom_class_eq: right-hand side is not a function"
-  else let val vars = (Term.fv lhs)@(Term.fv rhs);
+  then raise Fail "axiom_class_eq: right-hand side is not a class"
+  else let val vars = (Term.fv lhs) @ (Term.fv rhs);
            val x = Term.fresh_var "x" Sort.IND vars;
            val iff = Formula.mk_iff;
            val forall = Formula.mk_forall;

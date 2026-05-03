@@ -5,26 +5,26 @@ signature Thm = sig
   val concl : t -> Formula.t;
   val mk_axiom : Formula.t -> t; (* danger! *)
 
-    val assume : Formula.t -> Formula.t list -> t;
-    val disch : Formula.t -> t -> t;
-    val undisch : t -> t;
-    val modus_ponens : t -> t -> t;
-    val and_intro : t -> t -> t;
-    val and_elim_l : t -> t;
-    val and_elim_r : t -> t;
-    val or_intro_l : Formula.t -> t -> t;
-    val or_intro_r : Formula.t -> t -> t;
-    val or_elim : t -> t -> t;
-    val not_intro : t -> t;
-    val not_elim : t -> t;
-    val contr : Formula.t -> t -> t;
-    val iff_intro : t -> t -> t;
-    val iff_elim_l : t -> t;
-    val iff_elim_r : t -> t;
-    val forall_intro : Term.t -> t -> t;
-    val forall_elim : Term.t -> t -> t;
-    val exists_intro : Term.t -> Term.t -> Formula.t -> t -> t;
-    val exists_elim : Term.t -> t -> t;
+  val assume : Formula.t -> Formula.t list -> t;
+  val disch : Formula.t -> t -> t;
+  val undisch : t -> t;
+  val modus_ponens : t -> t -> t;
+  val and_intro : t -> t -> t;
+  val and_elim_l : t -> t;
+  val and_elim_r : t -> t;
+  val or_intro_l : Formula.t -> t -> t;
+  val or_intro_r : Formula.t -> t -> t;
+  val or_elim : t -> t -> t;
+  val not_intro : t -> t;
+  val not_elim : t -> t;
+  val contr : Formula.t -> t -> t;
+  val iff_intro : t -> t -> t;
+  val iff_elim_l : t -> t;
+  val iff_elim_r : t -> t;
+  val forall_intro : Term.t -> t -> t;
+  val forall_elim : Term.t -> t -> t;
+  val exists_intro : Term.t -> Term.t -> Formula.t -> t -> t;
+  val exists_elim : Term.t -> t -> t;
 
   val axiom_pair : Term.t -> Term.t -> t;
   val axiom_proj1 : Term.t -> Term.t -> t;
