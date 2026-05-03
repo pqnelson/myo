@@ -1596,7 +1596,7 @@ We also have derived rules for quantifiers:
 
 \nwenddocs{}\nwbegincode{83}\sublabel{NW1NjfzY-uZfts-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}}\moddef{Derived results for Intuitionistic predicate logic~{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{\relax}{NW1NjfzY-uZfts-2}\nwenddeflinemarkup
 
-\nwalsodefined{\\{NW1NjfzY-uZfts-2}\\{NW1NjfzY-uZfts-3}\\{NW1NjfzY-uZfts-4}\\{NW1NjfzY-uZfts-5}\\{NW1NjfzY-uZfts-6}\\{NW1NjfzY-uZfts-7}\\{NW1NjfzY-uZfts-8}\\{NW1NjfzY-uZfts-9}\\{NW1NjfzY-uZfts-A}\\{NW1NjfzY-uZfts-B}\\{NW1NjfzY-uZfts-C}}\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwendcode{}\nwbegindocs{84}\nwdocspar
+\nwalsodefined{\\{NW1NjfzY-uZfts-2}\\{NW1NjfzY-uZfts-3}\\{NW1NjfzY-uZfts-4}\\{NW1NjfzY-uZfts-5}\\{NW1NjfzY-uZfts-6}\\{NW1NjfzY-uZfts-7}\\{NW1NjfzY-uZfts-8}\\{NW1NjfzY-uZfts-9}\\{NW1NjfzY-uZfts-A}\\{NW1NjfzY-uZfts-B}\\{NW1NjfzY-uZfts-C}\\{NW1NjfzY-uZfts-D}\\{NW1NjfzY-uZfts-E}}\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwendcode{}\nwbegindocs{84}\nwdocspar
 
 \begin{node}% all_disj?
 $\vdash(\forall x\ldotp A[x]\lor C)\implies\forall x\ldotp(A[x]\lor C)$
@@ -2308,7 +2308,7 @@ fun ex_imp_test () =
 $\vdash(\exists x\ldotp C)\iff C$ and $\vdash(\forall x\ldotp C)\iff C$
 \end{node}
 
-\begin{node}
+\begin{node}\label{node:derived:existential-elimination}
 Lastly, we will need to use a modified version of existential
 elimination~(\S\ref{node:kernel:existential-elimination}) for
 LCF-style tactics. We want something of the form:
@@ -2338,13 +2338,13 @@ $A$, or $B$.
 \end{enumerate}
 \end{proof}
 
-\nwenddocs{}\nwbegincode{124}\sublabel{NW1NjfzY-uZfts-C}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-C}}}\moddef{Derived results for Intuitionistic predicate logic~{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{NW1NjfzY-uZfts-B}{\relax}\nwenddeflinemarkup
+\nwenddocs{}\nwbegincode{124}\sublabel{NW1NjfzY-uZfts-C}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-C}}}\moddef{Derived results for Intuitionistic predicate logic~{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{NW1NjfzY-uZfts-B}{NW1NjfzY-uZfts-D}\nwenddeflinemarkup
 (* exists_elim : Term.t -> Thm.t -> Thm.t -> Thm.t *)
 fun exists_elim (v : Term.t) (th1 : Thm.t) (th2 : Thm.t) : Thm.t =
   let
-    val (x,A) = Formula.dest_exists(Thm.conc th1);
+    val (x,A) = Formula.dest_exists(Thm.concl th1);
     val Av = Formula.subst x v A;
-    val th3 = weaken Av th2;
+    val th3 = weaken [Av] th2;
     val th4 = Thm.disch Av th3;
     val th5 = Thm.exists_elim v th4;
     (* aside on renaming bound variables *)
@@ -2352,13 +2352,101 @@ fun exists_elim (v : Term.t) (th1 : Thm.t) (th2 : Thm.t) : Thm.t =
     val lm2 = Thm.disch Av lm1;
     val lm3 = Thm.disch (Formula.mk_exists(x,A)) lm1;
     val th6 = Thm.modus_ponens lm3 th1;
-    val th7 = hypo_syll lm4 th5;
+    val th7 = hypo_syll th6 th5;
   in
     Thm.modus_ponens th7 th1
   end;
 \nwindexdefn{\nwixident{Derived.exists{\_}elim}}{Derived.exists:unelim}{NW1NjfzY-uZfts-C}\eatline
+\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.exists{\_}elim}}{Derived.exists:unelim}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.subst}}{Formula.subst}}\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.concl}}{Thm.concl}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-uZfts-C}\nwindexuse{\nwixident{Formula.subst}}{Formula.subst}{NW1NjfzY-uZfts-C}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1NjfzY-uZfts-C}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-C}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-uZfts-C}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-C}\nwindexuse{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}{NW1NjfzY-uZfts-C}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-uZfts-C}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW1NjfzY-uZfts-C}\nwendcode{}\nwbegindocs{125}\nwdocspar
+\begin{node}
+We have the following \emph{congruence of universal quantifier}
+theorem, $\vdash (\forall x\ldotp A[x])\implies(\forall y\ldotp A[y])$.
+\end{node}
 
-\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.exists{\_}elim}}{Derived.exists:unelim}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.subst}}{Formula.subst}}\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-uZfts-C}\nwindexuse{\nwixident{Formula.subst}}{Formula.subst}{NW1NjfzY-uZfts-C}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1NjfzY-uZfts-C}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-C}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-C}\nwindexuse{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}{NW1NjfzY-uZfts-C}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-uZfts-C}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW1NjfzY-uZfts-C}\nwendcode{}
+\begin{proof}
+\begin{enumerate}
+\item $\forall x\ldotp A[x]\vdash\forall x\ldotp A[x]$ by assuming%1
+\item $\forall x\ldotp A[x]\vdash A[y]$ by $\forall$-elim($y$, 1)%2
+\item $\forall x\ldotp A[x]\vdash\forall y\ldotp A[y]$ by $\forall$-intro(2)%3
+\item $\vdash(\forall x\ldotp A[x])\implies(\forall y\ldotp A[y])$
+  by discharging(3)\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{126}\sublabel{NW1NjfzY-uZfts-D}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-D}}}\moddef{Derived results for Intuitionistic predicate logic~{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{NW1NjfzY-uZfts-C}{NW1NjfzY-uZfts-E}\nwenddeflinemarkup
+(* forall_cong : Term.t -> Term.t -> (Term.t -> Formula.t -> Thm.t *)
+fun forall_cong x y (A : Term.t -> Formula.t) =
+  if not(Term.have_same_sort x y)
+  then raise Fail "forall_cong: variables have different sorts"
+  else
+    let
+      val Ax = Formula.mk_forall(x, A x);
+      val th1 = Thm.assume Ax [];
+      val th2 = Thm.forall_elim y th1;
+      val th3 = Thm.forall_intro y th2;
+    in
+      Thm.disch Ax th3
+    end;
+\nwindexdefn{\nwixident{Derived.forall{\_}cong}}{Derived.forall:uncong}{NW1NjfzY-uZfts-D}\eatline
+\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.forall{\_}cong}}{Derived.forall:uncong}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Term.have{\_}same{\_}sort}}{Term.have:unsame:unsort}}\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}}\\{{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-uZfts-D}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW1NjfzY-uZfts-D}\nwindexuse{\nwixident{Term.have{\_}same{\_}sort}}{Term.have:unsame:unsort}{NW1NjfzY-uZfts-D}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1NjfzY-uZfts-D}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-D}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-D}\nwindexuse{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}{NW1NjfzY-uZfts-D}\nwindexuse{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}{NW1NjfzY-uZfts-D}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW1NjfzY-uZfts-D}\nwendcode{}\nwbegindocs{127}\nwdocspar
+\begin{node}
+Similarly, we have congruence for existential quantifiers,
+\begin{equation*}
+\vdash(\exists x\ldotp A[x])\implies(\exists y\ldotp A[y]).
+\end{equation*}
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $A[x]\vdash A[x]$ by assuming%1
+\item $A[x]\vdash\exists y\ldotp A[y]$ by $\exists$-intro($y$, 1)%2
+\item $\vdash A[x]\implies(\exists y\ldotp A[y])$ by discharging(2)%3
+\item $\vdash(\exists x\ldotp A[x])\implies(\exists y\ldotp A[y])$
+  by $\exists$-elim(4)\qedhere
+\end{enumerate}
+\end{proof}
+
+\nwenddocs{}\nwbegincode{128}\sublabel{NW1NjfzY-uZfts-E}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-E}}}\moddef{Derived results for Intuitionistic predicate logic~{\nwtagstyle{}\subpageref{NW1NjfzY-uZfts-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4dPl0p-1}}\nwprevnextdefs{NW1NjfzY-uZfts-D}{\relax}\nwenddeflinemarkup
+(* exists_cong : Term.t -> Term.t -> (Term.t -> Formula.t -> Thm.t *)
+fun exists_cong x y (A : Term.t -> Formula.t) =
+  if not(Term.have_same_sort x y)
+  then raise Fail "forall_cong: variables have different sorts"
+  else
+    let
+      val th1 = Thm.assume (A x) [];
+      val th2 = Thm.exists_intro y x (A y) th1;
+      val th3 = Thm.disch (A x) th2;
+    in
+      Thm.exists_elim x th3
+    end;
+\nwindexdefn{\nwixident{Derived.exists{\_}cong}}{Derived.exists:uncong}{NW1NjfzY-uZfts-E}\eatline
+\nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.exists{\_}cong}}{Derived.exists:uncong}}}\nwidentuses{\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Term.have{\_}same{\_}sort}}{Term.have:unsame:unsort}}\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}}\\{{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW1NjfzY-uZfts-E}\nwindexuse{\nwixident{Term.have{\_}same{\_}sort}}{Term.have:unsame:unsort}{NW1NjfzY-uZfts-E}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1NjfzY-uZfts-E}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-E}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-E}\nwindexuse{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}{NW1NjfzY-uZfts-E}\nwindexuse{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}{NW1NjfzY-uZfts-E}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW1NjfzY-uZfts-E}\nwendcode{}\nwbegindocs{129}\nwdocspar
+\nwenddocs{}\nwbegincode{130}\sublabel{NW1NjfzY-3DeU7m-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3DeU7m-1}}}\moddef{Unit tests for derived rules~{\nwtagstyle{}\subpageref{NW1NjfzY-3DeU7m-1}}}\endmoddef\nwstartdeflinemarkup\nwenddeflinemarkup
+fun forall_cong_test () =
+  let
+    fun A x = Fun.mk_pred("A",[x]);
+    val x = Term.Var("x",Sort.IND);
+    val y = Term.Var("y",Sort.IND);
+    val expected = Formula.mk_imp(Formula.mk_forall(x, A x),
+                                  Formula.mk_forall(y, A y));
+    val actual = Thm.concl(\nwlinkedidentc{Derived.forall_cong}{NW1NjfzY-uZfts-D} x y A);
+  in
+    Formula.eq expected actual
+  end;
+
+fun exists_cong_test () =
+  let
+    fun A x = Fun.mk_pred("A",[x]);
+    val x = Term.Var("x",Sort.IND);
+    val y = Term.Var("y",Sort.IND);
+    val expected = Formula.mk_imp(Formula.mk_exists(x, A x),
+                                  Formula.mk_exists(y, A y));
+    val actual = Thm.concl(\nwlinkedidentc{Derived.exists_cong}{NW1NjfzY-uZfts-E} x y A);
+  in
+    Formula.eq expected actual
+  end;
+\nwnotused{Unit tests for derived rules}\nwidentuses{\\{{\nwixident{Derived.exists{\_}cong}}{Derived.exists:uncong}}\\{{\nwixident{Derived.forall{\_}cong}}{Derived.forall:uncong}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Derived.exists{\_}cong}}{Derived.exists:uncong}{NW1NjfzY-3DeU7m-1}\nwindexuse{\nwixident{Derived.forall{\_}cong}}{Derived.forall:uncong}{NW1NjfzY-3DeU7m-1}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1NjfzY-3DeU7m-1}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-3DeU7m-1}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-3DeU7m-1}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-3DeU7m-1}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1NjfzY-3DeU7m-1}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-3DeU7m-1}\nwendcode{}\nwbegindocs{131}\nwdocspar
+\nwenddocs{}
 
 \nwixlogsorted{c}{{$(\neg A)\lor B$ sufficient to prove $A\implies B$}{NW1NjfzY-3NUP7w-1}{\nwixu{NW1NjfzY-4CUt2L-6}\nwixd{NW1NjfzY-3NUP7w-1}}}%
 \nwixlogsorted{c}{{$\vdash A\land(B\lor C)\iff((A\land B)\lor(A\land C))$}{NW1NjfzY-efA9w-1}{\nwixu{NW1NjfzY-4CUt2L-4}\nwixd{NW1NjfzY-efA9w-1}}}%
@@ -2372,7 +2460,7 @@ fun exists_elim (v : Term.t) (th1 : Thm.t) (th2 : Thm.t) : Thm.t =
 \nwixlogsorted{c}{{Conjunction tautology $\vdash A\implies(B\implies A\land B)$}{NW1NjfzY-1I5AY8-1}{\nwixu{NW1NjfzY-4CUt2L-3}\nwixd{NW1NjfzY-1I5AY8-1}}}%
 \nwixlogsorted{c}{{Contrapositive derived rules}{NW1NjfzY-4KFbFg-1}{\nwixu{NW1NjfzY-4CUt2L-5}\nwixd{NW1NjfzY-4KFbFg-1}\nwixd{NW1NjfzY-4KFbFg-2}}}%
 \nwixlogsorted{c}{{Curry implication}{NW1NjfzY-1iptma-1}{\nwixu{NW1NjfzY-4CUt2L-5}\nwixd{NW1NjfzY-1iptma-1}}}%
-\nwixlogsorted{c}{{Derived results for Intuitionistic predicate logic}{NW1NjfzY-uZfts-1}{\nwixu{NW1NjfzY-4dPl0p-1}\nwixd{NW1NjfzY-uZfts-1}\nwixd{NW1NjfzY-uZfts-2}\nwixd{NW1NjfzY-uZfts-3}\nwixd{NW1NjfzY-uZfts-4}\nwixd{NW1NjfzY-uZfts-5}\nwixd{NW1NjfzY-uZfts-6}\nwixd{NW1NjfzY-uZfts-7}\nwixd{NW1NjfzY-uZfts-8}\nwixd{NW1NjfzY-uZfts-9}\nwixd{NW1NjfzY-uZfts-A}\nwixd{NW1NjfzY-uZfts-B}\nwixd{NW1NjfzY-uZfts-C}}}%
+\nwixlogsorted{c}{{Derived results for Intuitionistic predicate logic}{NW1NjfzY-uZfts-1}{\nwixu{NW1NjfzY-4dPl0p-1}\nwixd{NW1NjfzY-uZfts-1}\nwixd{NW1NjfzY-uZfts-2}\nwixd{NW1NjfzY-uZfts-3}\nwixd{NW1NjfzY-uZfts-4}\nwixd{NW1NjfzY-uZfts-5}\nwixd{NW1NjfzY-uZfts-6}\nwixd{NW1NjfzY-uZfts-7}\nwixd{NW1NjfzY-uZfts-8}\nwixd{NW1NjfzY-uZfts-9}\nwixd{NW1NjfzY-uZfts-A}\nwixd{NW1NjfzY-uZfts-B}\nwixd{NW1NjfzY-uZfts-C}\nwixd{NW1NjfzY-uZfts-D}\nwixd{NW1NjfzY-uZfts-E}}}%
 \nwixlogsorted{c}{{Derived results for Intuitionistic propositional logic}{NW1NjfzY-4CUt2L-1}{\nwixu{NW1NjfzY-4dPl0p-1}\nwixd{NW1NjfzY-4CUt2L-1}\nwixd{NW1NjfzY-4CUt2L-2}\nwixd{NW1NjfzY-4CUt2L-3}\nwixd{NW1NjfzY-4CUt2L-4}\nwixd{NW1NjfzY-4CUt2L-5}\nwixd{NW1NjfzY-4CUt2L-6}\nwixd{NW1NjfzY-4CUt2L-7}}}%
 \nwixlogsorted{c}{{Derived.sml}{NW1NjfzY-4dPl0p-1}{\nwixd{NW1NjfzY-4dPl0p-1}}}%
 \nwixlogsorted{c}{{Disjunction is associative}{NW1NjfzY-J2rA5-1}{\nwixu{NW1NjfzY-4CUt2L-2}\nwixd{NW1NjfzY-J2rA5-1}}}%
@@ -2394,6 +2482,7 @@ fun exists_elim (v : Term.t) (th1 : Thm.t) (th2 : Thm.t) : Thm.t =
 \nwixlogsorted{c}{{Transitivity of implies}{NW1NjfzY-1sm2GN-1}{\nwixu{NW1NjfzY-4CUt2L-5}\nwixd{NW1NjfzY-1sm2GN-1}}}%
 \nwixlogsorted{c}{{Uncurrying implication}{NW1NjfzY-1JZnQr-1}{\nwixu{NW1NjfzY-4CUt2L-5}\nwixd{NW1NjfzY-1JZnQr-1}}}%
 \nwixlogsorted{c}{{Unit tests for \code{}Derived.sml\edoc{}}{NW1NjfzY-3rvgpx-1}{\nwixd{NW1NjfzY-3rvgpx-1}\nwixd{NW1NjfzY-3rvgpx-2}\nwixd{NW1NjfzY-3rvgpx-3}\nwixd{NW1NjfzY-3rvgpx-4}\nwixd{NW1NjfzY-3rvgpx-5}\nwixd{NW1NjfzY-3rvgpx-6}\nwixd{NW1NjfzY-3rvgpx-7}\nwixd{NW1NjfzY-3rvgpx-8}\nwixd{NW1NjfzY-3rvgpx-9}\nwixd{NW1NjfzY-3rvgpx-A}}}%
+\nwixlogsorted{c}{{Unit tests for derived rules}{NW1NjfzY-3DeU7m-1}{\nwixd{NW1NjfzY-3DeU7m-1}}}%
 \nwixlogsorted{c}{{Weak negation elimination}{NW1NjfzY-16XbWD-1}{\nwixu{NW1NjfzY-4CUt2L-1}\nwixd{NW1NjfzY-16XbWD-1}}}%
 \nwixlogsorted{c}{{Weakening inference rule}{NW1NjfzY-2n5HPL-1}{\nwixu{NW1NjfzY-4CUt2L-1}\nwixd{NW1NjfzY-2n5HPL-1}}}%
 \nwixlogsorted{i}{{\nwixident{Derived.absurdum}}{Derived.absurdum}}%
@@ -2415,7 +2504,9 @@ fun exists_elim (v : Term.t) (th1 : Thm.t) (th2 : Thm.t) : Thm.t =
 \nwixlogsorted{i}{{\nwixident{Derived.ex{\_}disj{\_}distrib}}{Derived.ex:undisj:undistrib}}%
 \nwixlogsorted{i}{{\nwixident{Derived.ex{\_}imp}}{Derived.ex:unimp}}%
 \nwixlogsorted{i}{{\nwixident{Derived.ex{\_}not}}{Derived.ex:unnot}}%
+\nwixlogsorted{i}{{\nwixident{Derived.exists{\_}cong}}{Derived.exists:uncong}}%
 \nwixlogsorted{i}{{\nwixident{Derived.exists{\_}elim}}{Derived.exists:unelim}}%
+\nwixlogsorted{i}{{\nwixident{Derived.forall{\_}cong}}{Derived.forall:uncong}}%
 \nwixlogsorted{i}{{\nwixident{Derived.frege{\_}id}}{Derived.frege:unid}}%
 \nwixlogsorted{i}{{\nwixident{Derived.hypo{\_}syll}}{Derived.hypo:unsyll}}%
 \nwixlogsorted{i}{{\nwixident{Derived.hypo{\_}syll{\_}thm}}{Derived.hypo:unsyll:unthm}}%
@@ -2453,6 +2544,7 @@ fun exists_elim (v : Term.t) (th1 : Thm.t) (th2 : Thm.t) : Thm.t =
 \nwixlogsorted{i}{{\nwixident{Formula.subst}}{Formula.subst}}%
 \nwixlogsorted{i}{{\nwixident{Formula.t}}{Formula.t}}%
 \nwixlogsorted{i}{{\nwixident{Sort.IND}}{Sort.IND}}%
+\nwixlogsorted{i}{{\nwixident{Term.have{\_}same{\_}sort}}{Term.have:unsame:unsort}}%
 \nwixlogsorted{i}{{\nwixident{Term.t}}{Term.t}}%
 \nwixlogsorted{i}{{\nwixident{Thm.assume}}{Thm.assume}}%
 \nwixlogsorted{i}{{\nwixident{Thm.concl}}{Thm.concl}}%

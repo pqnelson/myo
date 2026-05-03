@@ -31,7 +31,7 @@ an inference rule has multiple premises, this amounts to requiring the
 user prove several subgoals. We will keep a stack (in the computer
 science sense of the term) of subgoals.
 
-Goals will also be given the ``justification'' function, which
+Goals will also be given the ``justification'' or ``validation'' function, which
 essentially says ``If you give me theorems for the subgoals, I will
 return to you a theorem establishing the proof obligation at this point.''
 We should view this as ``going back down'' the natural deduction proof
@@ -360,7 +360,7 @@ fun mp thm {goals = (asl, B)::gls, justify=jfn} =
   then raise Fail("mp: assumptions do not contain all hypotheses of theorem")
   else
     let
-      val A = Thm.conc thm;
+      val A = Thm.concl thm;
       val A_imp_B = Formula.mk_imp(A, B);
       fun jfn' (th_A_imp_B::thms) =
         jfn ((Thm.modus_ponens th_A_imp_B thm)::thms);
@@ -405,7 +405,7 @@ $\lor$-elimination in practice (as a [[per cases]] argument).
 <<Implementation of tactics>>=
 fun disj_cases thm {goals = (asl, C)::gls, justify=jfn} =
   let
-    val A_or_B = Thm.conc thm;
+    val A_or_B = Thm.concl thm;
     val (A,B) = Formula.dest_or A_or_B
                 handle _ => raise Fail "Tactic.disj_cases: theorem is not a disjunction";
     val A_imp_C = Formula.mk_imp(A,C);
@@ -441,7 +441,7 @@ fun or_l {goals = (asl, A_or_B)::gls, justify=jfn} =
   let
     val (A,B) = Formula.dest_or A_or_B;
     fun jfn' (th_A::thms) =
-      jfn ((Thm.or_intro_r B thm)::thms);
+      jfn ((Thm.or_intro_r B th_A)::thms);
   in
     {goals = (asl, A)::gls,
      justify = jfn'}
@@ -451,7 +451,7 @@ fun or_r {goals = (asl, A_or_B)::gls, justify=jfn} =
   let
     val (A,B) = Formula.dest_or A_or_B;
     fun jfn' (th_B::thms) =
-      jfn ((Thm.or_intro_l A thm)::thms);
+      jfn ((Thm.or_intro_l A th_B)::thms);
   in
     {goals = (asl, B)::gls,
      justify = jfn'}
@@ -485,7 +485,7 @@ val contr : Thm.t -> t;
 fun contr thm {goals = (asl, A)::gls, justify=jfn} =
   if not(assumptions_contain_hypotheses thm asl)
   then raise Fail("contr: assumptions do not contain all hypotheses of theorem")
-  else if not(Formula.is_falsum(Thm.conc thm))
+  else if not(Formula.is_falsum(Thm.concl thm))
   then raise Fail("contr: theorem is not a contradiction")
   else
     let
@@ -584,7 +584,7 @@ fun gen {goals = (asl, forall_A)::gls, justify=jfn} =
     val (x as (Term.Var(x0,s0)),A) = Formula.dest_forall forall_A;
     val fvs = List.concat (map (fn (_,fm) => Formula.fv fm) asl);
     val x' = Term.fresh_var x0 s0 fvs;
-    fun jfn' (thm::thms) = jfn((Thm.forall_intro x' A)::thms);
+    fun jfn' (th_A::thms) = jfn((Thm.forall_intro x' th_A)::thms);
   in
     { goals = (asl, Formula.subst x' x A)::gls,
       justify = jfn' }
@@ -631,9 +631,9 @@ fun choose th {goals = (asl, B)::gls, justify=jfn} =
   then raise Fail "choose: assumptions do not contain all hypotheses of theorem"
   else
     let
-      val ((Term.Var(x,s)),A) = Formula.dest_exists(Thm.conc th);
+      val (x as (Term.Var(x0,s)),A) = Formula.dest_exists(Thm.concl th);
       val fvs = List.concat (map (fn (_,fm) => Formula.fv fm) asl);
-      val x' = Term.fresh_var x s fvs;
+      val x' = Term.fresh_var x0 s fvs;
       fun jfn' (thm::thms) = jfn((Derived.exists_elim x' th thm)::thms);
     in
       { goals = (("",Formula.subst x x' A)::asl, B)::gls
@@ -651,6 +651,12 @@ fun exists tm {goals = (asl, ex_A)::gls, justify=jfn} =
   end;
 @
 
+\begin{xca}
+Prove these tactics are ``complete'', in the sense that any proof we
+can do with the kernel's inference rules can also be done using these
+tactics. [Hint: it's probably easiest to first prove we can derive the kernel's $\exists$-elimination rule~(\S\ref{node:kernel:existential-elimination}) from the derived $\exists$-elimination rule (\S\ref{node:derived:existential-elimination}).]
+\end{xca}
+
 \begin{problem}
 How exactly do we ``use'' assumptions in a tactics proof?
 \end{problem}
@@ -662,9 +668,47 @@ One way to do it is use \textit{modus ponens} tactic (\S\ref{node:tactic:MP})
 with the theorem $A_{3}\vdash A_{3}$ by ``[[Thm.assume]] $A_{3}$ \texttt{[]}''.
 \end{node}
 
+\begin{node}
+More broadly, there is a related problem: suppose the current subgoal
+is already proven as a theorem elsewhere? How do we ``solve'' the
+subgoal \emph{using} that theorem? HOL family provers use the
+[[ACCEPT_TAC]] to accomplish this.
 
-\begin{xca}
-Prove these tactics are ``complete'', in the sense that any proof we
-can do with the kernel's inference rules can also be done using these
-tactics. 
-\end{xca}
+However, it is not hard to imagine situations where the variables
+appearing in the theorem differ from what the goal expects. If we are
+trying to prove $\vdash\forall x\ldotp P[x]$ and we have a theorem
+$\vdash\forall y\ldotp P[y]$ where $x\neq y$ are different variables,
+then it would be nice to convert the variables to match. Borrowing the
+language of $\lambda$-calculus, it would be nice for the tactic to
+perform $\alpha$-conversion. (Note: this would also have to transform
+free variables affected by the $\alpha$-conversion which appear in the
+assumptions for the subgoal.)
+\end{node}
+
+\begin{node}
+Suppose our goal is of the form $A_{1},\dots,A_{n}\vdash^{\mkern-8.75mu\scriptstyle\rule[-.9ex]{0pt}{0pt}?} A$ and this
+is really the same as a theorem $A'_{1},\dots,A'_{m}\vdash A'$ where
+$m\leq n$ and there is some injective map $\pi\colon\{1,\dots,m\}\to\{1,\dots,n\}$
+such that $A'_{i}$ looks like $A_{\pi(i)}$. We want to essentially
+construct a derived inference rule taking
+\begin{enumerate}
+\item The ordered pair $([A_{1},\dots,A_{n}], A)$ corresponding to the goal;
+\item The theorem $A'_{1},\dots,A'_{m}\vdash A'$
+\end{enumerate}
+and produce a theorem of the form
+\begin{equation*}
+\vdash(A'_{1}\land\cdots\land A'_{m}\implies A')\implies(A_{1}\land\cdots\land A_{n}\implies A).
+\end{equation*}
+This is where all the hard work lies, making this derived inference
+rule. Then we can perform \textit{modus ponens}, repeatedly uncurry
+the result, and undischarge until we obtain the theorem $A_{1},\dots,A_{n}\vdash A$.
+This would give us some [[match]] derived rule of inference, which we
+can then turn into a tactic.
+\end{node}
+
+
+
+\begin{node}[References]
+For more about tactics, it is useful to see how other LCF-style
+provers employ them. See, e.g., Chapter 4 of HOL's description~\cite{HOLdescription}.
+\end{node}

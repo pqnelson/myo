@@ -2308,7 +2308,7 @@ fun ex_imp_test () =
 $\vdash(\exists x\ldotp C)\iff C$ and $\vdash(\forall x\ldotp C)\iff C$
 \end{node}
 
-\begin{node}
+\begin{node}\label{node:derived:existential-elimination}
 Lastly, we will need to use a modified version of existential
 elimination~(\S\ref{node:kernel:existential-elimination}) for
 LCF-style tactics. We want something of the form:
@@ -2342,9 +2342,9 @@ $A$, or $B$.
 (* exists_elim : Term.t -> Thm.t -> Thm.t -> Thm.t *)
 fun exists_elim (v : Term.t) (th1 : Thm.t) (th2 : Thm.t) : Thm.t =
   let
-    val (x,A) = Formula.dest_exists(Thm.conc th1);
+    val (x,A) = Formula.dest_exists(Thm.concl th1);
     val Av = Formula.subst x v A;
-    val th3 = weaken Av th2;
+    val th3 = weaken [Av] th2;
     val th4 = Thm.disch Av th3;
     val th5 = Thm.exists_elim v th4;
     (* aside on renaming bound variables *)
@@ -2352,8 +2352,97 @@ fun exists_elim (v : Term.t) (th1 : Thm.t) (th2 : Thm.t) : Thm.t =
     val lm2 = Thm.disch Av lm1;
     val lm3 = Thm.disch (Formula.mk_exists(x,A)) lm1;
     val th6 = Thm.modus_ponens lm3 th1;
-    val th7 = hypo_syll lm4 th5;
+    val th7 = hypo_syll th6 th5;
   in
     Thm.modus_ponens th7 th1
   end;
 @ %def Derived.exists_elim
+
+\begin{node}
+We have the following \emph{congruence of universal quantifier}
+theorem, $\vdash (\forall x\ldotp A[x])\implies(\forall y\ldotp A[y])$.
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $\forall x\ldotp A[x]\vdash\forall x\ldotp A[x]$ by assuming%1
+\item $\forall x\ldotp A[x]\vdash A[y]$ by $\forall$-elim($y$, 1)%2
+\item $\forall x\ldotp A[x]\vdash\forall y\ldotp A[y]$ by $\forall$-intro(2)%3
+\item $\vdash(\forall x\ldotp A[x])\implies(\forall y\ldotp A[y])$
+  by discharging(3)\qedhere
+\end{enumerate}
+\end{proof}
+
+<<Derived results for Intuitionistic predicate logic>>=
+(* forall_cong : Term.t -> Term.t -> (Term.t -> Formula.t -> Thm.t *)
+fun forall_cong x y (A : Term.t -> Formula.t) =
+  if not(Term.have_same_sort x y)
+  then raise Fail "forall_cong: variables have different sorts"
+  else
+    let
+      val Ax = Formula.mk_forall(x, A x);
+      val th1 = Thm.assume Ax [];
+      val th2 = Thm.forall_elim y th1;
+      val th3 = Thm.forall_intro y th2;
+    in
+      Thm.disch Ax th3
+    end;
+@ %def Derived.forall_cong
+
+\begin{node}
+Similarly, we have congruence for existential quantifiers,
+\begin{equation*}
+\vdash(\exists x\ldotp A[x])\implies(\exists y\ldotp A[y]).
+\end{equation*}
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $A[x]\vdash A[x]$ by assuming%1
+\item $A[x]\vdash\exists y\ldotp A[y]$ by $\exists$-intro($y$, 1)%2
+\item $\vdash A[x]\implies(\exists y\ldotp A[y])$ by discharging(2)%3
+\item $\vdash(\exists x\ldotp A[x])\implies(\exists y\ldotp A[y])$
+  by $\exists$-elim(4)\qedhere
+\end{enumerate}
+\end{proof}
+
+<<Derived results for Intuitionistic predicate logic>>=
+(* exists_cong : Term.t -> Term.t -> (Term.t -> Formula.t -> Thm.t *)
+fun exists_cong x y (A : Term.t -> Formula.t) =
+  if not(Term.have_same_sort x y)
+  then raise Fail "forall_cong: variables have different sorts"
+  else
+    let
+      val th1 = Thm.assume (A x) [];
+      val th2 = Thm.exists_intro y x (A y) th1;
+      val th3 = Thm.disch (A x) th2;
+    in
+      Thm.exists_elim x th3
+    end;
+@ %def Derived.exists_cong
+
+<<Unit tests for derived rules>>=
+fun forall_cong_test () =
+  let
+    fun A x = Fun.mk_pred("A",[x]);
+    val x = Term.Var("x",Sort.IND);
+    val y = Term.Var("y",Sort.IND);
+    val expected = Formula.mk_imp(Formula.mk_forall(x, A x),
+                                  Formula.mk_forall(y, A y));
+    val actual = Thm.concl(Derived.forall_cong x y A);
+  in
+    Formula.eq expected actual
+  end;
+
+fun exists_cong_test () =
+  let
+    fun A x = Fun.mk_pred("A",[x]);
+    val x = Term.Var("x",Sort.IND);
+    val y = Term.Var("y",Sort.IND);
+    val expected = Formula.mk_imp(Formula.mk_exists(x, A x),
+                                  Formula.mk_exists(y, A y));
+    val actual = Thm.concl(Derived.exists_cong x y A);
+  in
+    Formula.eq expected actual
+  end;
+@ 

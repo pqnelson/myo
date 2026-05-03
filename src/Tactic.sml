@@ -81,7 +81,7 @@ fun mp thm {goals = (asl, B)::gls, justify=jfn} =
   then raise Fail("mp: assumptions do not contain all hypotheses of theorem")
   else
     let
-      val A = Thm.conc thm;
+      val A = Thm.concl thm;
       val A_imp_B = Formula.mk_imp(A, B);
       fun jfn' (th_A_imp_B::thms) =
         jfn ((Thm.modus_ponens th_A_imp_B thm)::thms);
@@ -91,7 +91,7 @@ fun mp thm {goals = (asl, B)::gls, justify=jfn} =
     end;
 fun disj_cases thm {goals = (asl, C)::gls, justify=jfn} =
   let
-    val A_or_B = Thm.conc thm;
+    val A_or_B = Thm.concl thm;
     val (A,B) = Formula.dest_or A_or_B
                 handle _ => raise Fail "Tactic.disj_cases: theorem is not a disjunction";
     val A_imp_C = Formula.mk_imp(A,C);
@@ -106,7 +106,7 @@ fun or_l {goals = (asl, A_or_B)::gls, justify=jfn} =
   let
     val (A,B) = Formula.dest_or A_or_B;
     fun jfn' (th_A::thms) =
-      jfn ((Thm.or_intro_r B thm)::thms);
+      jfn ((Thm.or_intro_r B th_A)::thms);
   in
     {goals = (asl, A)::gls,
      justify = jfn'}
@@ -116,7 +116,7 @@ fun or_r {goals = (asl, A_or_B)::gls, justify=jfn} =
   let
     val (A,B) = Formula.dest_or A_or_B;
     fun jfn' (th_B::thms) =
-      jfn ((Thm.or_intro_l A thm)::thms);
+      jfn ((Thm.or_intro_l A th_B)::thms);
   in
     {goals = (asl, B)::gls,
      justify = jfn'}
@@ -124,7 +124,7 @@ fun or_r {goals = (asl, A_or_B)::gls, justify=jfn} =
 fun contr thm {goals = (asl, A)::gls, justify=jfn} =
   if not(assumptions_contain_hypotheses thm asl)
   then raise Fail("contr: assumptions do not contain all hypotheses of theorem")
-  else if not(Formula.is_falsum(Thm.conc thm))
+  else if not(Formula.is_falsum(Thm.concl thm))
   then raise Fail("contr: theorem is not a contradiction")
   else
     let
@@ -150,7 +150,7 @@ fun gen {goals = (asl, forall_A)::gls, justify=jfn} =
     val (x as (Term.Var(x0,s0)),A) = Formula.dest_forall forall_A;
     val fvs = List.concat (map (fn (_,fm) => Formula.fv fm) asl);
     val x' = Term.fresh_var x0 s0 fvs;
-    fun jfn' (thm::thms) = jfn((Thm.forall_intro x' A)::thms);
+    fun jfn' (th_A::thms) = jfn((Thm.forall_intro x' th_A)::thms);
   in
     { goals = (asl, Formula.subst x' x A)::gls,
       justify = jfn' }
@@ -171,9 +171,9 @@ fun choose th {goals = (asl, B)::gls, justify=jfn} =
   then raise Fail "choose: assumptions do not contain all hypotheses of theorem"
   else
     let
-      val ((Term.Var(x,s)),A) = Formula.dest_exists(Thm.conc th);
+      val (x as (Term.Var(x0,s)),A) = Formula.dest_exists(Thm.concl th);
       val fvs = List.concat (map (fn (_,fm) => Formula.fv fm) asl);
-      val x' = Term.fresh_var x s fvs;
+      val x' = Term.fresh_var x0 s fvs;
       fun jfn' (thm::thms) = jfn((Derived.exists_elim x' th thm)::thms);
     in
       { goals = (("",Formula.subst x x' A)::asl, B)::gls

@@ -433,9 +433,7 @@ fun Class_ind P =
   end;
 (* axiom_class_comp : Formula.t -> Term.t list -> Thm.t *)
 fun axiom_class_comp (P : Formula.t) ([] : Term.t list) =
-      (* return empty set *)
-      (FS0.preimage (FS0.const (FS0.pair FS0.zero FS0.zero))
-                    (FS0.singleton FS0.zero))
+      raise Fail "axiom_class_comp: variable list is empty"
   | axiom_class_comp P ((vars as (h::hs)) : Term.t list) =
       let
         fun not_in_vars y = List.all (not o (Term.eq y)) vars;

@@ -797,9 +797,9 @@ fun ex_imp x C A =
 (* exists_elim : Term.t -> Thm.t -> Thm.t -> Thm.t *)
 fun exists_elim (v : Term.t) (th1 : Thm.t) (th2 : Thm.t) : Thm.t =
   let
-    val (x,A) = Formula.dest_exists(Thm.conc th1);
+    val (x,A) = Formula.dest_exists(Thm.concl th1);
     val Av = Formula.subst x v A;
-    val th3 = weaken Av th2;
+    val th3 = weaken [Av] th2;
     val th4 = Thm.disch Av th3;
     val th5 = Thm.exists_elim v th4;
     (* aside on renaming bound variables *)
@@ -807,9 +807,33 @@ fun exists_elim (v : Term.t) (th1 : Thm.t) (th2 : Thm.t) : Thm.t =
     val lm2 = Thm.disch Av lm1;
     val lm3 = Thm.disch (Formula.mk_exists(x,A)) lm1;
     val th6 = Thm.modus_ponens lm3 th1;
-    val th7 = hypo_syll lm4 th5;
+    val th7 = hypo_syll th6 th5;
   in
     Thm.modus_ponens th7 th1
   end;
-
+(* forall_cong : Term.t -> Term.t -> (Term.t -> Formula.t -> Thm.t *)
+fun forall_cong x y (A : Term.t -> Formula.t) =
+  if not(Term.have_same_sort x y)
+  then raise Fail "forall_cong: variables have different sorts"
+  else
+    let
+      val Ax = Formula.mk_forall(x, A x);
+      val th1 = Thm.assume Ax [];
+      val th2 = Thm.forall_elim y th1;
+      val th3 = Thm.forall_intro y th2;
+    in
+      Thm.disch Ax th3
+    end;
+(* exists_cong : Term.t -> Term.t -> (Term.t -> Formula.t -> Thm.t *)
+fun exists_cong x y (A : Term.t -> Formula.t) =
+  if not(Term.have_same_sort x y)
+  then raise Fail "forall_cong: variables have different sorts"
+  else
+    let
+      val th1 = Thm.assume (A x) [];
+      val th2 = Thm.exists_intro y x (A y) th1;
+      val th3 = Thm.disch (A x) th2;
+    in
+      Thm.exists_elim x th3
+    end;
 end;
