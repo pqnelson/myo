@@ -7,7 +7,7 @@ type t = { goals : ((string * Formula.t) list * Formula.t) list,
 
 fun subgoals ({goals, ...}) = goals;
 
-fun justify ({justify=jfn, ...}) = jfn;
+fun justify ({justify = jfn, ...}) = jfn;
 
 local
   fun single (asl, fm) =
@@ -45,8 +45,8 @@ fun setup fm =
       then thm
       else raise Mismatch "Goal.setup: wrong theorem"
   in
-    {goals = [([], fm)],
-     justify = check}
+    { goals = [([], fm)]
+    , justify = check }
   end;
 
 (* extract_thm : Goal.t -> Thm.t *)

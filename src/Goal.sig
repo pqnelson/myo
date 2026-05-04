@@ -2,8 +2,8 @@ signature Goal = sig
   exception Unsolved of string;
   exception Mismatch of string;
   
-  type t = { goals : ((string * Formula.t) list * Formula.t) list,
-             justify : Thm.t list -> Thm.t };
+  type t = { goals : ((string * Formula.t) list * Formula.t) list
+           , justify : Thm.t list -> Thm.t };
 
   val subgoals : t -> ((string * Formula.t) list * Formula.t) list;
 
