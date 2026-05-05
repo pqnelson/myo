@@ -76,12 +76,6 @@ then we include the parentheses for clarity.
 \end{node}
 
 \nwenddocs{}\nwbegincode{7}\sublabel{NW24q7Pv-14xJt9-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW24q7Pv-14xJt9-1}}}\moddef{TBPrinter for a formula~{\nwtagstyle{}\subpageref{NW24q7Pv-14xJt9-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW24q7Pv-3JbCWS-1}}\nwenddeflinemarkup
-(* "∀" (* U+2200 *)
-   "∃" (* U+2203 *)
-"∧" U+2227
-"∨"; (* U+2228 *)
-"⇔" U+21D4
- *)
 \LA{}Gathering bound variables for pretty printing~{\nwtagstyle{}\subpageref{NW24q7Pv-2b9skq-1}}\RA{}
 fun formula fm =
   if Formula.is_falsum fm
@@ -162,8 +156,8 @@ Theorems are just a bunch of formulas separated by a turnstile.
 \end{node}
 
 \nwenddocs{}\nwbegincode{11}\sublabel{NW24q7Pv-2pSwbS-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW24q7Pv-2pSwbS-1}}}\moddef{TBPrinter for a theorem~{\nwtagstyle{}\subpageref{NW24q7Pv-2pSwbS-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW24q7Pv-3JbCWS-1}}\nwenddeflinemarkup
-(* NB: "⊦" U+22A6 is assertion
- "⊢" U+22A2 is just right tack *)
+(* NB: U+22A6 is assertion turnstile but it is a bit too "narrow",
+whereas U+22A2 is looks "just right" *)
 fun thm th =
   let
     val hyps = Thm.hyps th;

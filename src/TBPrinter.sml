@@ -7,12 +7,6 @@ fun term (Term.Var(x,_)) = x
                                     (map term args))^
            ")";
 
-(* "∀" (* U+2200 *)
-   "∃" (* U+2203 *)
-"∧" U+2227
-"∨"; (* U+2228 *)
-"⇔" U+21D4
- *)
 fun gather_bvars is_q dest_q acc fm =
   if not(is_q fm) then (acc, fm)
   else let val (var, body) = dest_q fm
@@ -72,8 +66,8 @@ and paren_form sub fm =
                else formula sub
     | _ => formula sub);
 
-(* NB: "⊦" U+22A6 is assertion
- "⊢" U+22A2 is just right tack *)
+(* NB: U+22A6 is assertion turnstile but it is a bit too "narrow",
+whereas U+22A2 is looks "just right" *)
 fun thm th =
   let
     val hyps = Thm.hyps th;
