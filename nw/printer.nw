@@ -73,6 +73,11 @@ Similarly $A\lor B\land C$ means $A\lor(B\land C)$.
 We wish to be careful: for implications and logical equivalence, if
 either subformula is another implication (or logical equivalence),
 then we include the parentheses for clarity.
+
+Note we will be using \acro{utf}-8 encoding of the various logical
+symbols and quantifiers, which in \SML/ have the form [[\u00XX]] where
+\texttt{XX} is a 2-character hexadecimal number. We will glide over
+the sordid details of \acro{utf}-8.
 \end{node}
 
 <<TBPrinter for a formula>>=

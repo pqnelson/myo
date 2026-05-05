@@ -15,7 +15,7 @@ val suite = Test.suite "DerivedSuite" [
                            "\nACTUAL: ",
                            (TBPrinter.formula actual)])
     end)
-  , Test.mk "ex_disj_distrib_test" (fn () =>
+, Test.mk "ex_disj_distrib_test" (fn () =>
     let
       val x = Term.Var("x", Sort.IND);
       val A = Formula.mk_pred("A", [x]);
@@ -33,7 +33,7 @@ val suite = Test.suite "DerivedSuite" [
                           TBPrinter.formula actual,
                           "\n"])
     end)
-  , Test.mk "all_conj_distrib_test" (fn () =>
+, Test.mk "all_conj_distrib_test" (fn () =>
     let
       val x = Term.Var("x", Sort.IND);
       val A = Formula.mk_pred("A", [x]);
@@ -51,7 +51,7 @@ val suite = Test.suite "DerivedSuite" [
                            (Formula.serialize actual),
                            "\n"])
     end)
-  , Test.mk "ex_conj_distrib_test" (fn () =>
+, Test.mk "ex_conj_distrib_test" (fn () =>
     let
       val x = Term.Var("x", Sort.IND);
       val A = Formula.mk_pred("A", [x]);
@@ -69,7 +69,7 @@ val suite = Test.suite "DerivedSuite" [
                            (Formula.serialize actual),
                            "\n"])
     end)
-  , Test.mk "imp_ex_test" (fn () =>
+, Test.mk "imp_ex_test" (fn () =>
     let
       val x = Term.Var("x", Sort.IND);
       val A = Formula.mk_pred("A", [x]);
@@ -87,7 +87,7 @@ val suite = Test.suite "DerivedSuite" [
                            (Formula.serialize actual),
                            "\n"])
     end)
-  , Test.mk "not_all_iff_ex_not_test" (fn () =>
+, Test.mk "not_all_iff_ex_not_test" (fn () =>
     let
       val x = Term.Var("x", Sort.IND);
       val A = Formula.mk_pred("A", [x]);
@@ -103,7 +103,7 @@ val suite = Test.suite "DerivedSuite" [
                            (Formula.serialize actual),
                            "\n"])
     end)
-  , Test.mk "all_imp_test" (fn () =>
+, Test.mk "all_imp_test" (fn () =>
     let
       val x = Term.Var("x", Sort.IND);
       val A = Formula.mk_pred("A", [x]);
@@ -120,7 +120,7 @@ val suite = Test.suite "DerivedSuite" [
                            (Formula.serialize actual),
                            "\n"])
     end)
-  , Test.mk "imp_all_test" (fn () =>
+, Test.mk "imp_all_test" (fn () =>
     let
       val x = Term.Var("x", Sort.IND);
       val A = Formula.mk_pred("A", [x]);
@@ -138,7 +138,7 @@ val suite = Test.suite "DerivedSuite" [
                            (Formula.serialize actual),
                            "\n"])
     end)
-  , Test.mk "ex_not_test" (fn () =>
+, Test.mk "ex_not_test" (fn () =>
     let
       val x = Term.Var("x", Sort.IND);
       val A = Formula.mk_pred("A", [x]);
@@ -154,7 +154,7 @@ val suite = Test.suite "DerivedSuite" [
                            (Formula.serialize actual),
                            "\n"])
     end)
-  , Test.mk "ex_imp_test" (fn () =>
+, Test.mk "ex_imp_test" (fn () =>
     let
       val x = Term.Var("x", Sort.IND);
       val A = Formula.mk_pred("A", [x]);
@@ -172,7 +172,7 @@ val suite = Test.suite "DerivedSuite" [
                            (Formula.serialize actual),
                            "\n"])
     end)
-  , Test.mk "forall_cong_test" (fn () =>
+, Test.mk "forall_cong_test" (fn () =>
     let
       fun A x = Formula.mk_pred("A",[x]);
       val x = Term.Var("x",Sort.IND);
@@ -188,7 +188,7 @@ val suite = Test.suite "DerivedSuite" [
                            (Formula.serialize actual),
                            "\n"])
     end)
-  , Test.mk "exists_cong_test" (fn () =>
+, Test.mk "exists_cong_test" (fn () =>
     let
       fun A x = Formula.mk_pred("A",[x]);
       val x = Term.Var("x",Sort.IND);

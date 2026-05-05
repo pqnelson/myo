@@ -40,7 +40,7 @@ end;
 \nwenddocs{}\nwbegincode{3}\sublabel{NW1NjfzY-4W6DdR-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-4W6DdR-1}}}\moddef{tests/DerivedSuite.sml~{\nwtagstyle{}\subpageref{NW1NjfzY-4W6DdR-1}}}\endmoddef\nwstartdeflinemarkup\nwenddeflinemarkup
 structure DerivedSuite : TestSuite = struct
 val suite = Test.suite "DerivedSuite" [
-  \LA{}Unit tests for \code{}Derived.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}\RA{}
+\LA{}Unit tests for \code{}Derived.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}\RA{}
 ]
 end;
 \nwnotused{tests/DerivedSuite.sml}\nwidentuses{\\{{\nwixident{Test.suite}}{Test.suite}}}\nwindexuse{\nwixident{Test.suite}}{Test.suite}{NW1NjfzY-4W6DdR-1}\nwendcode{}\nwbegindocs{4}\nwdocspar
@@ -1657,21 +1657,21 @@ fun all_disjL x A C =
 We also add a test to check that the result works.
 
 \nwenddocs{}\nwbegincode{93}\sublabel{NW1NjfzY-3rvgpx-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}}\moddef{Unit tests for \code{}Derived.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4W6DdR-1}}\nwprevnextdefs{\relax}{NW1NjfzY-3rvgpx-2}\nwenddeflinemarkup
-Test.mk "all_disjL_test" (fn () =>
-  let
-    val x = Term.Var("x", Sort.IND);
-    val A = Formula.mk_pred("A", [x]);
-    val C = Formula.mk_pred("C", []);
-    val expected = Formula.mk_imp(Formula.mk_or(Formula.mk_forall(x,A),C),
-                                  Formula.mk_forall(x, Formula.mk_or(A,C)));
-    val actual = Thm.concl (\nwlinkedidentc{Derived.all_disjL}{NW1NjfzY-uZfts-2} x A C);
-  in
-    Assert.that (Formula.eq expected actual)
-                (concat ["EXPECTED: ",
-                         (TBPrinter.formula expected),
-                         "\\nACTUAL: ",
-                         (TBPrinter.formula actual)])
-  end)
+  Test.mk "all_disjL_test" (fn () =>
+    let
+      val x = Term.Var("x", Sort.IND);
+      val A = Formula.mk_pred("A", [x]);
+      val C = Formula.mk_pred("C", []);
+      val expected = Formula.mk_imp(Formula.mk_or(Formula.mk_forall(x,A),C),
+                                    Formula.mk_forall(x, Formula.mk_or(A,C)));
+      val actual = Thm.concl (\nwlinkedidentc{Derived.all_disjL}{NW1NjfzY-uZfts-2} x A C);
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["EXPECTED: ",
+                           (TBPrinter.formula expected),
+                           "\\nACTUAL: ",
+                           (TBPrinter.formula actual)])
+    end)
 \nwalsodefined{\\{NW1NjfzY-3rvgpx-2}\\{NW1NjfzY-3rvgpx-3}\\{NW1NjfzY-3rvgpx-4}\\{NW1NjfzY-3rvgpx-5}\\{NW1NjfzY-3rvgpx-6}\\{NW1NjfzY-3rvgpx-7}\\{NW1NjfzY-3rvgpx-8}\\{NW1NjfzY-3rvgpx-9}\\{NW1NjfzY-3rvgpx-A}\\{NW1NjfzY-3rvgpx-B}}\nwused{\\{NW1NjfzY-4W6DdR-1}}\nwidentuses{\\{{\nwixident{Assert.that}}{Assert.that}}\\{{\nwixident{Derived.all{\_}disjL}}{Derived.all:undisjL}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{TBPrinter.formula}}{TBPrinter.formula}}\\{{\nwixident{Test.mk}}{Test.mk}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Assert.that}}{Assert.that}{NW1NjfzY-3rvgpx-1}\nwindexuse{\nwixident{Derived.all{\_}disjL}}{Derived.all:undisjL}{NW1NjfzY-3rvgpx-1}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1NjfzY-3rvgpx-1}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-3rvgpx-1}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-3rvgpx-1}\nwindexuse{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}{NW1NjfzY-3rvgpx-1}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1NjfzY-3rvgpx-1}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1NjfzY-3rvgpx-1}\nwindexuse{\nwixident{TBPrinter.formula}}{TBPrinter.formula}{NW1NjfzY-3rvgpx-1}\nwindexuse{\nwixident{Test.mk}}{Test.mk}{NW1NjfzY-3rvgpx-1}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-3rvgpx-1}\nwendcode{}\nwbegindocs{94}\nwdocspar
 
 \begin{node}%ex_disj_distrib
@@ -1755,23 +1755,23 @@ end;
 \nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.ex{\_}disj{\_}distrib}}{Derived.ex:undisj:undistrib}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}}\\{{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}}\\{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}\\{{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}}\\{{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}}\\{{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}}}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-uZfts-3}\nwindexuse{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}{NW1NjfzY-uZfts-3}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-3}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-3}\nwindexuse{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}{NW1NjfzY-uZfts-3}\nwindexuse{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}{NW1NjfzY-uZfts-3}\nwindexuse{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}{NW1NjfzY-uZfts-3}\nwindexuse{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}{NW1NjfzY-uZfts-3}\nwindexuse{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}{NW1NjfzY-uZfts-3}\nwindexuse{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}{NW1NjfzY-uZfts-3}\nwendcode{}\nwbegindocs{96}\nwdocspar
 \nwenddocs{}\nwbegincode{97}\sublabel{NW1NjfzY-3rvgpx-2}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-2}}}\moddef{Unit tests for \code{}Derived.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4W6DdR-1}}\nwprevnextdefs{NW1NjfzY-3rvgpx-1}{NW1NjfzY-3rvgpx-3}\nwenddeflinemarkup
 , Test.mk "ex_disj_distrib_test" (fn () =>
-  let
-    val x = Term.Var("x", Sort.IND);
-    val A = Formula.mk_pred("A", [x]);
-    val B = Formula.mk_pred("B", [x]);
-    val expected =
-      Formula.mk_iff(Formula.mk_or(Formula.mk_exists(x,A),
-                                   Formula.mk_exists(x,B)),
-                     Formula.mk_exists(x, Formula.mk_or(A,B)));
-    val actual = Thm.concl (\nwlinkedidentc{Derived.ex_disj_distrib}{NW1NjfzY-uZfts-3} x A B);
-  in
-    Assert.that (Formula.eq expected actual)
-                (concat["EXPECTED: ",
-                        TBPrinter.formula expected,
-                        "\\nACTUAL: ",
-                        TBPrinter.formula actual,
-                        "\\n"])
-  end)
+    let
+      val x = Term.Var("x", Sort.IND);
+      val A = Formula.mk_pred("A", [x]);
+      val B = Formula.mk_pred("B", [x]);
+      val expected =
+        Formula.mk_iff(Formula.mk_or(Formula.mk_exists(x,A),
+                                     Formula.mk_exists(x,B)),
+                       Formula.mk_exists(x, Formula.mk_or(A,B)));
+      val actual = Thm.concl (\nwlinkedidentc{Derived.ex_disj_distrib}{NW1NjfzY-uZfts-3} x A B);
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat["EXPECTED: ",
+                          TBPrinter.formula expected,
+                          "\\nACTUAL: ",
+                          TBPrinter.formula actual,
+                          "\\n"])
+    end)
 \nwused{\\{NW1NjfzY-4W6DdR-1}}\nwidentuses{\\{{\nwixident{Assert.that}}{Assert.that}}\\{{\nwixident{Derived.ex{\_}disj{\_}distrib}}{Derived.ex:undisj:undistrib}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}}\\{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{TBPrinter.formula}}{TBPrinter.formula}}\\{{\nwixident{Test.mk}}{Test.mk}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Assert.that}}{Assert.that}{NW1NjfzY-3rvgpx-2}\nwindexuse{\nwixident{Derived.ex{\_}disj{\_}distrib}}{Derived.ex:undisj:undistrib}{NW1NjfzY-3rvgpx-2}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1NjfzY-3rvgpx-2}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-3rvgpx-2}\nwindexuse{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}{NW1NjfzY-3rvgpx-2}\nwindexuse{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}{NW1NjfzY-3rvgpx-2}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1NjfzY-3rvgpx-2}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1NjfzY-3rvgpx-2}\nwindexuse{\nwixident{TBPrinter.formula}}{TBPrinter.formula}{NW1NjfzY-3rvgpx-2}\nwindexuse{\nwixident{Test.mk}}{Test.mk}{NW1NjfzY-3rvgpx-2}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-3rvgpx-2}\nwendcode{}\nwbegindocs{98}\nwdocspar
 
 \begin{node}%all_conj_distrib
@@ -1846,23 +1846,23 @@ fun all_conj_distrib x A B =
 \nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.all{\_}conj{\_}distrib}}{Derived.all:unconj:undistrib}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}}\\{{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}}\\{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1NjfzY-uZfts-4}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-uZfts-4}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-4}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-4}\nwindexuse{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}{NW1NjfzY-uZfts-4}\nwindexuse{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}{NW1NjfzY-uZfts-4}\nwindexuse{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}{NW1NjfzY-uZfts-4}\nwendcode{}\nwbegindocs{100}\nwdocspar
 \nwenddocs{}\nwbegincode{101}\sublabel{NW1NjfzY-3rvgpx-3}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-3}}}\moddef{Unit tests for \code{}Derived.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4W6DdR-1}}\nwprevnextdefs{NW1NjfzY-3rvgpx-2}{NW1NjfzY-3rvgpx-4}\nwenddeflinemarkup
 , Test.mk "all_conj_distrib_test" (fn () =>
-  let
-    val x = Term.Var("x", Sort.IND);
-    val A = Formula.mk_pred("A", [x]);
-    val B = Formula.mk_pred("B", [x]);
-    val expected =
-      Formula.mk_iff(Formula.mk_and(Formula.mk_forall(x,A),
-                                    Formula.mk_forall(x,B)),
-                     Formula.mk_forall(x, Formula.mk_and(A,B)));
-    val actual = Thm.concl (\nwlinkedidentc{Derived.all_conj_distrib}{NW1NjfzY-uZfts-4} x A B);
-  in
-    Assert.that (Formula.eq expected actual)
-                (concat ["Expecting: ",
-                         (Formula.serialize expected),
-                         "\\nActual: ",
-                         (Formula.serialize actual),
-                         "\\n"])
-  end)
+    let
+      val x = Term.Var("x", Sort.IND);
+      val A = Formula.mk_pred("A", [x]);
+      val B = Formula.mk_pred("B", [x]);
+      val expected =
+        Formula.mk_iff(Formula.mk_and(Formula.mk_forall(x,A),
+                                      Formula.mk_forall(x,B)),
+                       Formula.mk_forall(x, Formula.mk_and(A,B)));
+      val actual = Thm.concl (\nwlinkedidentc{Derived.all_conj_distrib}{NW1NjfzY-uZfts-4} x A B);
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["Expecting: ",
+                           (Formula.serialize expected),
+                           "\\nActual: ",
+                           (Formula.serialize actual),
+                           "\\n"])
+    end)
 \nwused{\\{NW1NjfzY-4W6DdR-1}}\nwidentuses{\\{{\nwixident{Assert.that}}{Assert.that}}\\{{\nwixident{Derived.all{\_}conj{\_}distrib}}{Derived.all:unconj:undistrib}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Test.mk}}{Test.mk}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Assert.that}}{Assert.that}{NW1NjfzY-3rvgpx-3}\nwindexuse{\nwixident{Derived.all{\_}conj{\_}distrib}}{Derived.all:unconj:undistrib}{NW1NjfzY-3rvgpx-3}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1NjfzY-3rvgpx-3}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1NjfzY-3rvgpx-3}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-3rvgpx-3}\nwindexuse{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}{NW1NjfzY-3rvgpx-3}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1NjfzY-3rvgpx-3}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW1NjfzY-3rvgpx-3}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1NjfzY-3rvgpx-3}\nwindexuse{\nwixident{Test.mk}}{Test.mk}{NW1NjfzY-3rvgpx-3}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-3rvgpx-3}\nwendcode{}\nwbegindocs{102}\nwdocspar
 
 \begin{node}%ex_conj_distrib
@@ -1906,23 +1906,23 @@ fun ex_conj_distrib x A B =
 \nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.ex{\_}conj{\_}distrib}}{Derived.ex:unconj:undistrib}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}}\\{{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}}}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1NjfzY-uZfts-5}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-5}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-5}\nwindexuse{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}{NW1NjfzY-uZfts-5}\nwindexuse{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}{NW1NjfzY-uZfts-5}\nwendcode{}\nwbegindocs{104}\nwdocspar
 \nwenddocs{}\nwbegincode{105}\sublabel{NW1NjfzY-3rvgpx-4}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-4}}}\moddef{Unit tests for \code{}Derived.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4W6DdR-1}}\nwprevnextdefs{NW1NjfzY-3rvgpx-3}{NW1NjfzY-3rvgpx-5}\nwenddeflinemarkup
 , Test.mk "ex_conj_distrib_test" (fn () =>
-  let
-    val x = Term.Var("x", Sort.IND);
-    val A = Formula.mk_pred("A", [x]);
-    val B = Formula.mk_pred("B", [x]);
-    val expected =
-      Formula.mk_imp(Formula.mk_exists(x, Formula.mk_and(A,B)),
-                     Formula.mk_and(Formula.mk_exists(x, A),
-                                    Formula.mk_exists(x, B)));
-    val actual = Thm.concl (\nwlinkedidentc{Derived.ex_conj_distrib}{NW1NjfzY-uZfts-5} x A B);
-  in
-    Assert.that (Formula.eq expected actual)
-                (concat ["Expecting: ",
-                         (Formula.serialize expected),
-                         "\\nActual: ",
-                         (Formula.serialize actual),
-                         "\\n"])
-  end)
+    let
+      val x = Term.Var("x", Sort.IND);
+      val A = Formula.mk_pred("A", [x]);
+      val B = Formula.mk_pred("B", [x]);
+      val expected =
+        Formula.mk_imp(Formula.mk_exists(x, Formula.mk_and(A,B)),
+                       Formula.mk_and(Formula.mk_exists(x, A),
+                                      Formula.mk_exists(x, B)));
+      val actual = Thm.concl (\nwlinkedidentc{Derived.ex_conj_distrib}{NW1NjfzY-uZfts-5} x A B);
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["Expecting: ",
+                           (Formula.serialize expected),
+                           "\\nActual: ",
+                           (Formula.serialize actual),
+                           "\\n"])
+    end)
 \nwused{\\{NW1NjfzY-4W6DdR-1}}\nwidentuses{\\{{\nwixident{Assert.that}}{Assert.that}}\\{{\nwixident{Derived.ex{\_}conj{\_}distrib}}{Derived.ex:unconj:undistrib}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Test.mk}}{Test.mk}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Assert.that}}{Assert.that}{NW1NjfzY-3rvgpx-4}\nwindexuse{\nwixident{Derived.ex{\_}conj{\_}distrib}}{Derived.ex:unconj:undistrib}{NW1NjfzY-3rvgpx-4}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1NjfzY-3rvgpx-4}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1NjfzY-3rvgpx-4}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-3rvgpx-4}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-3rvgpx-4}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1NjfzY-3rvgpx-4}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW1NjfzY-3rvgpx-4}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1NjfzY-3rvgpx-4}\nwindexuse{\nwixident{Test.mk}}{Test.mk}{NW1NjfzY-3rvgpx-4}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-3rvgpx-4}\nwendcode{}\nwbegindocs{106}\nwdocspar
 
 \begin{node}%imp_ex
@@ -1999,23 +1999,23 @@ end;
 \nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.imp{\_}ex}}{Derived.imp:unex}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}}\\{{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}}\\{{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}}\\{{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}}\\{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-uZfts-6}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-uZfts-6}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-uZfts-6}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-6}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-6}\nwindexuse{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}{NW1NjfzY-uZfts-6}\nwindexuse{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}{NW1NjfzY-uZfts-6}\nwindexuse{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}{NW1NjfzY-uZfts-6}\nwindexuse{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}{NW1NjfzY-uZfts-6}\nwindexuse{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}{NW1NjfzY-uZfts-6}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-uZfts-6}\nwendcode{}\nwbegindocs{108}\nwdocspar
 \nwenddocs{}\nwbegincode{109}\sublabel{NW1NjfzY-3rvgpx-5}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-5}}}\moddef{Unit tests for \code{}Derived.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4W6DdR-1}}\nwprevnextdefs{NW1NjfzY-3rvgpx-4}{NW1NjfzY-3rvgpx-6}\nwenddeflinemarkup
 , Test.mk "imp_ex_test" (fn () =>
-  let
-    val x = Term.Var("x", Sort.IND);
-    val A = Formula.mk_pred("A", [x]);
-    val C = Formula.mk_pred("C", []);
-    val expected =
-      Formula.mk_iff(Formula.mk_forall(x, Formula.mk_imp(A,C)),
-                     Formula.mk_imp(Formula.mk_exists(x, A),
-                                    C));
-    val actual = Thm.concl (\nwlinkedidentc{Derived.imp_ex}{NW1NjfzY-uZfts-6} x A C);
-  in
-    Assert.that (Formula.eq expected actual)
-                (concat ["Expecting: ",
-                         (Formula.serialize expected),
-                         "\\nActual: ",
-                         (Formula.serialize actual),
-                         "\\n"])
-  end)
+    let
+      val x = Term.Var("x", Sort.IND);
+      val A = Formula.mk_pred("A", [x]);
+      val C = Formula.mk_pred("C", []);
+      val expected =
+        Formula.mk_iff(Formula.mk_forall(x, Formula.mk_imp(A,C)),
+                       Formula.mk_imp(Formula.mk_exists(x, A),
+                                      C));
+      val actual = Thm.concl (\nwlinkedidentc{Derived.imp_ex}{NW1NjfzY-uZfts-6} x A C);
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["Expecting: ",
+                           (Formula.serialize expected),
+                           "\\nActual: ",
+                           (Formula.serialize actual),
+                           "\\n"])
+    end)
 \nwused{\\{NW1NjfzY-4W6DdR-1}}\nwidentuses{\\{{\nwixident{Assert.that}}{Assert.that}}\\{{\nwixident{Derived.imp{\_}ex}}{Derived.imp:unex}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Test.mk}}{Test.mk}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Assert.that}}{Assert.that}{NW1NjfzY-3rvgpx-5}\nwindexuse{\nwixident{Derived.imp{\_}ex}}{Derived.imp:unex}{NW1NjfzY-3rvgpx-5}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1NjfzY-3rvgpx-5}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-3rvgpx-5}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-3rvgpx-5}\nwindexuse{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}{NW1NjfzY-3rvgpx-5}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-3rvgpx-5}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1NjfzY-3rvgpx-5}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW1NjfzY-3rvgpx-5}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1NjfzY-3rvgpx-5}\nwindexuse{\nwixident{Test.mk}}{Test.mk}{NW1NjfzY-3rvgpx-5}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-3rvgpx-5}\nwendcode{}\nwbegindocs{110}\nwdocspar
 
 \begin{node}
@@ -2067,21 +2067,21 @@ end;
 \nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.not{\_}all{\_}iff{\_}ex{\_}not}}{Derived.not:unall:uniff:unex:unnot}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}}\\{{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}}\\{{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}}\\{{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}}\\{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}}\\{{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}}}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}{NW1NjfzY-uZfts-7}\nwindexuse{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}{NW1NjfzY-uZfts-7}\nwendcode{}\nwbegindocs{112}\nwdocspar
 \nwenddocs{}\nwbegincode{113}\sublabel{NW1NjfzY-3rvgpx-6}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-6}}}\moddef{Unit tests for \code{}Derived.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4W6DdR-1}}\nwprevnextdefs{NW1NjfzY-3rvgpx-5}{NW1NjfzY-3rvgpx-7}\nwenddeflinemarkup
 , Test.mk "not_all_iff_ex_not_test" (fn () =>
-  let
-    val x = Term.Var("x", Sort.IND);
-    val A = Formula.mk_pred("A", [x]);
-    val expected =
-      Formula.mk_iff(Formula.mk_forall(x, Formula.mk_not(A)),
-                     Formula.mk_not(Formula.mk_exists(x, A)));
-    val actual = Thm.concl (\nwlinkedidentc{Derived.not_all_iff_ex_not}{NW1NjfzY-uZfts-7} x A);
-  in
-    Assert.that (Formula.eq expected actual)
-                (concat ["Expecting: ",
-                         (Formula.serialize expected),
-                         "\\nActual: ",
-                         (Formula.serialize actual),
-                         "\\n"])
-  end)
+    let
+      val x = Term.Var("x", Sort.IND);
+      val A = Formula.mk_pred("A", [x]);
+      val expected =
+        Formula.mk_iff(Formula.mk_forall(x, Formula.mk_not(A)),
+                       Formula.mk_not(Formula.mk_exists(x, A)));
+      val actual = Thm.concl (\nwlinkedidentc{Derived.not_all_iff_ex_not}{NW1NjfzY-uZfts-7} x A);
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["Expecting: ",
+                           (Formula.serialize expected),
+                           "\\nActual: ",
+                           (Formula.serialize actual),
+                           "\\n"])
+    end)
 \nwused{\\{NW1NjfzY-4W6DdR-1}}\nwidentuses{\\{{\nwixident{Assert.that}}{Assert.that}}\\{{\nwixident{Derived.not{\_}all{\_}iff{\_}ex{\_}not}}{Derived.not:unall:uniff:unex:unnot}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Test.mk}}{Test.mk}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Assert.that}}{Assert.that}{NW1NjfzY-3rvgpx-6}\nwindexuse{\nwixident{Derived.not{\_}all{\_}iff{\_}ex{\_}not}}{Derived.not:unall:uniff:unex:unnot}{NW1NjfzY-3rvgpx-6}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1NjfzY-3rvgpx-6}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-3rvgpx-6}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-3rvgpx-6}\nwindexuse{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}{NW1NjfzY-3rvgpx-6}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW1NjfzY-3rvgpx-6}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1NjfzY-3rvgpx-6}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW1NjfzY-3rvgpx-6}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1NjfzY-3rvgpx-6}\nwindexuse{\nwixident{Test.mk}}{Test.mk}{NW1NjfzY-3rvgpx-6}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-3rvgpx-6}\nwendcode{}\nwbegindocs{114}\nwdocspar
 
 \begin{node}
@@ -2148,22 +2148,22 @@ fun all_imp x C A =
 \nwindexdefn{\nwixident{Derived.all{\_}imp}}{Derived.all:unimp}{NW1NjfzY-uZfts-8}\eatline
 \nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.all{\_}imp}}{Derived.all:unimp}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}}\\{{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}}\\{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}\\{{\nwixident{Thm.t}}{Thm.t}}\\{{\nwixident{Thm.undisch}}{Thm.undisch}}}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-uZfts-8}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-uZfts-8}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW1NjfzY-uZfts-8}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1NjfzY-uZfts-8}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-8}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-8}\nwindexuse{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}{NW1NjfzY-uZfts-8}\nwindexuse{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}{NW1NjfzY-uZfts-8}\nwindexuse{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}{NW1NjfzY-uZfts-8}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW1NjfzY-uZfts-8}\nwindexuse{\nwixident{Thm.undisch}}{Thm.undisch}{NW1NjfzY-uZfts-8}\nwendcode{}\nwbegincode{116}\sublabel{NW1NjfzY-3rvgpx-7}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-7}}}\moddef{Unit tests for \code{}Derived.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4W6DdR-1}}\nwprevnextdefs{NW1NjfzY-3rvgpx-6}{NW1NjfzY-3rvgpx-8}\nwenddeflinemarkup
 , Test.mk "all_imp_test" (fn () =>
-  let
-    val x = Term.Var("x", Sort.IND);
-    val A = Formula.mk_pred("A", [x]);
-    val C = Formula.mk_pred("C", []);
-    val expected =
-      Formula.mk_iff(Formula.mk_forall(x, Formula.mk_imp(C, A)),
-                     Formula.mk_imp(C, Formula.mk_forall(x, A)));
-    val actual = Thm.concl (\nwlinkedidentc{Derived.all_imp}{NW1NjfzY-uZfts-8} x C A);
-  in
-    Assert.that (Formula.eq expected actual)
-                (concat ["Expecting: ",
-                         (Formula.serialize expected),
-                         "\\nActual: ",
-                         (Formula.serialize actual),
-                         "\\n"])
-  end)
+    let
+      val x = Term.Var("x", Sort.IND);
+      val A = Formula.mk_pred("A", [x]);
+      val C = Formula.mk_pred("C", []);
+      val expected =
+        Formula.mk_iff(Formula.mk_forall(x, Formula.mk_imp(C, A)),
+                       Formula.mk_imp(C, Formula.mk_forall(x, A)));
+      val actual = Thm.concl (\nwlinkedidentc{Derived.all_imp}{NW1NjfzY-uZfts-8} x C A);
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["Expecting: ",
+                           (Formula.serialize expected),
+                           "\\nActual: ",
+                           (Formula.serialize actual),
+                           "\\n"])
+    end)
 \nwused{\\{NW1NjfzY-4W6DdR-1}}\nwidentuses{\\{{\nwixident{Assert.that}}{Assert.that}}\\{{\nwixident{Derived.all{\_}imp}}{Derived.all:unimp}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Test.mk}}{Test.mk}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Assert.that}}{Assert.that}{NW1NjfzY-3rvgpx-7}\nwindexuse{\nwixident{Derived.all{\_}imp}}{Derived.all:unimp}{NW1NjfzY-3rvgpx-7}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1NjfzY-3rvgpx-7}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-3rvgpx-7}\nwindexuse{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}{NW1NjfzY-3rvgpx-7}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-3rvgpx-7}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1NjfzY-3rvgpx-7}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW1NjfzY-3rvgpx-7}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1NjfzY-3rvgpx-7}\nwindexuse{\nwixident{Test.mk}}{Test.mk}{NW1NjfzY-3rvgpx-7}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-3rvgpx-7}\nwendcode{}\nwbegindocs{117}\nwdocspar
 
 \begin{node}
@@ -2205,23 +2205,23 @@ fun imp_all x A C =
 \nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.imp{\_}all}}{Derived.imp:unall}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}}\\{{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-uZfts-9}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-uZfts-9}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-9}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-9}\nwindexuse{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}{NW1NjfzY-uZfts-9}\nwindexuse{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}{NW1NjfzY-uZfts-9}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-uZfts-9}\nwendcode{}\nwbegindocs{119}\nwdocspar
 \nwenddocs{}\nwbegincode{120}\sublabel{NW1NjfzY-3rvgpx-8}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-8}}}\moddef{Unit tests for \code{}Derived.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4W6DdR-1}}\nwprevnextdefs{NW1NjfzY-3rvgpx-7}{NW1NjfzY-3rvgpx-9}\nwenddeflinemarkup
 , Test.mk "imp_all_test" (fn () =>
-  let
-    val x = Term.Var("x", Sort.IND);
-    val A = Formula.mk_pred("A", [x]);
-    val C = Formula.mk_pred("C", []);
-    val expected =
-      Formula.mk_imp(Formula.mk_exists(x, Formula.mk_imp(A,C)),
-                     Formula.mk_imp(Formula.mk_forall(x, A),
-                                    C));
-    val actual = Thm.concl (\nwlinkedidentc{Derived.imp_all}{NW1NjfzY-uZfts-9} x A C);
-  in
-    Assert.that (Formula.eq expected actual)
-                (concat ["Expecting: ",
-                         (Formula.serialize expected),
-                         "\\nActual: ",
-                         (Formula.serialize actual),
-                         "\\n"])
-  end)
+    let
+      val x = Term.Var("x", Sort.IND);
+      val A = Formula.mk_pred("A", [x]);
+      val C = Formula.mk_pred("C", []);
+      val expected =
+        Formula.mk_imp(Formula.mk_exists(x, Formula.mk_imp(A,C)),
+                       Formula.mk_imp(Formula.mk_forall(x, A),
+                                      C));
+      val actual = Thm.concl (\nwlinkedidentc{Derived.imp_all}{NW1NjfzY-uZfts-9} x A C);
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["Expecting: ",
+                           (Formula.serialize expected),
+                           "\\nActual: ",
+                           (Formula.serialize actual),
+                           "\\n"])
+    end)
 \nwused{\\{NW1NjfzY-4W6DdR-1}}\nwidentuses{\\{{\nwixident{Assert.that}}{Assert.that}}\\{{\nwixident{Derived.imp{\_}all}}{Derived.imp:unall}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Test.mk}}{Test.mk}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Assert.that}}{Assert.that}{NW1NjfzY-3rvgpx-8}\nwindexuse{\nwixident{Derived.imp{\_}all}}{Derived.imp:unall}{NW1NjfzY-3rvgpx-8}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1NjfzY-3rvgpx-8}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-3rvgpx-8}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-3rvgpx-8}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-3rvgpx-8}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1NjfzY-3rvgpx-8}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW1NjfzY-3rvgpx-8}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1NjfzY-3rvgpx-8}\nwindexuse{\nwixident{Test.mk}}{Test.mk}{NW1NjfzY-3rvgpx-8}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-3rvgpx-8}\nwendcode{}\nwbegindocs{121}\nwdocspar
 
 \begin{node}
@@ -2269,21 +2269,21 @@ fun ex_not x A =
 \nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.ex{\_}not}}{Derived.ex:unnot}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}}\\{{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}}\\{{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}}}\nwindexuse{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}{NW1NjfzY-uZfts-A}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-uZfts-A}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW1NjfzY-uZfts-A}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-A}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-A}\nwindexuse{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}{NW1NjfzY-uZfts-A}\nwindexuse{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}{NW1NjfzY-uZfts-A}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-uZfts-A}\nwindexuse{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}{NW1NjfzY-uZfts-A}\nwindexuse{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}{NW1NjfzY-uZfts-A}\nwendcode{}\nwbegindocs{123}\nwdocspar
 \nwenddocs{}\nwbegincode{124}\sublabel{NW1NjfzY-3rvgpx-9}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-9}}}\moddef{Unit tests for \code{}Derived.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4W6DdR-1}}\nwprevnextdefs{NW1NjfzY-3rvgpx-8}{NW1NjfzY-3rvgpx-A}\nwenddeflinemarkup
 , Test.mk "ex_not_test" (fn () =>
-  let
-    val x = Term.Var("x", Sort.IND);
-    val A = Formula.mk_pred("A", [x]);
-    val expected =
-      Formula.mk_imp(Formula.mk_exists(x, Formula.mk_not(A)),
-                     Formula.mk_not(Formula.mk_forall(x, A)));
-    val actual = Thm.concl (\nwlinkedidentc{Derived.ex_not}{NW1NjfzY-uZfts-A} x A);
-  in
-    Assert.that (Formula.eq expected actual)
-                (concat ["Expecting: ",
-                         (Formula.serialize expected),
-                         "\\nActual: ",
-                         (Formula.serialize actual),
-                         "\\n"])
-  end)
+    let
+      val x = Term.Var("x", Sort.IND);
+      val A = Formula.mk_pred("A", [x]);
+      val expected =
+        Formula.mk_imp(Formula.mk_exists(x, Formula.mk_not(A)),
+                       Formula.mk_not(Formula.mk_forall(x, A)));
+      val actual = Thm.concl (\nwlinkedidentc{Derived.ex_not}{NW1NjfzY-uZfts-A} x A);
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["Expecting: ",
+                           (Formula.serialize expected),
+                           "\\nActual: ",
+                           (Formula.serialize actual),
+                           "\\n"])
+    end)
 \nwused{\\{NW1NjfzY-4W6DdR-1}}\nwidentuses{\\{{\nwixident{Assert.that}}{Assert.that}}\\{{\nwixident{Derived.ex{\_}not}}{Derived.ex:unnot}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Test.mk}}{Test.mk}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Assert.that}}{Assert.that}{NW1NjfzY-3rvgpx-9}\nwindexuse{\nwixident{Derived.ex{\_}not}}{Derived.ex:unnot}{NW1NjfzY-3rvgpx-9}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1NjfzY-3rvgpx-9}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-3rvgpx-9}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-3rvgpx-9}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-3rvgpx-9}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW1NjfzY-3rvgpx-9}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1NjfzY-3rvgpx-9}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW1NjfzY-3rvgpx-9}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1NjfzY-3rvgpx-9}\nwindexuse{\nwixident{Test.mk}}{Test.mk}{NW1NjfzY-3rvgpx-9}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-3rvgpx-9}\nwendcode{}\nwbegindocs{125}\nwdocspar
 
 \begin{node}
@@ -2326,23 +2326,23 @@ fun ex_imp x C A =
 \nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.ex{\_}imp}}{Derived.ex:unimp}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}}\\{{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-uZfts-B}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW1NjfzY-uZfts-B}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1NjfzY-uZfts-B}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-B}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-B}\nwindexuse{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}{NW1NjfzY-uZfts-B}\nwindexuse{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}{NW1NjfzY-uZfts-B}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1NjfzY-uZfts-B}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW1NjfzY-uZfts-B}\nwendcode{}\nwbegindocs{127}\nwdocspar
 \nwenddocs{}\nwbegincode{128}\sublabel{NW1NjfzY-3rvgpx-A}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-A}}}\moddef{Unit tests for \code{}Derived.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4W6DdR-1}}\nwprevnextdefs{NW1NjfzY-3rvgpx-9}{NW1NjfzY-3rvgpx-B}\nwenddeflinemarkup
 , Test.mk "ex_imp_test" (fn () =>
-  let
-    val x = Term.Var("x", Sort.IND);
-    val A = Formula.mk_pred("A", [x]);
-    val C = Formula.mk_pred("C", []);
-    val expected =
-      Formula.mk_imp(Formula.mk_exists(x, Formula.mk_imp(C,A)),
-                     Formula.mk_imp(C,
-                                    Formula.mk_exists(x, A)));
-    val actual = Thm.concl (\nwlinkedidentc{Derived.ex_imp}{NW1NjfzY-uZfts-B} x C A);
-  in
-    Assert.that (Formula.eq expected actual)
-                (concat ["Expecting: ",
-                         (Formula.serialize expected),
-                         "\\nActual: ",
-                         (Formula.serialize actual),
-                         "\\n"])
-  end)
+    let
+      val x = Term.Var("x", Sort.IND);
+      val A = Formula.mk_pred("A", [x]);
+      val C = Formula.mk_pred("C", []);
+      val expected =
+        Formula.mk_imp(Formula.mk_exists(x, Formula.mk_imp(C,A)),
+                       Formula.mk_imp(C,
+                                      Formula.mk_exists(x, A)));
+      val actual = Thm.concl (\nwlinkedidentc{Derived.ex_imp}{NW1NjfzY-uZfts-B} x C A);
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["Expecting: ",
+                           (Formula.serialize expected),
+                           "\\nActual: ",
+                           (Formula.serialize actual),
+                           "\\n"])
+    end)
 \nwused{\\{NW1NjfzY-4W6DdR-1}}\nwidentuses{\\{{\nwixident{Assert.that}}{Assert.that}}\\{{\nwixident{Derived.ex{\_}imp}}{Derived.ex:unimp}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Test.mk}}{Test.mk}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Assert.that}}{Assert.that}{NW1NjfzY-3rvgpx-A}\nwindexuse{\nwixident{Derived.ex{\_}imp}}{Derived.ex:unimp}{NW1NjfzY-3rvgpx-A}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1NjfzY-3rvgpx-A}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-3rvgpx-A}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-3rvgpx-A}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1NjfzY-3rvgpx-A}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW1NjfzY-3rvgpx-A}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1NjfzY-3rvgpx-A}\nwindexuse{\nwixident{Test.mk}}{Test.mk}{NW1NjfzY-3rvgpx-A}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-3rvgpx-A}\nwendcode{}\nwbegindocs{129}\nwdocspar
 
 \begin{node}
@@ -2464,37 +2464,37 @@ fun exists_cong x y (A : Term.t -> Formula.t) =
 \nwused{\\{NW1NjfzY-4dPl0p-1}}\nwidentdefs{\\{{\nwixident{Derived.exists{\_}cong}}{Derived.exists:uncong}}}\nwidentuses{\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Term.have{\_}same{\_}sort}}{Term.have:unsame:unsort}}\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}}\\{{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW1NjfzY-uZfts-E}\nwindexuse{\nwixident{Term.have{\_}same{\_}sort}}{Term.have:unsame:unsort}{NW1NjfzY-uZfts-E}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1NjfzY-uZfts-E}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1NjfzY-uZfts-E}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1NjfzY-uZfts-E}\nwindexuse{\nwixident{Thm.exists{\_}elim}}{Thm.exists:unelim}{NW1NjfzY-uZfts-E}\nwindexuse{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}{NW1NjfzY-uZfts-E}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW1NjfzY-uZfts-E}\nwendcode{}\nwbegindocs{135}\nwdocspar
 \nwenddocs{}\nwbegincode{136}\sublabel{NW1NjfzY-3rvgpx-B}\nwmargintag{{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-B}}}\moddef{Unit tests for \code{}Derived.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1NjfzY-3rvgpx-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1NjfzY-4W6DdR-1}}\nwprevnextdefs{NW1NjfzY-3rvgpx-A}{\relax}\nwenddeflinemarkup
 , Test.mk "forall_cong_test" (fn () =>
-  let
-    fun A x = Formula.mk_pred("A",[x]);
-    val x = Term.Var("x",Sort.IND);
-    val y = Term.Var("y",Sort.IND);
-    val expected = Formula.mk_imp(Formula.mk_forall(x, A x),
-                                  Formula.mk_forall(y, A y));
-    val actual = Thm.concl(\nwlinkedidentc{Derived.forall_cong}{NW1NjfzY-uZfts-D} x y A);
-  in
-    Assert.that (Formula.eq expected actual)
-                (concat ["Expecting: ",
-                         (Formula.serialize expected),
-                         "\\nActual: ",
-                         (Formula.serialize actual),
-                         "\\n"])
-  end)
+    let
+      fun A x = Formula.mk_pred("A",[x]);
+      val x = Term.Var("x",Sort.IND);
+      val y = Term.Var("y",Sort.IND);
+      val expected = Formula.mk_imp(Formula.mk_forall(x, A x),
+                                    Formula.mk_forall(y, A y));
+      val actual = Thm.concl(\nwlinkedidentc{Derived.forall_cong}{NW1NjfzY-uZfts-D} x y A);
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["Expecting: ",
+                           (Formula.serialize expected),
+                           "\\nActual: ",
+                           (Formula.serialize actual),
+                           "\\n"])
+    end)
 , Test.mk "exists_cong_test" (fn () =>
-  let
-    fun A x = Formula.mk_pred("A",[x]);
-    val x = Term.Var("x",Sort.IND);
-    val y = Term.Var("y",Sort.IND);
-    val expected = Formula.mk_imp(Formula.mk_exists(x, A x),
-                                  Formula.mk_exists(y, A y));
-    val actual = Thm.concl(\nwlinkedidentc{Derived.exists_cong}{NW1NjfzY-uZfts-E} x y A);
-  in
-    Assert.that (Formula.eq expected actual)
-                (concat ["Expecting: ",
-                         (Formula.serialize expected),
-                         "\\nActual: ",
-                         (Formula.serialize actual),
-                         "\\n"])
-  end)
+    let
+      fun A x = Formula.mk_pred("A",[x]);
+      val x = Term.Var("x",Sort.IND);
+      val y = Term.Var("y",Sort.IND);
+      val expected = Formula.mk_imp(Formula.mk_exists(x, A x),
+                                    Formula.mk_exists(y, A y));
+      val actual = Thm.concl(\nwlinkedidentc{Derived.exists_cong}{NW1NjfzY-uZfts-E} x y A);
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["Expecting: ",
+                           (Formula.serialize expected),
+                           "\\nActual: ",
+                           (Formula.serialize actual),
+                           "\\n"])
+    end)
 \nwused{\\{NW1NjfzY-4W6DdR-1}}\nwidentuses{\\{{\nwixident{Assert.that}}{Assert.that}}\\{{\nwixident{Derived.exists{\_}cong}}{Derived.exists:uncong}}\\{{\nwixident{Derived.forall{\_}cong}}{Derived.forall:uncong}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Test.mk}}{Test.mk}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Assert.that}}{Assert.that}{NW1NjfzY-3rvgpx-B}\nwindexuse{\nwixident{Derived.exists{\_}cong}}{Derived.exists:uncong}{NW1NjfzY-3rvgpx-B}\nwindexuse{\nwixident{Derived.forall{\_}cong}}{Derived.forall:uncong}{NW1NjfzY-3rvgpx-B}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1NjfzY-3rvgpx-B}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW1NjfzY-3rvgpx-B}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1NjfzY-3rvgpx-B}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1NjfzY-3rvgpx-B}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1NjfzY-3rvgpx-B}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW1NjfzY-3rvgpx-B}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW1NjfzY-3rvgpx-B}\nwindexuse{\nwixident{Test.mk}}{Test.mk}{NW1NjfzY-3rvgpx-B}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1NjfzY-3rvgpx-B}\nwendcode{}\nwbegindocs{137}\nwdocspar
 \nwenddocs{}
 
