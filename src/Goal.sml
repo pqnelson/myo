@@ -5,9 +5,9 @@ exception Mismatch of string;
 type t = { goals : ((string * Formula.t) list * Formula.t) list,
            justify : Thm.t list -> Thm.t };
 
-fun subgoals ({goals, ...}) = goals;
+fun subgoals ({goals, ...} : t) = goals;
 
-fun justify ({justify = jfn, ...}) = jfn;
+fun justify ({justify = jfn, ...} : t) = jfn;
 
 local
   fun single (asl, fm) =

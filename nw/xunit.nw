@@ -1,0 +1,704 @@
+% -*- mode: poly-noweb; noweb-code-mode: sml-mode; -*-
+%%
+%% xunit.nw
+%% 
+%% Made by Alex Nelson <pqnelson@gmail.com>
+%% Login   <alex@lisp>
+%% 
+%% Started on  2026-05-04T16:56:51-0700
+%% Last update 2026-05-04T16:56:51-0700
+%% 
+
+\section{Unit testing framework}
+
+\begin{node}
+How do we know our code works as expected? One solution is to
+\emph{prove} the code works according to some specification and some
+formal semantics of the programming language. This is hard,
+time-consuming, and brittle.
+
+Another solution is to test code against a handful of
+examples. This is easier, more robust, and acts as a form of
+documentation (want to know how to use the code? Look at some
+examples, in the form of tests). Further, testing gives us immediate
+feedback about whether our expected use case works or
+not. (Admittedly, in the static mode of presentation, this dynamic
+feedback loop is missing.)
+\end{node}
+
+\begin{node}[Overview of design]
+We define each \define{Test Case} as a function which checks one
+scenario for a ``system under test'' (usually a specific
+function). The typical test cases are either (1) simple ``check the
+actual output matches the expected output'' tests, or (2) check
+specific exceptions are raised in illegal situations.
+
+A generic test cases has four ``phases'' or ``steps'':
+\begin{enumerate}
+\item \textsc{Setup} the test fixture [all the data needed to describe
+  the ``before executing the system under test''];
+\item \textsc{Exercise} the system under test (i.e., run the code you
+  want to test against the test fixture);
+\item \textsc{Verify} the ``actual output'' matches [in some
+  appropriate sense] the ``expected output''
+\item \textsc{Teardown} the test fixtures.
+\end{enumerate}
+\SML/ written in a functional style handles the teardown for us
+automatically, sparing us one step of montony.
+
+The xUnit framework uses a \define{Assertion Method} to verify the
+actual output matches the expected output. 
+
+A collection of tests form a \define{Test Suite}, which is itself a
+test. In particular, a test suite may contain a nested test
+suite. Every test is either a test case or a test suite.
+
+The \define{Test Runner} takes tests, executes them, constructing
+\define{Test Results} containing the outcome of each test along with
+other metadata (like the amount of time it took to perform). We keep
+things as simple as possible, and manually register tests with the
+test runner.
+
+We then have a \define{Test Reporter} take test results produced by
+the runner, then prints a summary to the screen (or otherwise produces
+some kind of artifact, like an XML file). Some people advocate saving
+an XML file for each time you run unit tests, other people do not. We
+are agnostic, but want to recognize this is a source of change (so we
+abstract it away into its own module).
+\end{node}
+
+\begin{node}[Assertions]
+We have a simple module to handle assertions for equality, or
+asserting that a certain condition is satisfied. User-specific
+messages are supplied for failure reporting.
+
+When the assertion is not satisfied, a custom [[Assert.Fail]]
+exception is propagated. Later, the test runner will handle these
+exceptions differently than any other: assertion failures are recorded
+as ``failed tests'' whereas all other exceptional situations are
+recorded as ``unexpected exception raised'' as its result.
+\end{node}
+
+<<Assert.sml>>=
+structure Assert = struct
+exception Fail of string;
+
+(* that : bool -> string -> unit *)
+fun that cond msg =
+  if cond then ()
+  else raise Fail msg;
+
+(* eq : ''a -> ''a -> string -> unit *)
+fun eq expected actual msg =
+  that (expected = actual) msg;
+end;
+@ %def Assert.Fail Assert.that Assert.eq
+
+\begin{node}[Test]
+We begin with the data structure for a test case and a test suite.
+
+A test case has a name and a ``test method'' which the runner
+executes. We construct a test case with [[Test.mk]] (since [[mk]] is
+the standard constructor prefix/``name component'').
+
+A test suite has a name and a collection of tests. We construct a test
+suite with the [[Test.suite]] method.
+
+Executing a test suite or test case is handled with the [[Test.run]]
+method. It will produce a [[Test.Result.t]] object storing the outcome
+and metadata.
+\end{node}
+
+<<Test.sig>>=
+signature Test = sig
+  type t;
+  structure Result : sig
+              <<Specification for test result>>
+            end;
+  val suite : string -> t list -> t;
+  val mk : string -> (unit -> unit) -> t;
+  val run : t -> Result.t;
+end;
+@
+
+<<Test.sml>>=
+structure Test :> Test = struct
+
+structure Result = struct
+<<Implementation of test result>>
+end;
+
+<<Constructors for tests>>
+
+<<Run a test case or suite>>
+end;
+@
+
+\begin{node}
+The constructors for a test case and test suite are rather straightforward.
+\end{node}
+
+<<Constructors for tests>>=
+datatype t = Case of string * (unit -> unit)
+           | Suite of string * (t list);
+
+fun mk name method = Case(name, method);
+
+fun suite name tests = Suite(name, tests);
+@ %def Test.t Test.mk Test.suite
+
+\begin{node}
+We abstract away the outcome of the test result, since more may be
+added later. Some people want to allow ``skipping'' tests and wish to
+add ``skipped'' as an outcome. The outcomes we will report are:
+Success (the test's outcome was as expected), ``failure'' (the test's
+outcome was not as expected, so we need the failure message), and
+``error'' (an unexpected exception was raised, which we store in the
+outcome).
+
+The test result for a test case includes the test name, the amount of
+time elapsed while running the test as measured against a ``clock'',
+and the test outcome.
+
+The results for a test suite are similar, but instead of a single test
+outcome we have a collection of test results (for all the tests
+included in the suite).
+\end{node}
+
+<<Specification for test result>>=
+type t;
+@
+
+<<Implementation of test result>>=
+datatype Outcome = Success
+                 | Failure of string
+                 | Error of exn;
+
+datatype t = Case of string * Time.time * Outcome
+           | Suite of string * Time.time * (t list);
+@ %def Test.Result.t
+
+\begin{node}
+How do we actually ``construct'' a test result from a test? Well, we
+run it. For a test case, this amounts to ``clocking'' the test and
+recording the outcome. We'll delegate this work to [[Test.Result.for_case]].
+
+For a test suite, we have a bunch of tests to run. We'll just lazily
+run all these tests.
+\end{node}
+
+<<Run a test case or suite>>=
+(* run : Test.t -> Test.Result.t *)
+fun run (Case (name, method)) = Result.for_case name method
+  | run (Suite (name, tests)) =
+      Result.for_suite name (fn () => map run tests);
+@ %def Test.run
+
+\begin{node}
+Given the name (as a string) and the four-phase test procedure as a
+function, we:
+\begin{enumerate}
+\item Record the start time
+\item Execute the test
+\item In the default case: record the time interval since we started
+  the test, along with the name, and that the test outcome was a [[Success]].
+\item If an [[Assert.Fail msg]] was raised, then we record the time
+  interval since we started, along with the name, and that the outcome
+  was a [[Failure]] with the given [[msg]].
+\item If any other exception [[e]] was raised, then we record the time
+  interval since we started, along with the test case's name, and that
+  the outcome was an [[Error e]].
+\end{enumerate}
+\end{node}
+
+<<Specification for test result>>=
+val for_case : string -> (unit -> unit) -> t;
+@
+
+<<Implementation of test result>>=
+fun for_case name assertion =
+  let
+    val start = Time.now();
+  in
+    (assertion();
+     Case(name,
+          (Time.-)(Time.now(), start),
+          Success))
+    handle Assert.Fail msg =>
+           Case (name,
+                 (Time.-)(Time.now(), start),
+                 Failure msg)
+         | e => Case(name,
+                     (Time.-)(Time.now(), start),
+                     Error e)
+  end;
+@ %def Test.Result.for_case
+
+\begin{node}
+The test result for a test suite is determined by:
+\begin{enumerate}
+\item Clock the start time; then
+\item Calculate the result of each test by recursively invoking
+  [[Test.run]] on each test in the suite; then
+\item Clock the end time, recording the duration of running the tests
+  in the suite; then
+\item Finally construct the test result object for the test suite.
+\end{enumerate}
+\end{node}
+
+<<Specification for test result>>=
+val for_suite : string -> (unit -> (t list)) -> t;
+@
+
+<<Implementation of test result>>=
+fun for_suite name mk_results =
+  let
+    val start = Time.now();
+    val results = mk_results ();
+    val dt = (Time.-)(Time.now(), start);
+  in
+    Suite(name, dt, results)
+  end;
+@ %def Test.Result.for_suite
+
+\begin{node}[Accessor methods for test result objects]
+We have abstracted the test result internals away, so we won't have to
+worry about them. We have standard ways to get the name of the test,
+the failure message (if any---otherwise return the empty string), and
+the exception message (if any---otherwise return the empty string).
+\end{node}
+
+<<Specification for test result>>=
+val name : t -> string;
+val msg : t -> string;
+val exn_message : t -> string;
+@
+
+<<Implementation of test result>>=
+(* name : Test.Result.t -> string *)
+fun name (Case (n,_,_)) = n
+  | name (Suite (n,_,_)) = n;
+
+(* msg : Test.Result.t -> string *)
+fun msg (Case (_,_,Failure msg)) = msg
+  | msg _ = "";
+
+(* exn_msg : Test.Result.t -> string *)
+fun exn_message (Case (_,_,Error e)) = exnMessage e
+  | exn_message _ = ""; 
+@ %def Test.Result.name Test.Result.msg Test.Result.exn_message
+
+\begin{node}
+For test cases, we can access the time it took to execute.
+
+For test suites, there is some overhead by recursively invoking
+[[Test.run]] lazily. If the user wants to omit this, they can
+calculate the sum of time intervals it took to run each test case.
+\end{node}
+
+<<Specification for test result>>=
+(* realtime excludes the time it took a TestSuite to
+   allocate infrastructure in memory. *)
+val realtime : t -> Time.time;
+val runtime : t -> Time.time;
+@
+
+<<Implementation of test result>>=
+(* runtime : t -> Time.time
+
+How long did it take to run the test(s) and construct the
+result(s)? *)
+  fun runtime (Case (_,dt,_)) = dt
+    | runtime (Suite (_,dt,_)) = dt;
+
+  (* realtime : t -> Time.time
+
+How long did it take just to run the test(s)? *)
+  fun realtime (Case (_,dt,_)) = dt
+    | realtime (Suite (_,_,[])) = Time.zeroTime
+    | realtime (Suite (_,_,[x])) = realtime x
+    | realtime (Suite (_,_,r::rs)) =
+      foldl (fn (result,dt) =>
+                (Time.+)(dt, realtime result))
+            (realtime r)
+            rs;
+@ %def Test.Result.runtime Test.Result.realtime
+
+\begin{node}
+When reporting test results for a test suite, we will need to access
+the results for each test in the suite.
+\end{node}
+
+<<Specification for test result>>=
+val results : t -> t list;
+@
+
+<<Implementation of test result>>=
+fun results (Suite (_,_,rs)) = rs;
+@ %def Test.Result.results
+
+\begin{node}
+We can tabulate the number of successes, failures, errors, and total
+number of tests. The logic for these functions are all rather similar.
+\begin{itemize}
+\item For a test case, if the outcome is a [[Success]] then return
+  $1$, otherwise return $0$.
+\item For a test suite, just count all the successes in each test in
+  the suite.
+\end{itemize}
+Counting the total number of test cases just sums the total number of
+successes, failures, and errors.
+\end{node}
+
+<<Specification for test result>>=
+val count_successes : t -> int;
+val count_failures : t -> int;
+val count_errors : t -> int;
+val count_total : t -> int;
+@
+
+<<Implementation of test result>>=
+fun count_successes (Case (_,_,Success)) = 1
+  | count_successes (Case _) = 0 
+  | count_successes (Suite (_,_,outcomes)) =
+      foldl (op +) 0 (map count_successes outcomes);
+
+fun count_failures (Case (_,_,Failure _)) = 1
+  | count_failures (Case _) = 0
+  | count_failures (Suite (_,_,outcomes)) =
+      foldl (op +) 0 (map count_failures outcomes);
+
+fun count_errors (Case (_,_,Error _)) = 1
+  | count_errors (Case _) = 0
+  | count_errors (Suite (_,_,outcomes)) =
+      foldl (op +) 0 (map count_errors outcomes);
+
+fun count_total x =
+  count_successes x + count_failures x + count_errors x;
+@ %def Test.Result.count_total Test.Result.count_successes Test.Result.count_failures Test.Result.count_errors
+
+\begin{node}[Predicate for test outcome]
+We can say a test suite or a test case is a success if the [[count_successes]] equals the [[count_total]].
+
+Failure for a test case is rather obvious (the outcome was a
+[[Failure]]). But what qualifies as a ``failure'' for a test suite? We
+will treat \emph{any} reported failure as indicating the test suite
+should qualify as a ``failure''.
+
+Similarly, any error result in a test contained in a test suite
+qualifies that test suite as a ``error''.
+\end{node}
+
+<<Specification for test result>>=
+val is_success : t -> bool;
+val is_failure : t -> bool;
+val is_error : t -> bool;
+@
+
+<<Implementation of test result>>=
+fun is_success x = (count_total x) = (count_successes x);
+
+fun is_failure (Case (_,_, Failure _)) = true
+  | is_failure (Case _) = false
+  | is_failure (s as Suite _) = (count_failures s) > 0;
+
+fun is_error (Case (_,_, Error _)) = true
+  | is_error (Case _) = false
+  | is_error (s as Suite _) = (count_errors s) > 0;
+@ %def Test.Result.is_success Test.Result.is_failure Test.Result.is_error
+
+\begin{node}[Predicates for test results]
+Since the test result is an opaque data structure, we need to provide
+predicates to indicate whether a test result is for a suite or a test
+case. This will be necessary for reporting results.
+\end{node}
+
+<<Specification for test result>>=
+val is_case : t -> bool;
+val is_suite : t -> bool;
+@
+
+<<Implementation of test result>>=
+fun is_case (Case _) = true
+  | is_case _ = false;
+
+fun is_suite (Suite _) = true
+  | is_suite _ = false;
+@ %def Test.Result.is_case Test.Result.is_suite
+
+\begin{node}[Test reporter specification]
+So far, we have implemented the assertion methods, the test case and
+suite structures, and the test result data structure. We just need a
+test runner and test reporter modules. Let us now turn to the test reporter.
+
+We will abstract away ``reporting'' as any \SML/ function producing a
+unit type (which is what happens when we write to a file or print to
+the screen). Ostensibly, the user may want to send an email (or post a
+TikTok video, or page someone, or\dots), so we just abstract away
+whatever ``reporting'' mechanism this could be.
+\end{node}
+
+<<Reporter.sig>>=
+signature Reporter = sig
+  val report : Test.Result.t -> unit;
+  val report_all : Test.Result.t list -> unit;
+end;
+@
+
+\begin{node}
+I'm used the JUnit's report to the terminal, so I'm going to stick to
+that. We will report the time interval in microseconds.
+\end{node}
+
+<<JUnitTt.sml>>=
+(* 
+Print to the terminal (hence the "-Tt" suffix) a summary of test
+results in the style of JUnit.
+
+If any failures or errors occur, print those out with a bit more
+detail.
+*)
+structure JUnitTt :> Reporter = struct
+structure Result = Test.Result;
+
+fun interval_to_string (dt : Time.time) =
+  (LargeInt.toString (Time.toMicroseconds dt))^"ms";
+
+<<Iteratively report JUnit-style report for a single outcome>>
+
+val report = print o (report_iter "");
+
+val report_all = app report;
+end;
+@ 
+
+\begin{node}
+How we report results depends on whether we are reporting for a test
+case or a test suite:
+\begin{itemize}
+\item Reporting a test case:
+\begin{enumerate}
+\item If the test failed, we should print the path to the test, announce it failed, and give the failure message.
+\item If the test err'd, we should do everything similarly to the failure case, except announce it was an ERROR and produce the exception message.
+\item If the test succeeded, then don't do anything: we do not wish to pollute the terminal.
+\end{enumerate}
+\item For a test suite:
+\begin{enumerate}
+\item Write the test suite's full path to the screen.
+\item Write the results for each test in the suite to the screen.
+\item Write to the screen a summary line counting the total number of tests run, the number of failures, the number of errors, and the name of the test suite.
+\end{enumerate}
+\end{itemize}
+\end{node}
+
+<<Iteratively report JUnit-style report for a single outcome>>=
+fun report_iter p =
+  let
+    fun path "" s = s
+      | path p s = p^"."^s; 
+    fun for_case c =
+      if Result.is_failure c
+      then concat [path p (Result.name c),
+                   " FAIL: ",
+                   Result.msg c,
+                   "\n"]
+      else if Result.is_error c
+      then concat [path p (Result.name c),
+                   " ERROR: ",
+                   (Result.exn_message c),
+                   "\n"]
+      else "";
+    fun for_suite result =
+      let
+        val p2 = path p (Result.name result);
+        val rs = Test.Result.results result;
+      in
+        concat ["Running ", p2, "\n",
+                concat (map (report_iter p2) rs),
+                "Tests run: ",
+                Int.toString(Result.count_total result),
+                ", Failures: ",
+                Int.toString(Result.count_failures result),
+                ", Errors: ",
+                Int.toString(Result.count_errors result),
+                ", Time elapsed: ",
+                interval_to_string (Result.realtime result),
+                " - in ",
+                (Result.name result), "\n"]
+      end;
+  in
+    fn r => if Test.Result.is_case r then for_case r
+            else for_suite r
+  end;
+@ 
+
+\begin{node}[Test runner]
+Now we have arrived at the final stage of the unit testing framework:
+we want to take a list of tests, execute them, and report the results
+using some test reporter. We will simply create a ``parametrized module''
+(\SML/ functor) which allows for any arbitrary test reporter to be used.
+
+The test runner has a single method, which expects a list of tests to
+run and report.
+\end{node}
+
+<<TestRunner.sig>>=
+signature TestRunner = sig
+  val run : Test.t list -> unit;
+end;
+@
+
+\begin{node}
+The test runner:
+\begin{enumerate}
+\item Runs the tests to obtain the test results,
+\item Reports the results,
+\end{enumerate}
+and that's it.
+\end{node}
+
+<<tests/MkRunner.sml>>=
+(*
+Using any test reporter, we can run the tests, then
+report the results.
+*)
+functor MkRunner(Reporter : Reporter) :> TestRunner = struct
+  fun run tests =
+    let
+      val results = map Test.run tests;
+    in
+      Reporter.report_all results;
+      ()
+    end;
+end;
+@ 
+
+\begin{node}
+The ``main'' function is rather straightforward for unit tests.
+
+Working with MLton and Poly/ML, we also define the [[main]] function here
+for future usage.
+
+We also initialize the unit tests to be run with an empty test
+suite. This way, when we register test suites, we will do it in a
+uniform manner (to aid readability).
+\end{node}
+
+<<tests/main.sml>>=
+(*
+Using the different reporters, we can run the tests, then
+report the results.
+
+Defaults to the JUnitTt reporter.
+
+For inspecting per test result, VerboseTt.report may be useful
+*)
+structure Runner :> TestRunner = MkRunner(JUnitTt);
+
+val tests : Test.t list = [
+  Test.suite "" []
+<<Register unit tests>>
+];
+
+fun main () = Runner.run tests;
+@
+
+\begin{node}[SML/NJ adapter]
+If we want to support SML/NJ, then we should organize test suites as
+structures implementing the [[TestSuite]] signature, then add to
+the [[<<Unit tests>>]] chunk the [[MyTestSuite.suite]]. We informally
+stipulate that the [[suite]] value should be a test suite, but there's
+no way to enforce this.
+\end{node}
+
+<<tests/TestSuite.sig>>=
+signature TestSuite = sig
+  val suite : Test.t
+end;
+@
+
+\begin{node}[Build script for MLton]
+Lastly, it will be convenient to have a build script for MLton (and
+Poly/ML if the user employs \texttt{polymlb}).
+\end{node}
+
+<<test.mlb>>=
+$(SML_LIB)/basis/basis.mlb
+tests/Assert.sml
+tests/Test.sig
+tests/Test.sml
+tests/Reporter.sig
+tests/JUnitTt.sml
+tests/TestRunner.sig
+tests/MkRunner.sml
+tests/TestSuite.sig
+common.mlb
+<<Unit tests to run>>
+tests/main.sml
+src/main.sml
+@ 
+
+\begin{node}[References]
+Beck~\cite{beck1994simple} coded the progenitor SUnit framework for
+treating specification documents as Smalltalk code.
+Following Meszaros~\cite{meszaros2007xunit}, we describe the basic
+design of a simplified testing framework for our needs.
+\end{node}
+
+\begin{xca}[Saving artifacts]
+Extreme programming practices advocate test reporters saving an
+``artifact'' of some kind when running the tests. Write a test
+reporter producing some file recording the results.
+\begin{enumerate}
+\item Determine the markup for the file (XML? JSON? YAML?)
+\item Write a specification for the artifact produced. 
+\item Write a reporter producing this sort of artifact. Where will the artifact be placed? 
+\item Write a tool which reads in the artifact, and prints out a summary to the screen. 
+\end{enumerate}
+\end{xca}
+
+\begin{xca}[Combine test reporters]
+Write a \SML/ functor \texttt{MkJointReporter(R1 : Reporter, R2 : Reporter) : Reporter}
+which will perform all the reporting in [[R1]] and [[R2]].
+\end{xca}
+
+\begin{xca}[Capture output]
+Write code to capture \texttt{stdout} (and \texttt{stderr}), and store
+anything written to these output streams as metadata in a test result.
+\end{xca}
+
+\begin{xca}[Exit status]
+Modify the test runner code so it will exit with a failure status if
+there were failed unit tests (or errors encountered).
+\end{xca}
+
+\begin{xca}[Testing the tester]
+We mentioned that unit testing originated as a way to transform a
+specification document into executable code.
+\begin{enumerate}
+\item Write specifications for the code in this section (i.e.,
+  specifications for the unit testing framework itself)
+\item Transform these specifications into unit tests, so we can check
+  the unit testing code is doing what we expect.
+\end{enumerate}
+\end{xca}
+
+\begin{xca}[BDD testing]
+There are as many ways to test code as there are programmers (if not more).
+A popular alternative to the minimal design we've implemented is
+``behaviour driven development'' where you first write down the tests
+in \define{Gherkin} to specify the behaviour expected in different
+situations (``Given [setup], when [code is executed], expected
+[outcome]'' is usually the template they use), then you run the tests
+(to make sure they fail), then you implement the code to satisfy the
+specified behaviour.
+\begin{enumerate}
+\item Research Gherkin and this approach to unit testing. What are its
+  merits and drawbacks?
+\item What would be needed to modify our code to implement a
+  Gherkin-style testing framework?
+\item Would this style of coding be well-suited to developing a proof
+  assistant? Why or why not? (This could easily be an essay, a term
+  paper, or a PhD thesis.)
+\end{enumerate}
+\end{xca}

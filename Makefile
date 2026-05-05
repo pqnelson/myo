@@ -1,10 +1,10 @@
 .POSIX:
 TEX=latex
 FILE=myo
-NOWEBOPTS=-latex -n
+NOWEBOPTS=-latex -n -indexfrom $(FILE).defs
 NWFILES=nw/many-sorted-term.nw nw/many-sorted-formula.nw nw/kernel.nw \
 	nw/fs0-syntax.nw nw/state.nw nw/derived.nw nw/goal.nw \
-	nw/classical.nw nw/printer.nw nw/unification.nw
+	nw/unification.nw nw/classical.nw nw/printer.nw nw/xunit.nw
 .SUFFIXES: .nw .tex
 .PHONY: pdf extract_text nw %.nw $(NWFILES)
 
@@ -18,10 +18,11 @@ pdf:
 	dvipdfmx $(FILE).dvi
 
 extract_text: defs $(NWFILES)
+	noweave $(NOWEBOPTS) $(NWFILES) > tex/bigoutput.tex
 
 # Amazingly enough, this is POSIX-compliant!
 $(NWFILES):
-	noweave $(NOWEBOPTS) -indexfrom $(FILE).defs $@ > tex/$(*F).tex
+	noweave $(NOWEBOPTS) $@ > tex/$(*F).tex
 
 defs:
 	nodefs $(NWFILES) > $(FILE).defs
@@ -48,6 +49,18 @@ code:
 	notangle -RUnif.sml $(NWFILES) | tr -d '\r' > src/Unif.sml
 	notangle -RClassical.sig $(NWFILES) | tr -d '\r' > src/Classical.sig
 	notangle -RClassical.sml $(NWFILES) | tr -d '\r' > src/Classical.sml
+	notangle -Rtests/ClassicalSuite.sml $(NWFILES) | tr -d '\r' > tests/ClassicalSuite.sml
+	notangle -Rtest.mlb $(NWFILES) | tr -d '\r' > test.mlb
+	notangle -RAssert.sml $(NWFILES) | tr -d '\r' > tests/Assert.sml
+	notangle -RTest.sig $(NWFILES) | tr -d '\r' > tests/Test.sig
+	notangle -RTest.sml $(NWFILES) | tr -d '\r' > tests/Test.sml
+	notangle -RReporter.sig $(NWFILES) | tr -d '\r' > tests/Reporter.sig
+	notangle -RJUnitTt.sml $(NWFILES) | tr -d '\r' > tests/JUnitTt.sml
+	notangle -RTestRunner.sig $(NWFILES) | tr -d '\r' > tests/TestRunner.sig
+	notangle -Rtests/MkRunner.sml $(NWFILES) | tr -d '\r' > tests/MkRunner.sml
+	notangle -Rtests/main.sml $(NWFILES) | tr -d '\r' > tests/main.sml
+	notangle -Rtests/TestSuite.sig $(NWFILES) | tr -d '\r' > tests/TestSuite.sig
+
 
 clean:
-	rm src/*.sig src/*.sml
+	rm src/*.sig src/*.sml tests/*.sig tests/*.sml

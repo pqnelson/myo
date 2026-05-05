@@ -20,36 +20,36 @@ fun gather_bvars is_q dest_q acc fm =
        end;
 fun formula fm =
   if Formula.is_falsum fm
-  then "⊥" (* U+22A5 *)
+  then "\u00E2\u008A\u00A5" (* U+22A5 *)
   else if Formula.is_pred fm
   then let val (P,args) = Formula.dest_pred fm
        in P^"["^(String.concatWith ", " (map term args))^"]" end
   else if Formula.is_not fm
   then let val A = Formula.dest_not fm;
-           val conn = "¬"; (* U+00AC *)
+           val conn = "\u00C2\u00AC"; (* U+00AC *)
        in conn ^ (paren_form A fm) end
   else if Formula.is_and fm
   then let val (A, B) = Formula.dest_and fm;
-           val conn = "∧"; (* U+2227 *)
+           val conn = "\u00e2\u0088\u00a7"; (* U+2227 *)
        in (paren_form A fm) ^ conn ^ (paren_form B fm) end
   else if Formula.is_or fm
   then let val (A, B) = Formula.dest_or fm;
-           val conn = "∨"; (* U+2228 *)
+           val conn = "\u00e2\u0088\u00a8"; (* U+2228 *)
        in (paren_form A fm) ^ conn ^ (paren_form B fm) end
   else if Formula.is_imp fm
   then let val (A, B) = Formula.dest_imp fm;
-           val conn = "⟹"; (* U+27F9 for long version, U+21D2 *)
+           val conn = "\u00e2\u009f\u00b9"; (* U+27F9 for long version, U+21D2 *)
        in (paren_form A fm) ^ conn ^ (paren_form B fm) end
   else if Formula.is_iff fm
   then let val (A, B) = Formula.dest_iff fm;
-           val conn = "⟺"; (* U+27FA for long version, U+21D4 *)
+           val conn = "\u00e2\u009f\u00ba"; (* U+27FA for long version, U+21D4 *)
        in (paren_form A fm) ^ conn ^ (paren_form B fm) end
   else if Formula.is_forall fm
   then let
     val (var, body) = Formula.dest_forall fm
     val (prefix, A) = gather_bvars Formula.is_forall
                                    Formula.dest_forall
-                                   ("∀" ^ (* U+2200 *)
+                                   ("\u00e2\u0088\u0080" ^ (* U+2200 *)
                                     (term var))
                                    body
   in prefix ^ "." ^ (formula body) end
@@ -58,7 +58,7 @@ fun formula fm =
     val (var, body) = Formula.dest_exists fm
     val (prefix, A) = gather_bvars Formula.is_exists
                                    Formula.dest_exists
-                                   ("∃" ^ (* U+2203 *)
+                                   ("\u00E2\u0088\u0083" ^ (* U+2203 *)
                                     (term var))
                                    body
   in prefix ^ "." ^ (formula body) end
@@ -79,8 +79,8 @@ fun thm th =
     val hyps = Thm.hyps th;
     val concl = Thm.concl th;
     val turnstile = if List.null hyps
-                    then "⊢ "
-                    else " ⊢ ";
+                    then "\u00E2\u008A\u00A2 "
+                    else " \u00E2\u008A\u00A2 ";
   in
     (String.concatWith ", " (map formula hyps)) ^
     turnstile ^
@@ -88,8 +88,8 @@ fun thm th =
   end;
 
 local
-  fun turnstile [] = "⊢ "
-    | turnstile _ = " ⊢ ";
+  fun turnstile [] = "\u00E2\u008A\u00A2 "
+    | turnstile _ = " \u00E2\u008A\u00A2 ";
   fun single (asl, fm) =
     (String.concatWith
        ", "

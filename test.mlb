@@ -1,0 +1,13 @@
+$(SML_LIB)/basis/basis.mlb
+tests/Assert.sml
+tests/Test.sig
+tests/Test.sml
+tests/Reporter.sig
+tests/JUnitTt.sml
+tests/TestRunner.sig
+tests/MkRunner.sml
+tests/TestSuite.sig
+common.mlb
+tests/ClassicalSuite.sml
+tests/main.sml
+src/main.sml

@@ -1,0 +1,108 @@
+structure Test :> Test = struct
+
+structure Result = struct
+datatype Outcome = Success
+                 | Failure of string
+                 | Error of exn;
+
+datatype t = Case of string * Time.time * Outcome
+           | Suite of string * Time.time * (t list);
+fun for_case name assertion =
+  let
+    val start = Time.now();
+  in
+    (assertion();
+     Case(name,
+          (Time.-)(Time.now(), start),
+          Success))
+    handle Assert.Fail msg =>
+           Case (name,
+                 (Time.-)(Time.now(), start),
+                 Failure msg)
+         | e => Case(name,
+                     (Time.-)(Time.now(), start),
+                     Error e)
+  end;
+fun for_suite name mk_results =
+  let
+    val start = Time.now();
+    val results = mk_results ();
+    val dt = (Time.-)(Time.now(), start);
+  in
+    Suite(name, dt, results)
+  end;
+(* name : Test.Result.t -> string *)
+fun name (Case (n,_,_)) = n
+  | name (Suite (n,_,_)) = n;
+
+(* msg : Test.Result.t -> string *)
+fun msg (Case (_,_,Failure msg)) = msg
+  | msg _ = "";
+
+(* exn_msg : Test.Result.t -> string *)
+fun exn_message (Case (_,_,Error e)) = exnMessage e
+  | exn_message _ = ""; 
+(* runtime : t -> Time.time
+
+How long did it take to run the test(s) and construct the
+result(s)? *)
+  fun runtime (Case (_,dt,_)) = dt
+    | runtime (Suite (_,dt,_)) = dt;
+
+  (* realtime : t -> Time.time
+
+How long did it take just to run the test(s)? *)
+  fun realtime (Case (_,dt,_)) = dt
+    | realtime (Suite (_,_,[])) = Time.zeroTime
+    | realtime (Suite (_,_,[x])) = realtime x
+    | realtime (Suite (_,_,r::rs)) =
+      foldl (fn (result,dt) =>
+                (Time.+)(dt, realtime result))
+            (realtime r)
+            rs;
+fun results (Suite (_,_,rs)) = rs;
+fun count_successes (Case (_,_,Success)) = 1
+  | count_successes (Case _) = 0 
+  | count_successes (Suite (_,_,outcomes)) =
+      foldl (op +) 0 (map count_successes outcomes);
+
+fun count_failures (Case (_,_,Failure _)) = 1
+  | count_failures (Case _) = 0
+  | count_failures (Suite (_,_,outcomes)) =
+      foldl (op +) 0 (map count_failures outcomes);
+
+fun count_errors (Case (_,_,Error _)) = 1
+  | count_errors (Case _) = 0
+  | count_errors (Suite (_,_,outcomes)) =
+      foldl (op +) 0 (map count_errors outcomes);
+
+fun count_total x =
+  count_successes x + count_failures x + count_errors x;
+fun is_success x = (count_total x) = (count_successes x);
+
+fun is_failure (Case (_,_, Failure _)) = true
+  | is_failure (Case _) = false
+  | is_failure (s as Suite _) = (count_failures s) > 0;
+
+fun is_error (Case (_,_, Error _)) = true
+  | is_error (Case _) = false
+  | is_error (s as Suite _) = (count_errors s) > 0;
+fun is_case (Case _) = true
+  | is_case _ = false;
+
+fun is_suite (Suite _) = true
+  | is_suite _ = false;
+end;
+
+datatype t = Case of string * (unit -> unit)
+           | Suite of string * (t list);
+
+fun mk name method = Case(name, method);
+
+fun suite name tests = Suite(name, tests);
+
+(* run : Test.t -> Test.Result.t *)
+fun run (Case (name, method)) = Result.for_case name method
+  | run (Suite (name, tests)) =
+      Result.for_suite name (fn () => map run tests);
+end;

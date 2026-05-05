@@ -55,6 +55,18 @@ Poly/ML 5.9.1 Release (Git version v5.9.1-64-ga71e81c1)
 
 Then it will load all the code.
 
+You can run unit tests, if you're using MLton or Polymlb, as:
+
+```
+~/myo/$ mlbton test.mlb
+~/myo/$ test
+```
+
+```
+~/myo/$ polymlb test.mlb
+~/myo/$ test
+```
+
 ## What? Why?
 
 This is trying to play around with some simple programs suitable for
