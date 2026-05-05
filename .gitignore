@@ -18,3 +18,9 @@ refs/
 
 # Noweb stuff
 *.defs
+
+# executable outputs
+test
+*.o
+*.ui
+*.uo

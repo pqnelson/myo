@@ -8,8 +8,9 @@ For inspecting per test result, VerboseTt.report may be useful
 *)
 structure Runner :> TestRunner = MkRunner(JUnitTt);
 
-val tests : Test.t list = [
+val tests : Test.t list = tl [
   Test.suite "" []
+, DerivedSuite.suite
 , ClassicalSuite.suite
 ];
 

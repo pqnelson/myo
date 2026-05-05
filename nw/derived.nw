@@ -37,6 +37,22 @@ structure Derived = struct
 end;
 @ 
 
+<<tests/DerivedSuite.sml>>=
+structure DerivedSuite : TestSuite = struct
+val suite = Test.suite "DerivedSuite" [
+  <<Unit tests for [[Derived.sml]]>>
+]
+end;
+@
+
+<<Register unit tests>>=
+, DerivedSuite.suite
+@
+
+<<Unit tests to run>>=
+tests/DerivedSuite.sml
+@
+
 \begin{node}\label{node:fs0:derived.nw:toc:propositional-logic}
 There are a lot of useful theorems to prove, but I have not done so
 yet. So I am keeping a list.
@@ -1641,7 +1657,7 @@ fun all_disjL x A C =
 We also add a test to check that the result works.
 
 <<Unit tests for [[Derived.sml]]>>=
-fun all_disjL_test () =
+Test.mk "all_disjL_test" (fn () =>
   let
     val x = Term.Var("x", Sort.IND);
     val A = Formula.mk_pred("A", [x]);
@@ -1650,8 +1666,12 @@ fun all_disjL_test () =
                                   Formula.mk_forall(x, Formula.mk_or(A,C)));
     val actual = Thm.concl (Derived.all_disjL x A C);
   in
-    Formula.eq expected actual
-  end;
+    Assert.that (Formula.eq expected actual)
+                (concat ["EXPECTED: ",
+                         (TBPrinter.formula expected),
+                         "\nACTUAL: ",
+                         (TBPrinter.formula actual)])
+  end)
 @ 
 
 \begin{node}%ex_disj_distrib
@@ -1734,7 +1754,7 @@ end;
 @ %def Derived.ex_disj_distrib
 
 <<Unit tests for [[Derived.sml]]>>=
-fun ex_disj_distrib_test () =
+, Test.mk "ex_disj_distrib_test" (fn () =>
   let
     val x = Term.Var("x", Sort.IND);
     val A = Formula.mk_pred("A", [x]);
@@ -1745,8 +1765,13 @@ fun ex_disj_distrib_test () =
                      Formula.mk_exists(x, Formula.mk_or(A,B)));
     val actual = Thm.concl (Derived.ex_disj_distrib x A B);
   in
-    Formula.eq expected actual
-  end;
+    Assert.that (Formula.eq expected actual)
+                (concat["EXPECTED: ",
+                        TBPrinter.formula expected,
+                        "\nACTUAL: ",
+                        TBPrinter.formula actual,
+                        "\n"])
+  end)
 @ 
 
 \begin{node}%all_conj_distrib
@@ -1820,7 +1845,7 @@ fun all_conj_distrib x A B =
 @ %def Derived.all_conj_distrib
 
 <<Unit tests for [[Derived.sml]]>>=
-fun all_conj_distrib_test () =
+, Test.mk "all_conj_distrib_test" (fn () =>
   let
     val x = Term.Var("x", Sort.IND);
     val A = Formula.mk_pred("A", [x]);
@@ -1831,11 +1856,13 @@ fun all_conj_distrib_test () =
                      Formula.mk_forall(x, Formula.mk_and(A,B)));
     val actual = Thm.concl (Derived.all_conj_distrib x A B);
   in
-    if not(Formula.eq expected actual)
-    then "Expecting: "^(Formula.serialize expected)^"\nActual: "^
-         (Formula.serialize actual)^"\n"
-    else ""
-  end;
+    Assert.that (Formula.eq expected actual)
+                (concat ["Expecting: ",
+                         (Formula.serialize expected),
+                         "\nActual: ",
+                         (Formula.serialize actual),
+                         "\n"])
+  end)
 @ 
 
 \begin{node}%ex_conj_distrib
@@ -1878,7 +1905,7 @@ fun ex_conj_distrib x A B =
 @ %def Derived.ex_conj_distrib
 
 <<Unit tests for [[Derived.sml]]>>=
-fun ex_conj_distrib_test () =
+, Test.mk "ex_conj_distrib_test" (fn () =>
   let
     val x = Term.Var("x", Sort.IND);
     val A = Formula.mk_pred("A", [x]);
@@ -1889,11 +1916,13 @@ fun ex_conj_distrib_test () =
                                     Formula.mk_exists(x, B)));
     val actual = Thm.concl (Derived.ex_conj_distrib x A B);
   in
-    if not(Formula.eq expected actual)
-    then "Expecting: "^(Formula.serialize expected)^"\nActual: "^
-         (Formula.serialize actual)^"\n"
-    else ""
-  end;
+    Assert.that (Formula.eq expected actual)
+                (concat ["Expecting: ",
+                         (Formula.serialize expected),
+                         "\nActual: ",
+                         (Formula.serialize actual),
+                         "\n"])
+  end)
 @ 
 
 \begin{node}%imp_ex
@@ -1969,7 +1998,7 @@ end;
 @ %def Derived.imp_ex
 
 <<Unit tests for [[Derived.sml]]>>=
-fun imp_ex_test () =
+, Test.mk "imp_ex_test" (fn () =>
   let
     val x = Term.Var("x", Sort.IND);
     val A = Formula.mk_pred("A", [x]);
@@ -1980,11 +2009,13 @@ fun imp_ex_test () =
                                     C));
     val actual = Thm.concl (Derived.imp_ex x A C);
   in
-    if not(Formula.eq expected actual)
-    then "Expecting: "^(Formula.serialize expected)^"\nActual: "^
-         (Formula.serialize actual)^"\n"
-    else ""
-  end;
+    Assert.that (Formula.eq expected actual)
+                (concat ["Expecting: ",
+                         (Formula.serialize expected),
+                         "\nActual: ",
+                         (Formula.serialize actual),
+                         "\n"])
+  end)
 @ 
 
 \begin{node}
@@ -2035,7 +2066,7 @@ end;
 @ %def Derived.not_all_iff_ex_not
 
 <<Unit tests for [[Derived.sml]]>>=
-fun not_all_iff_ex_not_test () =
+, Test.mk "not_all_iff_ex_not_test" (fn () =>
   let
     val x = Term.Var("x", Sort.IND);
     val A = Formula.mk_pred("A", [x]);
@@ -2044,11 +2075,13 @@ fun not_all_iff_ex_not_test () =
                      Formula.mk_not(Formula.mk_exists(x, A)));
     val actual = Thm.concl (Derived.not_all_iff_ex_not x A);
   in
-    if not(Formula.eq expected actual)
-    then "Expecting: "^(Formula.serialize expected)^"\nActual: "^
-         (Formula.serialize actual)^"\n"
-    else ""
-  end;
+    Assert.that (Formula.eq expected actual)
+                (concat ["Expecting: ",
+                         (Formula.serialize expected),
+                         "\nActual: ",
+                         (Formula.serialize actual),
+                         "\n"])
+  end)
 @ 
 
 \begin{node}
@@ -2114,7 +2147,7 @@ fun all_imp x C A =
   end;
 @ %def Derived.all_imp
 <<Unit tests for [[Derived.sml]]>>=
-fun all_imp_test () =
+, Test.mk "all_imp_test" (fn () =>
   let
     val x = Term.Var("x", Sort.IND);
     val A = Formula.mk_pred("A", [x]);
@@ -2124,11 +2157,13 @@ fun all_imp_test () =
                      Formula.mk_imp(C, Formula.mk_forall(x, A)));
     val actual = Thm.concl (Derived.all_imp x C A);
   in
-    if not(Formula.eq expected actual)
-    then "Expecting: "^(Formula.serialize expected)^"\nActual: "^
-         (Formula.serialize actual)^"\n"
-    else ""
-  end;
+    Assert.that (Formula.eq expected actual)
+                (concat ["Expecting: ",
+                         (Formula.serialize expected),
+                         "\nActual: ",
+                         (Formula.serialize actual),
+                         "\n"])
+  end)
 @ 
 
 \begin{node}
@@ -2169,7 +2204,7 @@ fun imp_all x A C =
 @ %def Derived.imp_all
 
 <<Unit tests for [[Derived.sml]]>>=
-fun imp_all_test () =
+, Test.mk "imp_all_test" (fn () =>
   let
     val x = Term.Var("x", Sort.IND);
     val A = Formula.mk_pred("A", [x]);
@@ -2180,11 +2215,13 @@ fun imp_all_test () =
                                     C));
     val actual = Thm.concl (Derived.imp_all x A C);
   in
-    if not(Formula.eq expected actual)
-    then "Expecting: "^(Formula.serialize expected)^"\nActual: "^
-         (Formula.serialize actual)^"\n"
-    else ""
-  end;
+    Assert.that (Formula.eq expected actual)
+                (concat ["Expecting: ",
+                         (Formula.serialize expected),
+                         "\nActual: ",
+                         (Formula.serialize actual),
+                         "\n"])
+  end)
 @ 
 
 \begin{node}
@@ -2231,7 +2268,7 @@ fun ex_not x A =
 @ %def Derived.ex_not
 
 <<Unit tests for [[Derived.sml]]>>=
-fun ex_not_test () =
+, Test.mk "ex_not_test" (fn () =>
   let
     val x = Term.Var("x", Sort.IND);
     val A = Formula.mk_pred("A", [x]);
@@ -2240,11 +2277,13 @@ fun ex_not_test () =
                      Formula.mk_not(Formula.mk_forall(x, A)));
     val actual = Thm.concl (Derived.ex_not x A);
   in
-    if not(Formula.eq expected actual)
-    then "Expecting: "^(Formula.serialize expected)^"\nActual: "^
-         (Formula.serialize actual)^"\n"
-    else ""
-  end;
+    Assert.that (Formula.eq expected actual)
+                (concat ["Expecting: ",
+                         (Formula.serialize expected),
+                         "\nActual: ",
+                         (Formula.serialize actual),
+                         "\n"])
+  end)
 @ 
 
 \begin{node}
@@ -2286,7 +2325,7 @@ fun ex_imp x C A =
 @ %def Derived.ex_imp
 
 <<Unit tests for [[Derived.sml]]>>=
-fun ex_imp_test () =
+, Test.mk "ex_imp_test" (fn () =>
   let
     val x = Term.Var("x", Sort.IND);
     val A = Formula.mk_pred("A", [x]);
@@ -2295,13 +2334,15 @@ fun ex_imp_test () =
       Formula.mk_imp(Formula.mk_exists(x, Formula.mk_imp(C,A)),
                      Formula.mk_imp(C,
                                     Formula.mk_exists(x, A)));
-    val actual = Thm.concl (ex_imp x C A);
+    val actual = Thm.concl (Derived.ex_imp x C A);
   in
-    if not(Formula.eq expected actual)
-    then "Expecting: "^(Formula.serialize expected)^"\nActual: "^
-         (Formula.serialize actual)^"\n"
-    else ""
-  end;
+    Assert.that (Formula.eq expected actual)
+                (concat ["Expecting: ",
+                         (Formula.serialize expected),
+                         "\nActual: ",
+                         (Formula.serialize actual),
+                         "\n"])
+  end)
 @ 
 
 \begin{node}
@@ -2421,28 +2462,37 @@ fun exists_cong x y (A : Term.t -> Formula.t) =
     end;
 @ %def Derived.exists_cong
 
-<<Unit tests for derived rules>>=
-fun forall_cong_test () =
+<<Unit tests for [[Derived.sml]]>>=
+, Test.mk "forall_cong_test" (fn () =>
   let
-    fun A x = Fun.mk_pred("A",[x]);
+    fun A x = Formula.mk_pred("A",[x]);
     val x = Term.Var("x",Sort.IND);
     val y = Term.Var("y",Sort.IND);
     val expected = Formula.mk_imp(Formula.mk_forall(x, A x),
                                   Formula.mk_forall(y, A y));
     val actual = Thm.concl(Derived.forall_cong x y A);
   in
-    Formula.eq expected actual
-  end;
-
-fun exists_cong_test () =
+    Assert.that (Formula.eq expected actual)
+                (concat ["Expecting: ",
+                         (Formula.serialize expected),
+                         "\nActual: ",
+                         (Formula.serialize actual),
+                         "\n"])
+  end)
+, Test.mk "exists_cong_test" (fn () =>
   let
-    fun A x = Fun.mk_pred("A",[x]);
+    fun A x = Formula.mk_pred("A",[x]);
     val x = Term.Var("x",Sort.IND);
     val y = Term.Var("y",Sort.IND);
     val expected = Formula.mk_imp(Formula.mk_exists(x, A x),
                                   Formula.mk_exists(y, A y));
     val actual = Thm.concl(Derived.exists_cong x y A);
   in
-    Formula.eq expected actual
-  end;
+    Assert.that (Formula.eq expected actual)
+                (concat ["Expecting: ",
+                         (Formula.serialize expected),
+                         "\nActual: ",
+                         (Formula.serialize actual),
+                         "\n"])
+  end)
 @ 

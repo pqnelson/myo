@@ -18,7 +18,6 @@ pdf:
 	dvipdfmx $(FILE).dvi
 
 extract_text: defs $(NWFILES)
-	noweave $(NOWEBOPTS) $(NWFILES) > tex/bigoutput.tex
 
 # Amazingly enough, this is POSIX-compliant!
 $(NWFILES):
@@ -39,6 +38,7 @@ code:
 	notangle -RFS0.sml $(NWFILES) | tr -d '\r' > src/FS0.sml
 	notangle -RFS0.sig $(NWFILES) | tr -d '\r' > src/FS0.sig
 	notangle -RDerived.sml $(NWFILES) | tr -d '\r' > src/Derived.sml
+	notangle -Rtests/DerivedSuite.sml $(NWFILES) | tr -d '\r' > tests/DerivedSuite.sml
 	notangle -RGoal.sml $(NWFILES) | tr -d '\r' > src/Goal.sml
 	notangle -RGoal.sig $(NWFILES) | tr -d '\r' > src/Goal.sig
 	notangle -RTactic.sig $(NWFILES) | tr -d '\r' > src/Tactic.sig

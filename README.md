@@ -62,8 +62,20 @@ You can run unit tests, if you're using MLton or Polymlb, as:
 ~/myo/$ test
 ```
 
+...and...
+
 ```
 ~/myo/$ polymlb test.mlb
+~/myo/$ test
+```
+
+If you want to use Moscow ML's [MLB library](https://github.com/kfl/mosml/tree/13c581aec46eea134e478f2e2b6456278e36ecce/src/mosmlb),
+then you need to add a subdirectory `/usr/local/lib/mosml/basis/` and
+a file `/usr/local/lib/mosml/basis/basis.mlb` which will load all the
+necessary Standard ML 1997 files. After doing this, you then run:
+
+```
+~/myo/$ camlrunm /usr/local/lib/mosml/mosmlb test.mlb
 ~/myo/$ test
 ```
 
