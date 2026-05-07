@@ -367,7 +367,7 @@ fun disch (label : string) { goals = (asl, A_imp_B)::gls
   then <<Tactic to discharge an implication>>
   else if Formula.is_not A_imp_B
   then <<Tactic for negation>>
-  else raise Fail "Tactic.disch"
+  else raise Fail "Tactic.disch";
 @ %def Tactic.disch
 
 <<Tactic for negation>>=
@@ -974,6 +974,41 @@ tactics-based proofs.
                              , Tactic.assume
                              , Tactic.and_elim_l B
                              , Tactic.assume];
+      val actual = Thm.concl thm;
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["EXPECTED: ",
+                           Formula.serialize expected,
+                           "\nACTUAL: ",
+                           Formula.serialize actual,
+                           "\n"])
+    end)
+@
+
+\begin{node}
+We should test disjunction-related tactics as well.
+\end{node}
+
+<<Unit tests for [[Tactic.sml]]>>=
+, Test.mk "or_cong_l Tactic.prove test" (fn () =>
+    let
+      val A0 = Formula.mk_pred("A", []);
+      val A1 = Formula.mk_pred("A'", []);
+      val B = Formula.mk_pred("B", []);
+      val expected = Formula.mk_imp(Formula.mk_imp(A0, A1),
+                                    Formula.mk_imp(Formula.mk_or(A0,B),
+                                                   Formula.mk_or(A1,B)));
+      val thm = Tactic.prove expected
+                             [ Tactic.disch ""
+                             , Tactic.disch ""
+                             , Tactic.disj_cases (Thm.assume (Formula.mk_or(A0,B)) [])
+                             , Tactic.disch ""
+                             , Tactic.or_l
+                             , Tactic.undisch A0
+                             , Tactic.assume
+                             , Tactic.disch ""
+                             , Tactic.or_r
+                             , Tactic.assume ];
       val actual = Thm.concl thm;
     in
       Assert.that (Formula.eq expected actual)

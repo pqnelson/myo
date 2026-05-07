@@ -59,14 +59,14 @@ You can run unit tests, if you're using MLton or Polymlb, as:
 
 ```
 ~/myo/$ mlbton test.mlb
-~/myo/$ test
+~/myo/$ ./test
 ```
 
 ...and...
 
 ```
 ~/myo/$ polymlb test.mlb
-~/myo/$ test
+~/myo/$ ./test
 ```
 
 If you want to use Moscow ML's [MLB library](https://github.com/kfl/mosml/tree/13c581aec46eea134e478f2e2b6456278e36ecce/src/mosmlb),

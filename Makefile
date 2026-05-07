@@ -62,6 +62,19 @@ code:
 	notangle -Rtests/main.sml $(NWFILES) | tr -d '\r' > tests/main.sml
 	notangle -Rtests/TestSuite.sig $(NWFILES) | tr -d '\r' > tests/TestSuite.sig
 
+check: check-poly check-mlton
+
+check-poly:
+	touch test
+	rm test
+	polymlb -quiet test.mlb
+	./test
+
+check-mlton:
+	touch test
+	rm test
+	mlton test.mlb
+	./test
 
 clean:
 	rm src/*.sig src/*.sml tests/*.sig tests/*.sml

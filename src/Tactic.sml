@@ -66,7 +66,7 @@ fun disch (label : string) { goals = (asl, A_imp_B)::gls
          { goals = (((label, A)::asl, Formula.mk_falsum())::gls)
          , justify = jfn' }
        end
-  else raise Fail "Tactic.disch"
+  else raise Fail "Tactic.disch";
 (* undisch : Formula.t -> Tactic.t *)
 fun undisch fm {goals = (asl, A)::gls, justify = jfn} =
   let

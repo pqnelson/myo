@@ -30,12 +30,40 @@ val suite = Test.suite "TacticSuite" [
       val expected = Formula.mk_imp(Formula.mk_and(A, B),
                                     Formula.mk_and(B, A));
       val thm = Tactic.prove expected
-                             [Tactic.disch ""
+                             [ Tactic.disch ""
                              , Tactic.and_intro
                              , Tactic.and_elim_r A
                              , Tactic.assume
                              , Tactic.and_elim_l B
                              , Tactic.assume];
+      val actual = Thm.concl thm;
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["EXPECTED: ",
+                           Formula.serialize expected,
+                           "\nACTUAL: ",
+                           Formula.serialize actual,
+                           "\n"])
+    end)
+, Test.mk "or_cong_l Tactic.prove test" (fn () =>
+    let
+      val A0 = Formula.mk_pred("A", []);
+      val A1 = Formula.mk_pred("A'", []);
+      val B = Formula.mk_pred("B", []);
+      val expected = Formula.mk_imp(Formula.mk_imp(A0, A1),
+                                    Formula.mk_imp(Formula.mk_or(A0,B),
+                                                   Formula.mk_or(A1,B)));
+      val thm = Tactic.prove expected
+                             [ Tactic.disch ""
+                             , Tactic.disch ""
+                             , Tactic.disj_cases (Thm.assume (Formula.mk_or(A0,B)) [])
+                             , Tactic.disch ""
+                             , Tactic.or_l
+                             , Tactic.undisch A0
+                             , Tactic.assume
+                             , Tactic.disch ""
+                             , Tactic.or_r
+                             , Tactic.assume ];
       val actual = Thm.concl thm;
     in
       Assert.that (Formula.eq expected actual)

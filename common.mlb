@@ -1,21 +1,26 @@
 $(SML_LIB)/basis/basis.mlb
-src/Sort.sml
-src/Term.sig
-src/Term.sml
-src/Formula.sig
-src/Formula.sml
-src/FS0.sig
-src/FS0.sml
-src/Thm.sig
-src/Thm.sml
-src/Derived.sml
-src/Goal.sig
-src/Goal.sml
-src/Tactic.sig
-src/Tactic.sml
-src/Unif.sig
-src/Unif.sml
-src/Classical.sig
-src/Classical.sml
-src/Printer.sig
-src/TBPrinter.sml
+ann
+    "nonexhaustiveBind ignore"
+    "nonexhaustiveMatch ignore"
+in
+    src/Sort.sml
+    src/Term.sig
+    src/Term.sml
+    src/Formula.sig
+    src/Formula.sml
+    src/FS0.sig
+    src/FS0.sml
+    src/Thm.sig
+    src/Thm.sml
+    src/Derived.sml
+    src/Goal.sig
+    src/Goal.sml
+    src/Tactic.sig
+    src/Tactic.sml
+    src/Unif.sig
+    src/Unif.sml
+    src/Classical.sig
+    src/Classical.sml
+    src/Printer.sig
+    src/TBPrinter.sml
+end
