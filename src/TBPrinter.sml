@@ -103,10 +103,10 @@ local
               (single (asl, fm)) ^
               (if List.null gls then "" else "\n"))
              gls;
+  fun subgoals [] = "No more goals"
+    | subgoals [g] = single g
+    | subgoals gls = iter 1 "" gls; 
 in
-fun goals [] = "No more goals"
-  | goals [g] = single g
-  | goals gls = iter 1 "" gls
+fun goals g = subgoals (Goal.subgoals g)
 end;
-
 end;

@@ -3,7 +3,7 @@ type t = Goal.t -> Goal.t;
 
 local
   fun tactic_proof (g : Goal.t) pf =
-    Goal.extract_thm(foldr (fn (tac, g') => tac g')
+    Goal.extract_thm(foldl (fn (tac, g') => tac g')
                            g
                            pf);
 in
@@ -67,6 +67,36 @@ fun disch (label : string) { goals = (asl, A_imp_B)::gls
          , justify = jfn' }
        end
   else raise Fail "Tactic.disch"
+(* undisch : Formula.t -> Tactic.t *)
+fun undisch fm {goals = (asl, A)::gls, justify = jfn} =
+  let
+    fun snd (_,y) = y;
+    val asl' = List.filter (not o (Formula.eq fm) o snd) asl;
+    fun jfn' (thm::thms) = jfn((Thm.undisch thm)::thms);
+  in
+    if length asl' = length asl
+    then raise Fail("Tactic.undisch: formula "^
+                    (Formula.serialize fm)^
+                    " is not an assumption")
+    else { goals = (asl', Formula.mk_imp(fm, A))::gls
+         , justify = jfn' }
+  end;
+
+(* undisch_lab : string -> Tactic.t *)
+fun undisch_lab s {goals = (asl, A)::gls, justify = jfn} =
+  let
+    fun iter (acc : (string * Formula.t) list) [] =
+          raise Fail ("Tactic.undisch: no assumption with label '"^s^"'")
+      | iter acc ((a as (l,fm))::asls) =
+          if s = l
+          then (fm, List.revAppend(acc, asls))
+          else iter (a::acc) asls;
+    val (fm, asl') = iter [] asl;
+    fun jfn' (thm::thms) = jfn((Thm.undisch thm)::thms);
+  in
+    { goals = (asl', Formula.mk_imp(fm, A))::gls
+    , justify = jfn' }
+  end;
 fun modus_ponens A {goals = (asl, B)::gls, justify = jfn} =
   let
     val A_imp_B = Formula.mk_imp(A, B);
@@ -121,6 +151,18 @@ fun or_r {goals = (asl, A_or_B)::gls, justify = jfn} =
     { goals = (asl, B)::gls
     , justify = jfn' }
   end;
+fun assume {goals = (asl, A)::gls, justify = jfn} =
+  if not(List.exists (fn (_,B) => Formula.eq A B) asl)
+  then raise Fail "Tactic.assume: goal is not among assumptions"
+  else
+    let
+      val hyps = map (fn (_,fm) => fm) asl;
+      val hyps' = List.filter (not o (Formula.eq A)) hyps;
+      fun jfn' thms = jfn((Thm.assume A hyps')::thms);
+    in
+      { goals = gls
+      , justify = jfn' }
+    end;
 fun contr thm {goals = (asl, A)::gls, justify = jfn} =
   if not(assumptions_contain_hypotheses thm asl)
   then raise Fail("contr: assumptions do not contain all hypotheses of theorem")
@@ -188,6 +230,30 @@ fun exists tm {goals = (asl, ex_A)::gls, justify = jfn} =
   in
     { goals = (asl, Formula.subst tm x A)::gls
     , justify = jfn' }
+  end;
+(* autolabel : t
+
+Assign labels to un-named assumptions. *)
+fun autolabel {goals = (asl, A)::gls, justify = jfn} =
+  let
+    val labels = List.filter (fn s => s <> "")
+                             (map (fn (s,_) => s) asl);
+    fun generate n labs =
+      let val guess = "H"^(Int.toString n)
+      in if List.exists (fn s => s = guess) labs
+         then generate (n + 1) labs
+         else (n, guess)
+      end;
+    fun iter n labs acc [] = rev acc
+      | iter n labs acc ((lab,fm)::asls) =
+          if lab = ""
+          then let val (n',lab') = generate n labs
+               in iter (n' + 1) (lab'::labs) ((lab',fm)::acc) asls end
+          else iter n labs ((lab,fm)::acc) asls;
+    val asl' = iter 0 labels [] asl;
+  in
+    { goals = (asl', A)::gls
+    , justify = jfn }
   end;
 
 end;

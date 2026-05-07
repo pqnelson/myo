@@ -43,6 +43,7 @@ code:
 	notangle -RGoal.sig $(NWFILES) | tr -d '\r' > src/Goal.sig
 	notangle -RTactic.sig $(NWFILES) | tr -d '\r' > src/Tactic.sig
 	notangle -RTactic.sml $(NWFILES) | tr -d '\r' > src/Tactic.sml
+	notangle -Rtests/TacticSuite.sml $(NWFILES) | tr -d '\r' > tests/TacticSuite.sml
 	notangle -RPrinter.sig $(NWFILES) | tr -d '\r' > src/Printer.sig
 	notangle -RTBPrinter.sml $(NWFILES) | tr -d '\r' > src/TBPrinter.sml
 	notangle -RUnif.sig $(NWFILES) | tr -d '\r' > src/Unif.sig

@@ -36,6 +36,69 @@ essentially says ``If you give me theorems for the subgoals, I will
 return to you a theorem establishing the proof obligation at this point.''
 We should view this as ``going back down'' the natural deduction proof
 using inference rules (or some derived inference rules).
+
+Let us make these notions more rigorous, as befits a Mathematician.
+\end{node}
+
+\begin{definition}
+A \define{Goal} is a sequent of the form $(\Gamma,A)$ (interpreted as
+``prove $A$ from assumptions $\Gamma$''). We will try (and probably
+fail) to reserve the notation ``$\Gamma\vdash A$'' (\acro{ascii}
+\texttt{Gamma |- A}) for the situations
+where this is a \emph{theorem}, and ``$\Gamma\gdash A$'' (\acro{ascii}
+\texttt{Gamma ?- A}) for
+situations where this is a \emph{goal}.
+\end{definition}
+
+\begin{definition}
+Let $\Delta\vdash A$ be a theorem, let $\Gamma\gdash B$ be a goal. We
+say $\Delta\vdash A$ \define{Achieves} $\Gamma\gdash B$ if for some
+subset $\Gamma'\subset\Gamma$ the sequents $\Gamma\gdash B$ and
+$\Gamma'\gdash A$ are identical up to renaming of bound variables.
+\end{definition}
+
+\begin{definition}
+A \define{Goal Stack} is a finite ordered list of goals. It is common
+to abuse language and refer to the goals appearing in the goal stack
+as \define{Subgoals}, and the goal stack itself as the ``goal''. We
+will henceforth use this convention.
+\end{definition}
+
+\begin{definition}
+A \define{Tactic} is a partial function of the form
+\begin{equation}
+T\colon\mbox{Subgoal}\pto\mbox{Subgoal list}\times\mbox{Validation}
+\end{equation}
+where ``Validation'' refers to a partial function of the form
+\begin{equation}
+V\colon\mbox{\texttt{Thm.t} list}\to\mbox{\texttt{Thm.t}}.
+\end{equation}
+The validation function \emph{is} important, but usually left implicit
+when documenting tactics.
+The LCF and HOL communities use the notation to write a tactic as
+\begin{equation}
+\vcenter{\infer=[T]{\Gamma_{1}\gdash A_{1},\quad\dots\quad,\Gamma_{n}\gdash A_{n}}{\Gamma\gdash A}}
+\end{equation}
+using a double inference line, transforming one goal into multiple
+subgoals (which are pushed onto the goal stack such that $G_{1}\gdash A_{1}$ is the new top of the goal stack).
+\end{definition}
+
+\begin{definition}
+Let $T$ be a tactic. We say the tactic $T$ is \define{Valid} if whenever
+\begin{equation}
+T(G)=([G_{1},\dots,G_{n}], P)
+\end{equation}
+is defined for a [sub]goal $G$, and whenever theorems $\phi_{1}$,
+\dots, $\phi_{n}$ respectively achieve the [sub]goals $G_{1}$, \dots, $G_{n}$,
+then the theorem $P(\phi_{1},\dots,\phi_{n})$ achieves the [sub]goal $G$.
+
+Otherwise, we say $T$ is an \define{Invalid} tactic.
+\end{definition}
+
+\begin{node}
+Note: we will adopt the convention that a goal includes the goal stack
+\emph{and} the composition of the justification functions obtained by
+the iterative application of tactics.
 \end{node}
 
 <<Goal.sig>>=
@@ -126,7 +189,7 @@ conjunction-introduction is the rule
 \end{equation}
 Then the tactic is written with a double inference line
 \begin{equation}
-\vcenter{\infer=[\land\mbox{-intro-tac}]{\Gamma\vdash A, \qquad \Gamma\vdash B}{\Gamma\vdash A\land B}}
+\vcenter{\infer=[\land\mbox{-intro-tac}]{\Gamma\gdash A, \qquad \Gamma\gdash B}{\Gamma\gdash A\land B}}
 \end{equation}
 It begins with a goal trying to prove $A\land B$ under hypotheses
 $\Gamma$, and breaks it down into two subgoals: try to prove $A$ under
@@ -156,6 +219,22 @@ type t = Goal.t -> Goal.t;
 end;
 @
 
+<<tests/TacticSuite.sml>>=
+structure TacticSuite : TestSuite = struct
+val suite = Test.suite "TacticSuite" [
+<<Unit tests for [[Tactic.sml]]>>
+]
+end;
+@
+
+<<Register unit tests>>=
+, TacticSuite.suite
+@
+
+<<Unit tests to run>>=
+tests/TacticSuite.sml
+@
+
 \begin{node}
 We can then prove a formula using a ``proof'' [[pf]], which is just a
 list of tactics. The only subtlety here is that tactics are literally
@@ -166,7 +245,7 @@ reverse order.
 <<Proving a theorem from tactics>>=
 local
   fun tactic_proof (g : Goal.t) pf =
-    Goal.extract_thm(foldr (fn (tac, g') => tac g')
+    Goal.extract_thm(foldl (fn (tac, g') => tac g')
                            g
                            pf);
 in
@@ -176,9 +255,9 @@ end;
 @ %def Tactic.prove
 
 \begin{node}
-When we the current goal requires proving $\Gamma\vdash A\land B$,
-we can transform it into two subgoals: $\Gamma\vdash A$ and
-$\Gamma\vdash B$.
+When the current goal requires proving $\Gamma\gdash A\land B$,
+we can transform it into two subgoals: $\Gamma\gdash A$ and
+$\Gamma\gdash B$.
 
 We also need to modify the justification during this step. We are
 stipulating the user will be able to produce these theorems
@@ -190,7 +269,7 @@ accumulated justification to prove the original claim.
 \end{node}
 
 <<Specification for tactics>>=
-  val and_intro : t;
+val and_intro : t;
 @ 
 
 <<Implementation of tactics>>=
@@ -215,10 +294,10 @@ The $\land$-elimination inference rules, recall, look like:
 \end{equation}
 The corresponding tactics would look like:
 \begin{equation}
-\vcenter{\infer=[\land\mbox{-elim-l-tac}(B)]{\Gamma\vdash A\land B}{\Gamma\vdash A}}
+\vcenter{\infer=[\land\mbox{-elim-l-tac}(B)]{\Gamma\gdash A\land B}{\Gamma\gdash A}}
 \end{equation}
 \begin{equation}
-\vcenter{\infer=[\land\mbox{-elim-r-tac}(A)]{\Gamma\vdash A\land B}{\Gamma\vdash B}}
+\vcenter{\infer=[\land\mbox{-elim-r-tac}(A)]{\Gamma\gdash A\land B}{\Gamma\gdash B}}
 \end{equation}
 These would change the current goal from proving just $\Gamma\vdash A$
 to some conjunction $\Gamma\vdash A\land B$, the user just needs to
@@ -231,8 +310,8 @@ used in the kernel for the inference rules.
 \end{node}
 
 <<Specification for tactics>>=
-  val and_elim_l : Formula.t -> t;
-  val and_elim_r : Formula.t -> t;
+val and_elim_l : Formula.t -> t;
+val and_elim_r : Formula.t -> t;
 @ 
 
 <<Implementation of tactics>>=
@@ -261,7 +340,7 @@ We had some rules for $\Longrightarrow$-introduction ([[disch]]) and
 elimination ([[modus_ponens]]). For the tactic associated with
 [[disch]], we see it should look like
 \begin{equation}
-\vcenter{\infer=[\texttt{disch}(A)]{A,\Gamma\vdash B}{\Gamma\setminus\{A\}\vdash A\implies B}}
+\vcenter{\infer=[\texttt{disch}(A)]{A,\Gamma\gdash B}{\Gamma\setminus\{A\}\gdash A\implies B}}
 \end{equation}
 We are adding $A$ as an assumption (where $A$ is determined from the
 current goal $A\implies B$), so we need a label for it.
@@ -270,7 +349,7 @@ Note that negation $\neg A$ is just an abbreviation for
 $A\implies\bot$ in Intuitionistic logic. So this tactic handles the
 negation situation like:
 \begin{equation}
-\vcenter{\infer=[\mbox{disch}]{A,\Gamma\vdash\bot}{\Gamma\vdash\neg A}}
+\vcenter{\infer=[\mbox{disch}]{A,\Gamma\gdash\bot}{\Gamma\gdash\neg A}}
 \end{equation}
 This is consistent with how HOL handles negated
 formulas.\footnote{Compare to HOL Light \url{https://hol-light.github.io/references/HTML/DISCH_TAC.html}
@@ -278,7 +357,7 @@ and HOL4 \url{https://hol-theorem-prover.org/trindemossen-2-helpdocs/help/Docfil
 \end{node}
 
 <<Specification for tactics>>=
-  val disch : string -> t;
+val disch : string -> t;
 @ 
 
 <<Implementation of tactics>>=
@@ -309,7 +388,62 @@ in
   { goals = (((label, A)::asl, B)::gls)
   , justify = jfn' }
 end
+@
+
+\begin{node}
+We also will want to use an assumption as a hypothesis. This is just
+the tactic counterpart of [[Thm.undisch]].
+\begin{equation*}
+\vcenter{\infer=[\mbox{undisch-lab}(k)]{\Gamma\setminus\{A_{k}\}\gdash A_{k}\implies A}{\Gamma\gdash A}}
+\end{equation*}
+This will remove \emph{all} assumptions which look like $A_{k}$ from
+the current subgoal. However, if there is no assumption with the label
+$k$, an error will be raised.
+
+Similarly, we can just discharge a hypothesis,
+\begin{equation*}
+\vcenter{\infer=[\mbox{undisch}(A_{0})]{\Gamma\setminus\{A_{0}\}\gdash A_{0}\implies A}{\Gamma\gdash A}}
+\end{equation*}
+This will remove all assumptions matching the formula $A_{0}$.
+\end{node}
+
+<<Specification for tactics>>=
+val undisch : Formula.t -> t;
+val undisch_lab : string -> t;
 @ 
+
+<<Implementation of tactics>>=
+(* undisch : Formula.t -> Tactic.t *)
+fun undisch fm {goals = (asl, A)::gls, justify = jfn} =
+  let
+    fun snd (_,y) = y;
+    val asl' = List.filter (not o (Formula.eq fm) o snd) asl;
+    fun jfn' (thm::thms) = jfn((Thm.undisch thm)::thms);
+  in
+    if length asl' = length asl
+    then raise Fail("Tactic.undisch: formula "^
+                    (Formula.serialize fm)^
+                    " is not an assumption")
+    else { goals = (asl', Formula.mk_imp(fm, A))::gls
+         , justify = jfn' }
+  end;
+
+(* undisch_lab : string -> Tactic.t *)
+fun undisch_lab s {goals = (asl, A)::gls, justify = jfn} =
+  let
+    fun iter (acc : (string * Formula.t) list) [] =
+          raise Fail ("Tactic.undisch: no assumption with label '"^s^"'")
+      | iter acc ((a as (l,fm))::asls) =
+          if s = l
+          then (fm, List.revAppend(acc, asls))
+          else iter (a::acc) asls;
+    val (fm, asl') = iter [] asl;
+    fun jfn' (thm::thms) = jfn((Thm.undisch thm)::thms);
+  in
+    { goals = (asl', Formula.mk_imp(fm, A))::gls
+    , justify = jfn' }
+  end;
+@ %def Tactic.undisch Tactic.undisch_lab
 
 \begin{node}
 The [[modus_ponens]] inference rule,
@@ -318,14 +452,14 @@ The [[modus_ponens]] inference rule,
 \end{equation}
 has a corresponding tactic
 \begin{equation}
-\vcenter{\infer=[\texttt{modus\_ponens}(A)]{\Gamma\vdash A\implies B,\qquad\Gamma\vdash A}{\Gamma\vdash B}}
+\vcenter{\infer=[\texttt{modus\_ponens}(A)]{\Gamma\gdash A\implies B,\qquad\Gamma\vdash A}{\Gamma\gdash B}}
 \end{equation}
-This changes the goal from trying to prove $\Gamma\vdash B$ to two
-subgoals $\Gamma\vdash A\implies B$ and $\Gamma\vdash A$.
+This changes the goal from trying to prove $\Gamma\gdash B$ to two
+subgoals $\Gamma\gdash A\implies B$ and $\Gamma\gdash A$.
 \end{node}
 
 <<Specification for tactics>>=
-  val modus_ponens : Formula.t -> t;
+val modus_ponens : Formula.t -> t;
 @ 
 
 <<Implementation of tactics>>=
@@ -345,7 +479,7 @@ Well, \textit{modus ponens} can be a little annoying to use,
 especially if you have a theorem handy which proves $\Gamma'\vdash A$,
 so HOL provers typically use a modified variant of the tactic:
 \begin{equation*}
-\vcenter{\infer=[\mbox{MP}(\Gamma'\vdash A)]{\Gamma\vdash A\implies B}{\Gamma\vdash B}}
+\vcenter{\infer=[\mbox{MP}(\Gamma'\vdash A)]{\Gamma\gdash A\implies B}{\Gamma\gdash B}}
 \end{equation*}
 where $\Gamma'\subset\Gamma$ (and the tactic fails otherwise).
 \end{node}
@@ -377,7 +511,7 @@ Disjunction elimination is a bit tricky as an inference rule,
 \end{equation}
 But as a tactic, we can transform it to:
 \begin{equation}
-\vcenter{\infer=[\lor\mbox{-elim}?]{\Gamma_{1}\vdash A\implies C,\quad\Gamma_{2}\vdash B\implies C}{\Gamma_{1}\cup\Gamma_{2}\vdash(A\lor B)\implies C}}
+\vcenter{\infer=[\lor\mbox{-elim}?]{\Gamma_{1}\gdash A\implies C,\quad\Gamma_{2}\gdash B\implies C}{\Gamma_{1}\cup\Gamma_{2}\gdash(A\lor B)\implies C}}
 \end{equation}
 In practice, we often use the modified inference rule
 \begin{equation}
@@ -388,7 +522,7 @@ $\lor$-elimination, and adds a premise for the disjunction. Then using
 \textit{modus ponens} and the usual $\lor$-elimination, we obtain our
 new version of $\lor$-elimination. The tactic is then
 \begin{equation}
-\vcenter{\infer=[\lor\mbox{-elim}(\Gamma\vdash A\lor B)]{\Gamma\vdash A\implies C,\quad\Gamma\vdash B\implies C}{\Gamma\vdash C}}
+\vcenter{\infer=[\lor\mbox{-elim}(\Gamma\vdash A\lor B)]{\Gamma\gdash A\implies C,\quad\Gamma\gdash B\implies C}{\Gamma\gdash C}}
 \end{equation}
 which matches what can be found in, e.g., HOL.\footnote{See, e.g., HOL
 Light \url{https://hol-light.github.io/references/HTML/DISJ_CASES_TAC.html};
@@ -399,7 +533,7 @@ $\lor$-elimination in practice (as a [[per cases]] argument).
 \end{node}
 
 <<Specification for tactics>>=
-  val disj_cases : Thm.t -> t;
+val disj_cases : Thm.t -> t;
 @ 
 
 <<Implementation of tactics>>=
@@ -422,10 +556,10 @@ fun disj_cases thm {goals = (asl, C)::gls, justify = jfn} =
 We also have two tactics corresponding to the disjunction introduction
 rules
 \begin{equation}
-\vcenter{\infer=[\lor\mbox{-intro-l}]{\Gamma\vdash A}{\Gamma\vdash A\lor B}}
+\vcenter{\infer=[\lor\mbox{-intro-l}]{\Gamma\gdash A}{\Gamma\gdash A\lor B}}
 \end{equation}
 \begin{equation}
-\vcenter{\infer=[\lor\mbox{-intro-r}]{\Gamma\vdash B}{\Gamma\vdash A\lor B}}
+\vcenter{\infer=[\lor\mbox{-intro-r}]{\Gamma\gdash B}{\Gamma\gdash A\lor B}}
 \end{equation}
 \end{node}
 % https://hol-light.github.io/references/HTML/DISJ1_TAC.html
@@ -458,11 +592,43 @@ fun or_r {goals = (asl, A_or_B)::gls, justify = jfn} =
   end;
 @ %def Tactic.or_l Tactic.or_r
 
+\begin{node}
+There are various ways to ``close'' a tactics proof: we can supply a
+theorem which satisfies the goal, we can observe that we can solve the
+goal with a suitable invocation [[Thm.assume]], and many other
+ways. We will focus on the [[assume]] tactic,
+\begin{equation*}
+\vcenter{\infer=[\mbox{assume}]{}{\Gamma\gdash A}}
+\end{equation*}
+assuming $A\in\Gamma$. This tactic will fail otherwise. The user does
+not need to supply $A$ (since it's known!). Further, this will ``pop''
+the goal stack.
+\end{node}
+
+<<Specification for tactics>>=
+val assume : t;
+@ 
+
+<<Implementation of tactics>>=
+fun assume {goals = (asl, A)::gls, justify = jfn} =
+  if not(List.exists (fn (_,B) => Formula.eq A B) asl)
+  then raise Fail "Tactic.assume: goal is not among assumptions"
+  else
+    let
+      val hyps = map (fn (_,fm) => fm) asl;
+      val hyps' = List.filter (not o (Formula.eq A)) hyps;
+      fun jfn' thms = jfn((Thm.assume A hyps')::thms);
+    in
+      { goals = gls
+      , justify = jfn' }
+    end;
+@ %def Tactic.assume
+
 % contr
 \begin{node}
 The explosion principle as a tactic.
 \begin{equation}
-\vcenter{\infer=[\mbox{contr}(\Gamma_{0}\vdash\bot)]{}{\Gamma\vdash A}}
+\vcenter{\infer=[\mbox{contr}(\Gamma_{0}\vdash\bot)]{}{\Gamma\gdash A}}
 \end{equation}
 where $\Gamma_{0}\subset\Gamma$. If $\Gamma_{0}\not\subset\Gamma$,
 then this tactic will fail. Also, if the theorem supplied does not
@@ -517,15 +683,15 @@ end;
 @ %def assumptions_contain_hypotheses
 
 \begin{node}
-We can transform the subgoal $\Gamma\vdash A\iff B$ into two subgoals
-$A\implies B$ and $B\implies A$,
+We can transform the subgoal $\Gamma\gdash A\iff B$ into two subgoals
+$\Gamma\gdash A\implies B$ and $\Gamma\gdash B\implies A$,
 \begin{equation}
-\vcenter{\infer=[\mbox{iff}]{\Gamma\vdash A\implies B,\qquad\Gamma\vdash B\implies A}{\Gamma\vdash A\iff B}}
+\vcenter{\infer=[\mbox{iff}]{\Gamma\gdash A\implies B,\qquad\Gamma\gdash B\implies A}{\Gamma\gdash A\iff B}}
 \end{equation}
-The reverse tactic has a subgoal be $\Gamma\vdash B$ and then for any
-formula $A$ transforms it to $\Gamma\vdash A\iff B$,
+The reverse tactic has a subgoal be $\Gamma\gdash B$ and then for any
+formula $A$ transforms it to $\Gamma\gdash A\iff B$,
 \begin{equation}
-\vcenter{\infer=[\mbox{iff-mp}(A)]{\Gamma\vdash A\iff B}{\Gamma\vdash B}}
+\vcenter{\infer=[\mbox{iff-mp}(A)]{\Gamma\gdash A\iff B}{\Gamma\gdash B}}
 \end{equation}
 I'm not certain how useful this second tactic would be.
 % https://hol-light.github.io/references/HTML/EQ_TAC.html
@@ -554,20 +720,20 @@ fun iff {goals = (asl, A_iff_B)::gls, justify = jfn} =
 The last tactics which need discussing concern themselves with quantifiers.
 We will first focus on universal quantifiers.
 
-When the current goal is $\Gamma\vdash\forall x\ldotp A$, we find a
+When the current goal is $\Gamma\gdash\forall x\ldotp A$, we find a
 fresh variable $x'$ (usually $x$) for $x$ and transform the goal to
-$\Gamma\vdash A[x'/x]$. This is the reverse of $\forall$-introduction,
+$\Gamma\gdash A[x'/x]$. This is the reverse of $\forall$-introduction,
 but since it proves the ``generalization'' of a claim, we'll refer to
 it as the \define{Generalization Tactic}:
 \begin{equation}
-\vcenter{\infer=[\mbox{gen}]{\Gamma\vdash A[x'/x]}{\Gamma\vdash\forall x\ldotp A}}
+\vcenter{\infer=[\mbox{gen}]{\Gamma\gdash A[x'/x]}{\Gamma\gdash\forall x\ldotp A}}
 \end{equation}
-Conversely, if we want to transform the current goal $\Gamma\vdash A$
-into $\Gamma\vdash\forall x\ldotp A[x/t]$ where $t$ is a term and $x$
+Conversely, if we want to transform the current goal $\Gamma\gdash A$
+into $\Gamma\gdash\forall x\ldotp A[x/t]$ where $t$ is a term and $x$
 is a variable, then we're really applying the specialization inference
 rule ($\forall$-elimination).
 \begin{equation}
-\vcenter{\infer=[\mbox{spec}(t,x)]{\Gamma\vdash\forall x\ldotp A[x/t]}{\Gamma\vdash A}}
+\vcenter{\infer=[\mbox{spec}(t,x)]{\Gamma\gdash\forall x\ldotp A[x/t]}{\Gamma\gdash A}}
 \end{equation}
 Note that ``spec'' fails when $t$ and $x$ are of different sorts.
 \end{node}
@@ -605,7 +771,7 @@ fun spec (t, x) {goals = (asl, A)::gls, justify = jfn} =
 Existential quantifier tactics. The tactic corresponding to the
 \emph{derived} $\exists$-elimination rule:
 \begin{equation}
-\vcenter{\infer=[\mbox{choose}(\Gamma'\vdash\exists x\ldotp A)]{(A[x'/x]),\Gamma\vdash B}{\Gamma\vdash B}}
+\vcenter{\infer=[\mbox{choose}(\Gamma'\vdash\exists x\ldotp A)]{(A[x'/x]),\Gamma\gdash B}{\Gamma\gdash B}}
 \end{equation}
 Care must be taken: although this corresponds to
 $\exists$-elimination, the form of $\exists$-elimination in the kernel
@@ -613,7 +779,7 @@ does not adequately match this tactic.
 
 The tactic corresponding to $\exists$-introduction:
 \begin{equation}
-\vcenter{\infer=[\mbox{exists}(t)]{\Gamma\vdash A[t/x]}{\Gamma\vdash\exists x\ldotp A}}
+\vcenter{\infer=[\mbox{exists}(t)]{\Gamma\gdash A[t/x]}{\Gamma\gdash\exists x\ldotp A}}
 \end{equation}
 \end{node}
 % https://hol-light.github.io/references/HTML/CHOOSE_TAC.html
@@ -657,6 +823,43 @@ can do with the kernel's inference rules can also be done using these
 tactics. [Hint: it's probably easiest to first prove we can derive the kernel's $\exists$-elimination rule~(\S\ref{node:kernel:existential-elimination}) from the derived $\exists$-elimination rule (\S\ref{node:derived:existential-elimination}).]
 \end{xca}
 
+\begin{node}
+Lastly, we will want to \emph{name} hypotheses automatically. These
+autogenerated labels will be of the form \texttt{H0}, \texttt{H1},
+\texttt{H2}, \dots, provided there are no ``collisions'' with the labels.
+\end{node}
+
+<<Specification for tactics>>=
+val autolabel : t;
+@ 
+
+<<Implementation of tactics>>=
+(* autolabel : t
+
+Assign labels to un-named assumptions. *)
+fun autolabel {goals = (asl, A)::gls, justify = jfn} =
+  let
+    val labels = List.filter (fn s => s <> "")
+                             (map (fn (s,_) => s) asl);
+    fun generate n labs =
+      let val guess = "H"^(Int.toString n)
+      in if List.exists (fn s => s = guess) labs
+         then generate (n + 1) labs
+         else (n, guess)
+      end;
+    fun iter n labs acc [] = rev acc
+      | iter n labs acc ((lab,fm)::asls) =
+          if lab = ""
+          then let val (n',lab') = generate n labs
+               in iter (n' + 1) (lab'::labs) ((lab',fm)::acc) asls end
+          else iter n labs ((lab,fm)::acc) asls;
+    val asl' = iter 0 labels [] asl;
+  in
+    { goals = (asl', A)::gls
+    , justify = jfn }
+  end;
+@ %def Tactic.autolabel
+
 \begin{problem}
 How exactly do we ``use'' assumptions in a tactics proof?
 \end{problem}
@@ -686,7 +889,7 @@ assumptions for the subgoal.)
 \end{node}
 
 \begin{node}
-Suppose our goal is of the form $A_{1},\dots,A_{n}\vdash^{\mkern-8.75mu\scriptstyle\rule[-.9ex]{0pt}{0pt}?} A$ and this
+Suppose our goal is of the form $A_{1},\dots,A_{n}\gdash A$ and this
 is really the same as a theorem $A'_{1},\dots,A'_{m}\vdash A'$ where
 $m\leq n$ and there is some injective map $\pi\colon\{1,\dots,m\}\to\{1,\dots,n\}$
 such that $A'_{i}$ looks like $A_{\pi(i)}$. We want to essentially
@@ -706,9 +909,76 @@ This would give us some [[match]] derived rule of inference, which we
 can then turn into a tactic.
 \end{node}
 
-
-
 \begin{node}[References]
 For more about tactics, it is useful to see how other LCF-style
 provers employ them. See, e.g., Chapter 4 of HOL's description~\cite{HOLdescription}.
 \end{node}
+
+\begin{node}
+How do we know these tactics, you know, actually work? Well, we can
+check they work as expected by rewriting some of our derived theorems
+using our tactics. Although this isn't a proof of correctness, it will
+at least give some confidence our code isn't completely wrong. For a
+few examples, let us consider the commutativity of conjunction.
+
+We will provide the same proof as in \texttt{Derived.sml}
+(\S\ref{node:derived.nw:and-comm}) but done twice: once using the
+\texttt{Goal} module to setup and extract the theorem, the second time
+using the \texttt{Tactic.prove} helper function. This will test
+\emph{both} the tactics involved in the proof \emph{and} the
+``infrastructure'' associated with ``packaging'' them into theorems.
+
+Why not rework the entire \texttt{Derived.sml} module to use tactics
+proofs instead? Well, the astute reader will realize that
+[[Thm.assume]] is being invoked \emph{twice} but we only need to use
+it \emph{once}. This will produce slightly more overhead if we use the
+tactics-based proofs.
+\end{node}
+
+<<Unit tests for [[Tactic.sml]]>>=
+  Test.mk "and_comm test" (fn () =>
+    let
+      val A = Formula.mk_pred("A", []);
+      val B = Formula.mk_pred("B", []);
+      val expected = Formula.mk_imp(Formula.mk_and(A, B),
+                                    Formula.mk_and(B, A));
+      val g0 = Goal.setup expected;
+      val g1 = Tactic.disch "" g0;
+      val g2 = Tactic.and_intro g1;
+      val g3 = Tactic.and_elim_r A g2;
+      val g4 = Tactic.assume g3;
+      val g5 = Tactic.and_elim_l B g4;
+      val g6 = Tactic.assume g5;
+      val thm = Goal.extract_thm g6;
+      val actual = Thm.concl thm;
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["EXPECTED: ",
+                           Formula.serialize expected,
+                           "\nACTUAL: ",
+                           Formula.serialize actual,
+                           "\n"])
+    end)
+, Test.mk "and_comm Tactic.prove test" (fn () =>
+    let
+      val A = Formula.mk_pred("A", []);
+      val B = Formula.mk_pred("B", []);
+      val expected = Formula.mk_imp(Formula.mk_and(A, B),
+                                    Formula.mk_and(B, A));
+      val thm = Tactic.prove expected
+                             [ Tactic.disch ""
+                             , Tactic.and_intro
+                             , Tactic.and_elim_r A
+                             , Tactic.assume
+                             , Tactic.and_elim_l B
+                             , Tactic.assume];
+      val actual = Thm.concl thm;
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["EXPECTED: ",
+                           Formula.serialize expected,
+                           "\nACTUAL: ",
+                           Formula.serialize actual,
+                           "\n"])
+    end)
+@ 

@@ -9,6 +9,7 @@ tests/MkRunner.sml
 tests/TestSuite.sig
 common.mlb
 tests/DerivedSuite.sml
+tests/TacticSuite.sml
 tests/ClassicalSuite.sml
 tests/main.sml
 src/main.sml

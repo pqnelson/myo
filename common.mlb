@@ -9,8 +9,6 @@ src/FS0.sml
 src/Thm.sig
 src/Thm.sml
 src/Derived.sml
-src/Printer.sig
-src/TBPrinter.sml
 src/Goal.sig
 src/Goal.sml
 src/Tactic.sig
@@ -19,3 +17,5 @@ src/Unif.sig
 src/Unif.sml
 src/Classical.sig
 src/Classical.sml
+src/Printer.sig
+src/TBPrinter.sml

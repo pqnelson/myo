@@ -21,6 +21,11 @@
 
 \noweboptions{longxref,english,breakcode,externalindex,smallcode}
 
+\newcommand\gdash{\mathrel{?\!-}} % goals
+% gdash alternative?
+% \vdash^{\mkern-8.75mu\scriptstyle\rule[-.9ex]{0pt}{0pt}?}
+\let\pto\rightharpoonup % partial functions
+
 \makeatletter
 \let\og@doi\doi
 \def\doi#1{\texttt{\og@doi{#1}}}
@@ -80,9 +85,12 @@
 \lastupdate{\today}
 \email{yakshaversguild@gmail.com}
 \thanks{This is part of the Yak Shavers' Guild project.}
-\subjclass[2020]{Primary 68N19; % Other programming paradigms (object-oriented, sequential, concurrent, automatic, etc.)
-Secondary 97P40, % Programming languages (educational aspects)
-97P50% Programming techniques (educational aspects)
+%% \subjclass[2020]{Primary 68N19; % Other programming paradigms (object-oriented, sequential, concurrent, automatic, etc.)
+%% Secondary 97P40, % Programming languages (educational aspects)
+%% 97P50% Programming techniques (educational aspects)
+%% }
+\subjclass[2020]{Primary 68V15; % Theorem proving (automated and interactive theorem provers, deduction, resolution, etc.) 
+Secondary 03E99% Other set theory
 }
 
 \begin{document}

@@ -27,7 +27,7 @@ signature Printer = sig
   val term : Term.t -> string;
   val formula : Formula.t -> string;
   val thm : Thm.t -> string;
-  val goals : ((string * Formula.t) list * Formula.t) list -> string;
+  val goals : Goal.t -> string;
 end;
 \nwnotused{Printer.sig}\nwidentuses{\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW24q7Pv-3x49D5-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW24q7Pv-3x49D5-1}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW24q7Pv-3x49D5-1}\nwendcode{}\nwbegindocs{2}\nwdocspar
 
@@ -73,6 +73,11 @@ Similarly $A\lor B\land C$ means $A\lor(B\land C)$.
 We wish to be careful: for implications and logical equivalence, if
 either subformula is another implication (or logical equivalence),
 then we include the parentheses for clarity.
+
+Note we will be using \acro{utf}-8 encoding of the various logical
+symbols and quantifiers, which in \SML/ have the form {\Tt{}{\nwbackslash}u00XX\nwendquote} where
+\texttt{XX} is a 2-character hexadecimal number. We will glide over
+the sordid details of \acro{utf}-8.
 \end{node}
 
 \nwenddocs{}\nwbegincode{7}\sublabel{NW24q7Pv-14xJt9-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW24q7Pv-14xJt9-1}}}\moddef{TBPrinter for a formula~{\nwtagstyle{}\subpageref{NW24q7Pv-14xJt9-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW24q7Pv-3JbCWS-1}}\nwenddeflinemarkup
@@ -199,13 +204,13 @@ local
               (single (asl, fm)) ^
               (if List.null gls then "" else "\\n"))
              gls;
+  fun subgoals [] = "No more goals"
+    | subgoals [g] = single g
+    | subgoals gls = iter 1 "" gls; 
 in
-fun goals [] = "No more goals"
-  | goals [g] = single g
-  | goals gls = iter 1 "" gls
+fun goals g = subgoals (Goal.subgoals g)
 end;
 \nwindexdefn{\nwixident{TBPrinter.goals}}{TBPrinter.goals}{NW24q7Pv-3yfJXJ-1}\eatline
-
 \nwused{\\{NW24q7Pv-3JbCWS-1}}\nwidentdefs{\\{{\nwixident{TBPrinter.goals}}{TBPrinter.goals}}}\nwendcode{}
 
 \nwixlogsorted{c}{{Gathering bound variables for pretty printing}{NW24q7Pv-2b9skq-1}{\nwixu{NW24q7Pv-14xJt9-1}\nwixd{NW24q7Pv-2b9skq-1}}}%

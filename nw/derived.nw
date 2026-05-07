@@ -515,7 +515,7 @@ fun and_thm A B =
   end;
 @ %def Derived.and_thm
 
-\begin{node}
+\begin{node}\label{node:derived.nw:and-comm}
 $\vdash A\land B\implies B\land A$
 \end{node}
 

@@ -11,6 +11,7 @@ structure Runner :> TestRunner = MkRunner(JUnitTt);
 val tests : Test.t list = tl [
   Test.suite "" []
 , DerivedSuite.suite
+, TacticSuite.suite
 , ClassicalSuite.suite
 ];
 
