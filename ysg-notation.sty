@@ -24,10 +24,12 @@
 \DeclareMathOperator\dom{dom}
 \DeclareMathOperator\id{id}
 \DeclareMathOperator\powerset{\mathcal{P}}
+\let\pto\rightharpoonup % partial functions
 \newcommand\N{\mathbb{N}}
 \newcommand\Z{\mathbb{Z}}
 \newcommand\concat{\mathbin{\frown}}
 \DeclareMathOperator\Seg{Seg}
+\newcommand\gdash{\mathrel{?\!-}} % goals
 
 \RequirePackage{relsize}
 \def\mc{\smaller}
@@ -50,6 +52,15 @@
 \def\SML/{{Standard~ML\spacefactor1000}}
 \def\WEB{\texttt{WEB\spacefactor1000}}
 \def\HTML{{\mc HTML\spacefactor1000}} % ltugboat.cls
+\def\XML{{\mc XML\spacefactor1000}} % ltugboat.cls
+\def\ASCII{{\mc ASCII\spacefactor1000}} % ltugboat.cls
+\newcommand\UTF{\acro{UTF}\futurelet\@nextchar\@tbUTFcheck}
+  \def\@tbUTFcheck{\ifx\@nextchar-%
+                      \mbox{-}\let\next=\tbgobbledash
+                    \else
+                      \let\next=\empty
+                    \fi\next}
+  \def\tbgobbledash-{} % ltugboat.cls
 \def\ARM/{{ARM\spacefactor1000}}
 \def\RISC/{{RISC\spacefactor1000}}
 \def\VAX/{{V\kern-.12em A\kern-.1em X\spacefactor1000}} % ltugcomn.sty

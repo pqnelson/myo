@@ -43,9 +43,9 @@ Let us make these notions more rigorous, as befits a Mathematician.
 \begin{definition}
 A \define{Goal} is a sequent of the form $(\Gamma,A)$ (interpreted as
 ``prove $A$ from assumptions $\Gamma$''). We will try (and probably
-fail) to reserve the notation ``$\Gamma\vdash A$'' (\acro{ascii}
+fail) to reserve the notation ``$\Gamma\vdash A$'' (\ASCII\
 \texttt{Gamma |- A}) for the situations
-where this is a \emph{theorem}, and ``$\Gamma\gdash A$'' (\acro{ascii}
+where this is a \emph{theorem}, and ``$\Gamma\gdash A$'' (\ASCII\
 \texttt{Gamma ?- A}) for
 situations where this is a \emph{goal}.
 \end{definition}
@@ -75,7 +75,7 @@ V\colon\mbox{\texttt{Thm.t} list}\to\mbox{\texttt{Thm.t}}.
 \end{equation}
 The validation function \emph{is} important, but usually left implicit
 when documenting tactics.
-The LCF and HOL communities use the notation to write a tactic as
+The LCF and \HOL\ communities use the notation to write a tactic as
 \begin{equation}
 \vcenter{\infer=[T]{\Gamma_{1}\gdash A_{1},\quad\dots\quad,\Gamma_{n}\gdash A_{n}}{\Gamma\gdash A}}
 \end{equation}
@@ -351,7 +351,7 @@ negation situation like:
 \begin{equation}
 \vcenter{\infer=[\mbox{disch}]{A,\Gamma\gdash\bot}{\Gamma\gdash\neg A}}
 \end{equation}
-This is consistent with how HOL handles negated
+This is consistent with how \HOL\ handles negated
 formulas.\footnote{Compare to HOL Light \url{https://hol-light.github.io/references/HTML/DISCH_TAC.html}
 and HOL4 \url{https://hol-theorem-prover.org/trindemossen-2-helpdocs/help/Docfiles/HTML/Tactic.DISCH_TAC.html}}
 \end{node}
@@ -477,7 +477,7 @@ fun modus_ponens A \{goals = (asl, B)::gls, justify = jfn\} =
 \begin{node}\label{node:tactic:MP}
 Well, \textit{modus ponens} can be a little annoying to use,
 especially if you have a theorem handy which proves $\Gamma'\vdash A$,
-so HOL provers typically use a modified variant of the tactic:
+so \HOL\ provers typically use a modified variant of the tactic:
 \begin{equation*}
 \vcenter{\infer=[\mbox{MP}(\Gamma'\vdash A)]{\Gamma\gdash A\implies B}{\Gamma\gdash B}}
 \end{equation*}
@@ -524,7 +524,7 @@ new version of $\lor$-elimination. The tactic is then
 \begin{equation}
 \vcenter{\infer=[\lor\mbox{-elim}(\Gamma\vdash A\lor B)]{\Gamma\gdash A\implies C,\quad\Gamma\gdash B\implies C}{\Gamma\gdash C}}
 \end{equation}
-which matches what can be found in, e.g., HOL.\footnote{See, e.g., HOL
+which matches what can be found in, e.g., \HOL.\footnote{See, e.g., HOL
 Light \url{https://hol-light.github.io/references/HTML/DISJ_CASES_TAC.html};
 HOL4 \url{https://hol-theorem-prover.org/trindemossen-2-helpdocs/help/Docfiles/HTML/Tactic.DISJ_CASES_TAC.html}}
 
@@ -874,7 +874,7 @@ with the theorem $A_{3}\vdash A_{3}$ by ``{\Tt{}Thm.assume\nwendquote} $A_{3}$ \
 \begin{node}
 More broadly, there is a related problem: suppose the current subgoal
 is already proven as a theorem elsewhere? How do we ``solve'' the
-subgoal \emph{using} that theorem? HOL family provers use the
+subgoal \emph{using} that theorem? \HOL\ family provers use the
 {\Tt{}ACCEPT{\_}TAC\nwendquote} to accomplish this.
 
 However, it is not hard to imagine situations where the variables
@@ -910,8 +910,10 @@ can then turn into a tactic.
 \end{node}
 
 \begin{node}[References]
-For more about tactics, it is useful to see how other LCF-style
-provers employ them. See, e.g., Chapter 4 of HOL's description~\cite{HOLdescription}.
+Milner~\cite{milner1984use} remains a classic reference on goals and
+tactics in theorem proving.
+For more about \emph{actual} tactics, it is useful to see how other LCF-style
+provers employ them. See, e.g., Chapter 4 of \HOL's description~\cite{HOLdescription}.
 \end{node}
 
 \begin{node}

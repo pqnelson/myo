@@ -28,9 +28,12 @@
 
 \ProcessOptions\relax
 
+\RequirePackage{amssymb}
+\RequirePackage{proof}
 \RequirePackage{marginnote}
 \RequirePackage{ifpdf}
 \RequirePackage[\ifpdf\else dvipdfmx\fi]{hyperref}
+\RequirePackage{doi}
 %% Barbara Beeton's hack https://tex.stackexchange.com/a/331608/14751
 \def\patch@ams@spacing{\AtBeginDocument{%
   \labelsep=5pt\relax

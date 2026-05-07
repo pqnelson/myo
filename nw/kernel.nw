@@ -70,7 +70,7 @@ $\Gamma_{1}\cup\Gamma_{2}$ (implemented as ``[[Gamma1 @@ Gamma2]]'')
 and removing hypotheses $\Gamma\setminus\{\phi\}$ (implemented as``[[remove phi Gamma]]'').
 I think a slightly more optimized version would sort the hypotheses,
 to remove duplicate entries faster. But this would add
-an additional $\mathcal{O}(n\log n)$ runtime to each invocation.
+an additional $\bigOh(n\log n)$ runtime to each invocation.
 \end{node}
 
 <<Inference rules>>=
