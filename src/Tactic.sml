@@ -61,7 +61,7 @@ fun disch (label : string) { goals = (asl, A_imp_B)::gls
   else if Formula.is_not A_imp_B
   then let
          val A = Formula.dest_not A_imp_B;
-         fun jfn' (th::thms) = jfn ((Thm.disch A (Thm.not_elim th))::thms);
+         fun jfn' (th::thms) = jfn ((Thm.not_intro (Thm.disch A th))::thms);
        in
          { goals = (((label, A)::asl, Formula.mk_falsum())::gls)
          , justify = jfn' }
@@ -119,6 +119,27 @@ fun mp thm {goals = (asl, B)::gls, justify = jfn} =
       { goals = (asl, A_imp_B)::gls
       , justify = jfn' }
     end;
+(* not_intro : Tactic.t *)
+fun not_intro {goals = (asl, not_A)::gls, justify = jfn} =
+  let
+    val A = Formula.dest_not not_A;
+    fun jfn' (thm::thms) = jfn((Thm.not_intro thm)::thms);
+  in
+    { goals = (asl, Formula.mk_imp(A, Formula.mk_falsum ()))::gls
+    , justify = jfn' }
+  end;
+(* not_elim : Tactic.t *)
+fun not_elim {goals = (asl, A_imp_F)::gls, justify = jfn} =
+  let
+    val (A,F) = Formula.dest_imp A_imp_F;
+    val _ = if Formula.is_falsum F
+            then ()
+            else raise Fail("Tactic.not_elim: goal does not imply falsum");
+    fun jfn' (thm::thms) = jfn((Thm.not_elim thm)::thms);
+  in
+    { goals = (asl, Formula.mk_not(A))::gls
+    , justify = jfn' }
+  end;
 fun disj_cases thm {goals = (asl, C)::gls, justify = jfn} =
   let
     val A_or_B = Thm.concl thm;

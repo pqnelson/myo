@@ -73,5 +73,28 @@ val suite = Test.suite "TacticSuite" [
                            Formula.serialize actual,
                            "\n"])
     end)
+, Test.mk "contrapositive_not Tactics.prove" (fn () =>
+    let
+      val A = Formula.mk_pred("A", []);
+      val B = Formula.mk_pred("B", []);
+      val expected = Formula.mk_imp(Formula.mk_imp(A,Formula.mk_not(B)),
+                                    Formula.mk_imp(B,Formula.mk_not(A)));
+      val thm = Tactic.prove expected
+                             [ Tactic.disch ""
+                             , Tactic.disch ""
+                             , Tactic.disch ""
+                             , Tactic.undisch B
+                             , Tactic.not_elim
+                             , Tactic.undisch A
+                             , Tactic.assume ];
+      val actual = Thm.concl thm;
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["EXPECTED: ",
+                           Formula.serialize expected,
+                           "\nACTUAL: ",
+                           Formula.serialize actual,
+                           "\n"])
+    end)
 ]
 end;

@@ -270,7 +270,7 @@ accumulated justification to prove the original claim.
 
 \nwenddocs{}\nwbegincode{17}\sublabel{NW1F32vJ-2kzjE-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-1}}}\moddef{Specification for tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-VKxLl-1}}\nwprevnextdefs{\relax}{NW1F32vJ-2kzjE-2}\nwenddeflinemarkup
 val and_intro : t;
-\nwalsodefined{\\{NW1F32vJ-2kzjE-2}\\{NW1F32vJ-2kzjE-3}\\{NW1F32vJ-2kzjE-4}\\{NW1F32vJ-2kzjE-5}\\{NW1F32vJ-2kzjE-6}\\{NW1F32vJ-2kzjE-7}\\{NW1F32vJ-2kzjE-8}\\{NW1F32vJ-2kzjE-9}\\{NW1F32vJ-2kzjE-A}\\{NW1F32vJ-2kzjE-B}\\{NW1F32vJ-2kzjE-C}\\{NW1F32vJ-2kzjE-D}\\{NW1F32vJ-2kzjE-E}}\nwused{\\{NW1F32vJ-VKxLl-1}}\nwendcode{}\nwbegindocs{18}\nwdocspar
+\nwalsodefined{\\{NW1F32vJ-2kzjE-2}\\{NW1F32vJ-2kzjE-3}\\{NW1F32vJ-2kzjE-4}\\{NW1F32vJ-2kzjE-5}\\{NW1F32vJ-2kzjE-6}\\{NW1F32vJ-2kzjE-7}\\{NW1F32vJ-2kzjE-8}\\{NW1F32vJ-2kzjE-9}\\{NW1F32vJ-2kzjE-A}\\{NW1F32vJ-2kzjE-B}\\{NW1F32vJ-2kzjE-C}\\{NW1F32vJ-2kzjE-D}\\{NW1F32vJ-2kzjE-E}\\{NW1F32vJ-2kzjE-F}}\nwused{\\{NW1F32vJ-VKxLl-1}}\nwendcode{}\nwbegindocs{18}\nwdocspar
 
 \nwenddocs{}\nwbegincode{19}\sublabel{NW1F32vJ-3Cb3oS-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-1}}}\moddef{Implementation of tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-2XH0oT-1}}\nwprevnextdefs{\relax}{NW1F32vJ-3Cb3oS-2}\nwenddeflinemarkup
 (* and_intro : Goal.t -> Goal.t *)
@@ -283,7 +283,7 @@ fun and_intro \{goals = ((asl, and_p_q)::gls), justify\} =
     , justify = jfn' \}
   end;
 \nwindexdefn{\nwixident{Tactic.and{\_}intro}}{Tactic.and:unintro}{NW1F32vJ-3Cb3oS-1}\eatline
-\nwalsodefined{\\{NW1F32vJ-3Cb3oS-2}\\{NW1F32vJ-3Cb3oS-3}\\{NW1F32vJ-3Cb3oS-4}\\{NW1F32vJ-3Cb3oS-5}\\{NW1F32vJ-3Cb3oS-6}\\{NW1F32vJ-3Cb3oS-7}\\{NW1F32vJ-3Cb3oS-8}\\{NW1F32vJ-3Cb3oS-9}\\{NW1F32vJ-3Cb3oS-A}\\{NW1F32vJ-3Cb3oS-B}\\{NW1F32vJ-3Cb3oS-C}\\{NW1F32vJ-3Cb3oS-D}\\{NW1F32vJ-3Cb3oS-E}}\nwused{\\{NW1F32vJ-2XH0oT-1}}\nwidentdefs{\\{{\nwixident{Tactic.and{\_}intro}}{Tactic.and:unintro}}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}}}\nwindexuse{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}{NW1F32vJ-3Cb3oS-1}\nwendcode{}\nwbegindocs{20}\nwdocspar
+\nwalsodefined{\\{NW1F32vJ-3Cb3oS-2}\\{NW1F32vJ-3Cb3oS-3}\\{NW1F32vJ-3Cb3oS-4}\\{NW1F32vJ-3Cb3oS-5}\\{NW1F32vJ-3Cb3oS-6}\\{NW1F32vJ-3Cb3oS-7}\\{NW1F32vJ-3Cb3oS-8}\\{NW1F32vJ-3Cb3oS-9}\\{NW1F32vJ-3Cb3oS-A}\\{NW1F32vJ-3Cb3oS-B}\\{NW1F32vJ-3Cb3oS-C}\\{NW1F32vJ-3Cb3oS-D}\\{NW1F32vJ-3Cb3oS-E}\\{NW1F32vJ-3Cb3oS-F}}\nwused{\\{NW1F32vJ-2XH0oT-1}}\nwidentdefs{\\{{\nwixident{Tactic.and{\_}intro}}{Tactic.and:unintro}}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}}}\nwindexuse{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}{NW1F32vJ-3Cb3oS-1}\nwendcode{}\nwbegindocs{20}\nwdocspar
 \begin{node}
 The $\land$-elimination inference rules, recall, look like:
 \begin{equation}
@@ -373,12 +373,12 @@ fun disch (label : string) \{ goals = (asl, A_imp_B)::gls
 \nwenddocs{}\nwbegincode{29}\sublabel{NW1F32vJ-1G1Cmu-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-1G1Cmu-1}}}\moddef{Tactic for negation~{\nwtagstyle{}\subpageref{NW1F32vJ-1G1Cmu-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-3Cb3oS-3}}\nwenddeflinemarkup
 let
   val A = Formula.dest_not A_imp_B;
-  fun jfn' (th::thms) = jfn ((Thm.disch A (Thm.not_elim th))::thms);
+  fun jfn' (th::thms) = jfn ((Thm.not_intro (Thm.disch A th))::thms);
 in
   \{ goals = (((label, A)::asl, Formula.mk_falsum())::gls)
   , justify = jfn' \}
 end
-\nwused{\\{NW1F32vJ-3Cb3oS-3}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}}\\{{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}}}\nwindexuse{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}{NW1F32vJ-1G1Cmu-1}\nwindexuse{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}{NW1F32vJ-1G1Cmu-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1F32vJ-1G1Cmu-1}\nwindexuse{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}{NW1F32vJ-1G1Cmu-1}\nwendcode{}\nwbegindocs{30}\nwdocspar
+\nwused{\\{NW1F32vJ-3Cb3oS-3}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}}\\{{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}}}\nwindexuse{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}{NW1F32vJ-1G1Cmu-1}\nwindexuse{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}{NW1F32vJ-1G1Cmu-1}\nwindexuse{\nwixident{Thm.disch}}{Thm.disch}{NW1F32vJ-1G1Cmu-1}\nwindexuse{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}{NW1F32vJ-1G1Cmu-1}\nwendcode{}\nwbegindocs{30}\nwdocspar
 
 \nwenddocs{}\nwbegincode{31}\sublabel{NW1F32vJ-IHUmU-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-IHUmU-1}}}\moddef{Tactic to discharge an implication~{\nwtagstyle{}\subpageref{NW1F32vJ-IHUmU-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-3Cb3oS-3}}\nwenddeflinemarkup
 let
@@ -505,6 +505,45 @@ fun mp thm \{goals = (asl, B)::gls, justify = jfn\} =
 \nwindexdefn{\nwixident{Tactic.mp}}{Tactic.mp}{NW1F32vJ-3Cb3oS-6}\eatline
 \nwused{\\{NW1F32vJ-2XH0oT-1}}\nwidentdefs{\\{{\nwixident{Tactic.mp}}{Tactic.mp}}}\nwidentuses{\\{{\nwixident{assumptions{\_}contain{\_}hypotheses}}{assumptions:uncontain:unhypotheses}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Thm.concl}}{Thm.concl}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}}\nwindexuse{\nwixident{assumptions{\_}contain{\_}hypotheses}}{assumptions:uncontain:unhypotheses}{NW1F32vJ-3Cb3oS-6}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1F32vJ-3Cb3oS-6}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1F32vJ-3Cb3oS-6}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1F32vJ-3Cb3oS-6}\nwendcode{}\nwbegindocs{44}\nwdocspar
 \begin{node}
+We also should write tactics for negation elimination and introduction.
+\begin{equation}
+\vcenter{\infer=[\neg\mbox{-intro}]{\Gamma\gdash\phi\implies\bot}{\Gamma\gdash\neg\phi}}
+\end{equation}
+\begin{equation}
+\vcenter{\infer=[\neg\mbox{-elim}]{\Gamma\gdash\neg\phi}{\Gamma\gdash\phi\implies\bot}}
+\end{equation}
+\end{node}
+
+\nwenddocs{}\nwbegincode{45}\sublabel{NW1F32vJ-2kzjE-7}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-7}}}\moddef{Specification for tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-VKxLl-1}}\nwprevnextdefs{NW1F32vJ-2kzjE-6}{NW1F32vJ-2kzjE-8}\nwenddeflinemarkup
+val not_intro : t;
+val not_elim : t;
+\nwused{\\{NW1F32vJ-VKxLl-1}}\nwendcode{}\nwbegindocs{46}\nwdocspar
+
+\nwenddocs{}\nwbegincode{47}\sublabel{NW1F32vJ-3Cb3oS-7}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-7}}}\moddef{Implementation of tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-2XH0oT-1}}\nwprevnextdefs{NW1F32vJ-3Cb3oS-6}{NW1F32vJ-3Cb3oS-8}\nwenddeflinemarkup
+(* not_intro : Tactic.t *)
+fun not_intro \{goals = (asl, not_A)::gls, justify = jfn\} =
+  let
+    val A = Formula.dest_not not_A;
+    fun jfn' (thm::thms) = jfn((Thm.not_intro thm)::thms);
+  in
+    \{ goals = (asl, Formula.mk_imp(A, Formula.mk_falsum ()))::gls
+    , justify = jfn' \}
+  end;
+(* not_elim : Tactic.t *)
+fun not_elim \{goals = (asl, A_imp_F)::gls, justify = jfn\} =
+  let
+    val (A,F) = Formula.dest_imp A_imp_F;
+    val _ = if Formula.is_falsum F
+            then ()
+            else raise Fail("\nwlinkedidentc{Tactic.not_elim}{NW1F32vJ-3Cb3oS-7}: goal does not imply falsum");
+    fun jfn' (thm::thms) = jfn((Thm.not_elim thm)::thms);
+  in
+    \{ goals = (asl, Formula.mk_not(A))::gls
+    , justify = jfn' \}
+  end;
+\nwindexdefn{\nwixident{Tactic.not{\_}intro}}{Tactic.not:unintro}{NW1F32vJ-3Cb3oS-7}\nwindexdefn{\nwixident{Tactic.not{\_}elim}}{Tactic.not:unelim}{NW1F32vJ-3Cb3oS-7}\eatline
+\nwused{\\{NW1F32vJ-2XH0oT-1}}\nwidentdefs{\\{{\nwixident{Tactic.not{\_}elim}}{Tactic.not:unelim}}\\{{\nwixident{Tactic.not{\_}intro}}{Tactic.not:unintro}}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}}\\{{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}}\\{{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}}\\{{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}}\\{{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}}}\nwindexuse{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}{NW1F32vJ-3Cb3oS-7}\nwindexuse{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}{NW1F32vJ-3Cb3oS-7}\nwindexuse{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}{NW1F32vJ-3Cb3oS-7}\nwindexuse{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}{NW1F32vJ-3Cb3oS-7}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1F32vJ-3Cb3oS-7}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW1F32vJ-3Cb3oS-7}\nwindexuse{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}{NW1F32vJ-3Cb3oS-7}\nwindexuse{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}{NW1F32vJ-3Cb3oS-7}\nwendcode{}\nwbegindocs{48}\nwdocspar
+\begin{node}
 Disjunction elimination is a bit tricky as an inference rule,
 \begin{equation}
 \vcenter{\infer[\lor\mbox{-elim}]{\Gamma_{1}\cup\Gamma_{2}\vdash(A\lor B)\implies C}{\Gamma_{1}\vdash A\implies C,&\Gamma_{2}\vdash B\implies C}}
@@ -532,16 +571,16 @@ Why do this? Well, it matches how Mathematicians use
 $\lor$-elimination in practice (as a {\Tt{}per\ cases\nwendquote} argument).
 \end{node}
 
-\nwenddocs{}\nwbegincode{45}\sublabel{NW1F32vJ-2kzjE-7}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-7}}}\moddef{Specification for tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-VKxLl-1}}\nwprevnextdefs{NW1F32vJ-2kzjE-6}{NW1F32vJ-2kzjE-8}\nwenddeflinemarkup
+\nwenddocs{}\nwbegincode{49}\sublabel{NW1F32vJ-2kzjE-8}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-8}}}\moddef{Specification for tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-VKxLl-1}}\nwprevnextdefs{NW1F32vJ-2kzjE-7}{NW1F32vJ-2kzjE-9}\nwenddeflinemarkup
 val disj_cases : Thm.t -> t;
-\nwused{\\{NW1F32vJ-VKxLl-1}}\nwidentuses{\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW1F32vJ-2kzjE-7}\nwendcode{}\nwbegindocs{46}\nwdocspar
+\nwused{\\{NW1F32vJ-VKxLl-1}}\nwidentuses{\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW1F32vJ-2kzjE-8}\nwendcode{}\nwbegindocs{50}\nwdocspar
 
-\nwenddocs{}\nwbegincode{47}\sublabel{NW1F32vJ-3Cb3oS-7}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-7}}}\moddef{Implementation of tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-2XH0oT-1}}\nwprevnextdefs{NW1F32vJ-3Cb3oS-6}{NW1F32vJ-3Cb3oS-8}\nwenddeflinemarkup
+\nwenddocs{}\nwbegincode{51}\sublabel{NW1F32vJ-3Cb3oS-8}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-8}}}\moddef{Implementation of tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-2XH0oT-1}}\nwprevnextdefs{NW1F32vJ-3Cb3oS-7}{NW1F32vJ-3Cb3oS-9}\nwenddeflinemarkup
 fun disj_cases thm \{goals = (asl, C)::gls, justify = jfn\} =
   let
     val A_or_B = Thm.concl thm;
     val (A,B) = Formula.dest_or A_or_B
-                handle _ => raise Fail "\nwlinkedidentc{Tactic.disj_cases}{NW1F32vJ-3Cb3oS-7}: theorem is not a disjunction";
+                handle _ => raise Fail "\nwlinkedidentc{Tactic.disj_cases}{NW1F32vJ-3Cb3oS-8}: theorem is not a disjunction";
     val A_imp_C = Formula.mk_imp(A,C);
     val B_imp_C = Formula.mk_imp(B,C);
     fun jfn' (th_A_imp_C::th_B_imp_C::thms) =
@@ -550,8 +589,8 @@ fun disj_cases thm \{goals = (asl, C)::gls, justify = jfn\} =
     \{ goals = (asl, A_imp_C)::(asl, B_imp_C)::gls
     , justify = jfn' \}
   end;
-\nwindexdefn{\nwixident{Tactic.disj{\_}cases}}{Tactic.disj:uncases}{NW1F32vJ-3Cb3oS-7}\eatline
-\nwused{\\{NW1F32vJ-2XH0oT-1}}\nwidentdefs{\\{{\nwixident{Tactic.disj{\_}cases}}{Tactic.disj:uncases}}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Thm.concl}}{Thm.concl}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}}}\nwindexuse{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}{NW1F32vJ-3Cb3oS-7}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1F32vJ-3Cb3oS-7}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1F32vJ-3Cb3oS-7}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1F32vJ-3Cb3oS-7}\nwindexuse{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}{NW1F32vJ-3Cb3oS-7}\nwendcode{}\nwbegindocs{48}\nwdocspar
+\nwindexdefn{\nwixident{Tactic.disj{\_}cases}}{Tactic.disj:uncases}{NW1F32vJ-3Cb3oS-8}\eatline
+\nwused{\\{NW1F32vJ-2XH0oT-1}}\nwidentdefs{\\{{\nwixident{Tactic.disj{\_}cases}}{Tactic.disj:uncases}}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Thm.concl}}{Thm.concl}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}}}\nwindexuse{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}{NW1F32vJ-3Cb3oS-8}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1F32vJ-3Cb3oS-8}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1F32vJ-3Cb3oS-8}\nwindexuse{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW1F32vJ-3Cb3oS-8}\nwindexuse{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}{NW1F32vJ-3Cb3oS-8}\nwendcode{}\nwbegindocs{52}\nwdocspar
 \begin{node}
 We also have two tactics corresponding to the disjunction introduction
 rules
@@ -565,12 +604,12 @@ rules
 % https://hol-light.github.io/references/HTML/DISJ1_TAC.html
 % https://hol-theorem-prover.org/trindemossen-2-helpdocs/help/Docfiles/HTML/Tactic.DISJ1_TAC.html
 
-\nwenddocs{}\nwbegincode{49}\sublabel{NW1F32vJ-2kzjE-8}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-8}}}\moddef{Specification for tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-VKxLl-1}}\nwprevnextdefs{NW1F32vJ-2kzjE-7}{NW1F32vJ-2kzjE-9}\nwenddeflinemarkup
+\nwenddocs{}\nwbegincode{53}\sublabel{NW1F32vJ-2kzjE-9}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-9}}}\moddef{Specification for tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-VKxLl-1}}\nwprevnextdefs{NW1F32vJ-2kzjE-8}{NW1F32vJ-2kzjE-A}\nwenddeflinemarkup
 val or_l : t;
 val or_r : t;
-\nwused{\\{NW1F32vJ-VKxLl-1}}\nwendcode{}\nwbegindocs{50}\nwdocspar
+\nwused{\\{NW1F32vJ-VKxLl-1}}\nwendcode{}\nwbegindocs{54}\nwdocspar
 
-\nwenddocs{}\nwbegincode{51}\sublabel{NW1F32vJ-3Cb3oS-8}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-8}}}\moddef{Implementation of tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-2XH0oT-1}}\nwprevnextdefs{NW1F32vJ-3Cb3oS-7}{NW1F32vJ-3Cb3oS-9}\nwenddeflinemarkup
+\nwenddocs{}\nwbegincode{55}\sublabel{NW1F32vJ-3Cb3oS-9}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-9}}}\moddef{Implementation of tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-2XH0oT-1}}\nwprevnextdefs{NW1F32vJ-3Cb3oS-8}{NW1F32vJ-3Cb3oS-A}\nwenddeflinemarkup
 fun or_l \{goals = (asl, A_or_B)::gls, justify = jfn\} =
   let
     val (A,B) = Formula.dest_or A_or_B;
@@ -590,8 +629,8 @@ fun or_r \{goals = (asl, A_or_B)::gls, justify = jfn\} =
     \{ goals = (asl, B)::gls
     , justify = jfn' \}
   end;
-\nwindexdefn{\nwixident{Tactic.or{\_}l}}{Tactic.or:unl}{NW1F32vJ-3Cb3oS-8}\nwindexdefn{\nwixident{Tactic.or{\_}r}}{Tactic.or:unr}{NW1F32vJ-3Cb3oS-8}\eatline
-\nwused{\\{NW1F32vJ-2XH0oT-1}}\nwidentdefs{\\{{\nwixident{Tactic.or{\_}l}}{Tactic.or:unl}}\\{{\nwixident{Tactic.or{\_}r}}{Tactic.or:unr}}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}}\\{{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}}\\{{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}}}\nwindexuse{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}{NW1F32vJ-3Cb3oS-8}\nwindexuse{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}{NW1F32vJ-3Cb3oS-8}\nwindexuse{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}{NW1F32vJ-3Cb3oS-8}\nwendcode{}\nwbegindocs{52}\nwdocspar
+\nwindexdefn{\nwixident{Tactic.or{\_}l}}{Tactic.or:unl}{NW1F32vJ-3Cb3oS-9}\nwindexdefn{\nwixident{Tactic.or{\_}r}}{Tactic.or:unr}{NW1F32vJ-3Cb3oS-9}\eatline
+\nwused{\\{NW1F32vJ-2XH0oT-1}}\nwidentdefs{\\{{\nwixident{Tactic.or{\_}l}}{Tactic.or:unl}}\\{{\nwixident{Tactic.or{\_}r}}{Tactic.or:unr}}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}}\\{{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}}\\{{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}}}\nwindexuse{\nwixident{Formula.dest{\_}or}}{Formula.dest:unor}{NW1F32vJ-3Cb3oS-9}\nwindexuse{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}{NW1F32vJ-3Cb3oS-9}\nwindexuse{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}{NW1F32vJ-3Cb3oS-9}\nwendcode{}\nwbegindocs{56}\nwdocspar
 \begin{node}
 There are various ways to ``close'' a tactics proof: we can supply a
 theorem which satisfies the goal, we can observe that we can solve the
@@ -605,14 +644,14 @@ not need to supply $A$ (since it's known!). Further, this will ``pop''
 the goal stack.
 \end{node}
 
-\nwenddocs{}\nwbegincode{53}\sublabel{NW1F32vJ-2kzjE-9}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-9}}}\moddef{Specification for tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-VKxLl-1}}\nwprevnextdefs{NW1F32vJ-2kzjE-8}{NW1F32vJ-2kzjE-A}\nwenddeflinemarkup
+\nwenddocs{}\nwbegincode{57}\sublabel{NW1F32vJ-2kzjE-A}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-A}}}\moddef{Specification for tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-VKxLl-1}}\nwprevnextdefs{NW1F32vJ-2kzjE-9}{NW1F32vJ-2kzjE-B}\nwenddeflinemarkup
 val assume : t;
-\nwused{\\{NW1F32vJ-VKxLl-1}}\nwendcode{}\nwbegindocs{54}\nwdocspar
+\nwused{\\{NW1F32vJ-VKxLl-1}}\nwendcode{}\nwbegindocs{58}\nwdocspar
 
-\nwenddocs{}\nwbegincode{55}\sublabel{NW1F32vJ-3Cb3oS-9}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-9}}}\moddef{Implementation of tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-2XH0oT-1}}\nwprevnextdefs{NW1F32vJ-3Cb3oS-8}{NW1F32vJ-3Cb3oS-A}\nwenddeflinemarkup
+\nwenddocs{}\nwbegincode{59}\sublabel{NW1F32vJ-3Cb3oS-A}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-A}}}\moddef{Implementation of tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-2XH0oT-1}}\nwprevnextdefs{NW1F32vJ-3Cb3oS-9}{NW1F32vJ-3Cb3oS-B}\nwenddeflinemarkup
 fun assume \{goals = (asl, A)::gls, justify = jfn\} =
   if not(List.exists (fn (_,B) => Formula.eq A B) asl)
-  then raise Fail "\nwlinkedidentc{Tactic.assume}{NW1F32vJ-3Cb3oS-9}: goal is not among assumptions"
+  then raise Fail "\nwlinkedidentc{Tactic.assume}{NW1F32vJ-3Cb3oS-A}: goal is not among assumptions"
   else
     let
       val hyps = map (fn (_,fm) => fm) asl;
@@ -622,8 +661,8 @@ fun assume \{goals = (asl, A)::gls, justify = jfn\} =
       \{ goals = gls
       , justify = jfn' \}
     end;
-\nwindexdefn{\nwixident{Tactic.assume}}{Tactic.assume}{NW1F32vJ-3Cb3oS-9}\eatline
-\nwused{\\{NW1F32vJ-2XH0oT-1}}\nwidentdefs{\\{{\nwixident{Tactic.assume}}{Tactic.assume}}}\nwidentuses{\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Thm.assume}}{Thm.assume}}}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1F32vJ-3Cb3oS-9}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1F32vJ-3Cb3oS-9}\nwendcode{}\nwbegindocs{56}\nwdocspar
+\nwindexdefn{\nwixident{Tactic.assume}}{Tactic.assume}{NW1F32vJ-3Cb3oS-A}\eatline
+\nwused{\\{NW1F32vJ-2XH0oT-1}}\nwidentdefs{\\{{\nwixident{Tactic.assume}}{Tactic.assume}}}\nwidentuses{\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Thm.assume}}{Thm.assume}}}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1F32vJ-3Cb3oS-A}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1F32vJ-3Cb3oS-A}\nwendcode{}\nwbegindocs{60}\nwdocspar
 % contr
 \begin{node}
 The explosion principle as a tactic.
@@ -643,11 +682,11 @@ subgoals.
 % https://hol-theorem-prover.org/trindemossen-2-helpdocs/help/Docfiles/HTML/Tactic.CONTR_TAC.html
 \end{node}
 
-\nwenddocs{}\nwbegincode{57}\sublabel{NW1F32vJ-2kzjE-A}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-A}}}\moddef{Specification for tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-VKxLl-1}}\nwprevnextdefs{NW1F32vJ-2kzjE-9}{NW1F32vJ-2kzjE-B}\nwenddeflinemarkup
+\nwenddocs{}\nwbegincode{61}\sublabel{NW1F32vJ-2kzjE-B}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-B}}}\moddef{Specification for tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-VKxLl-1}}\nwprevnextdefs{NW1F32vJ-2kzjE-A}{NW1F32vJ-2kzjE-C}\nwenddeflinemarkup
 val contr : Thm.t -> t;
-\nwused{\\{NW1F32vJ-VKxLl-1}}\nwidentuses{\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW1F32vJ-2kzjE-A}\nwendcode{}\nwbegindocs{58}\nwdocspar
+\nwused{\\{NW1F32vJ-VKxLl-1}}\nwidentuses{\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW1F32vJ-2kzjE-B}\nwendcode{}\nwbegindocs{62}\nwdocspar
 
-\nwenddocs{}\nwbegincode{59}\sublabel{NW1F32vJ-3Cb3oS-A}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-A}}}\moddef{Implementation of tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-2XH0oT-1}}\nwprevnextdefs{NW1F32vJ-3Cb3oS-9}{NW1F32vJ-3Cb3oS-B}\nwenddeflinemarkup
+\nwenddocs{}\nwbegincode{63}\sublabel{NW1F32vJ-3Cb3oS-B}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-B}}}\moddef{Implementation of tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-2XH0oT-1}}\nwprevnextdefs{NW1F32vJ-3Cb3oS-A}{NW1F32vJ-3Cb3oS-C}\nwenddeflinemarkup
 fun contr thm \{goals = (asl, A)::gls, justify = jfn\} =
   if not(\nwlinkedidentc{assumptions_contain_hypotheses}{NW1F32vJ-1bk6hJ-1} thm asl)
   then raise Fail("contr: assumptions do not contain all hypotheses of theorem")
@@ -661,8 +700,8 @@ fun contr thm \{goals = (asl, A)::gls, justify = jfn\} =
       \{ goals = gls
       , justify = jfn' \}
     end;
-\nwindexdefn{\nwixident{Tactic.contr}}{Tactic.contr}{NW1F32vJ-3Cb3oS-A}\eatline
-\nwused{\\{NW1F32vJ-2XH0oT-1}}\nwidentdefs{\\{{\nwixident{Tactic.contr}}{Tactic.contr}}}\nwidentuses{\\{{\nwixident{assumptions{\_}contain{\_}hypotheses}}{assumptions:uncontain:unhypotheses}}\\{{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}}\\{{\nwixident{Thm.concl}}{Thm.concl}}\\{{\nwixident{Thm.contr}}{Thm.contr}}}\nwindexuse{\nwixident{assumptions{\_}contain{\_}hypotheses}}{assumptions:uncontain:unhypotheses}{NW1F32vJ-3Cb3oS-A}\nwindexuse{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}{NW1F32vJ-3Cb3oS-A}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1F32vJ-3Cb3oS-A}\nwindexuse{\nwixident{Thm.contr}}{Thm.contr}{NW1F32vJ-3Cb3oS-A}\nwendcode{}\nwbegindocs{60}\nwdocspar
+\nwindexdefn{\nwixident{Tactic.contr}}{Tactic.contr}{NW1F32vJ-3Cb3oS-B}\eatline
+\nwused{\\{NW1F32vJ-2XH0oT-1}}\nwidentdefs{\\{{\nwixident{Tactic.contr}}{Tactic.contr}}}\nwidentuses{\\{{\nwixident{assumptions{\_}contain{\_}hypotheses}}{assumptions:uncontain:unhypotheses}}\\{{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}}\\{{\nwixident{Thm.concl}}{Thm.concl}}\\{{\nwixident{Thm.contr}}{Thm.contr}}}\nwindexuse{\nwixident{assumptions{\_}contain{\_}hypotheses}}{assumptions:uncontain:unhypotheses}{NW1F32vJ-3Cb3oS-B}\nwindexuse{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}{NW1F32vJ-3Cb3oS-B}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1F32vJ-3Cb3oS-B}\nwindexuse{\nwixident{Thm.contr}}{Thm.contr}{NW1F32vJ-3Cb3oS-B}\nwendcode{}\nwbegindocs{64}\nwdocspar
 \begin{node}
 Checking if the hypotheses of a theorem form a subset of the
 assumptions list is a straightforward (if rather boring) task.
@@ -670,7 +709,7 @@ You just check each hypothesis is syntactically equal to some
 assumption, and iterate over the hypotheses of the theorem.
 \end{node}
 
-\nwenddocs{}\nwbegincode{61}\sublabel{NW1F32vJ-1bk6hJ-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-1bk6hJ-1}}}\moddef{Check theorem hypotheses form subset of assumptions list~{\nwtagstyle{}\subpageref{NW1F32vJ-1bk6hJ-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-2XH0oT-1}}\nwenddeflinemarkup
+\nwenddocs{}\nwbegincode{65}\sublabel{NW1F32vJ-1bk6hJ-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-1bk6hJ-1}}}\moddef{Check theorem hypotheses form subset of assumptions list~{\nwtagstyle{}\subpageref{NW1F32vJ-1bk6hJ-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-2XH0oT-1}}\nwenddeflinemarkup
 local
   fun iter [] _ = true
     | iter (h::hs) asl =
@@ -681,7 +720,7 @@ fun \nwlinkedidentc{assumptions_contain_hypotheses}{NW1F32vJ-1bk6hJ-1} (thm : Th
   iter (Thm.hyps thm) (map (fn (_,fm) => fm) asl)
 end;
 \nwindexdefn{\nwixident{assumptions{\_}contain{\_}hypotheses}}{assumptions:uncontain:unhypotheses}{NW1F32vJ-1bk6hJ-1}\eatline
-\nwused{\\{NW1F32vJ-2XH0oT-1}}\nwidentdefs{\\{{\nwixident{assumptions{\_}contain{\_}hypotheses}}{assumptions:uncontain:unhypotheses}}}\nwidentuses{\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Thm.hyps}}{Thm.hyps}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1F32vJ-1bk6hJ-1}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW1F32vJ-1bk6hJ-1}\nwindexuse{\nwixident{Thm.hyps}}{Thm.hyps}{NW1F32vJ-1bk6hJ-1}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW1F32vJ-1bk6hJ-1}\nwendcode{}\nwbegindocs{62}\nwdocspar
+\nwused{\\{NW1F32vJ-2XH0oT-1}}\nwidentdefs{\\{{\nwixident{assumptions{\_}contain{\_}hypotheses}}{assumptions:uncontain:unhypotheses}}}\nwidentuses{\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Thm.hyps}}{Thm.hyps}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1F32vJ-1bk6hJ-1}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW1F32vJ-1bk6hJ-1}\nwindexuse{\nwixident{Thm.hyps}}{Thm.hyps}{NW1F32vJ-1bk6hJ-1}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW1F32vJ-1bk6hJ-1}\nwendcode{}\nwbegindocs{66}\nwdocspar
 \begin{node}
 We can transform the subgoal $\Gamma\gdash A\iff B$ into two subgoals
 $\Gamma\gdash A\implies B$ and $\Gamma\gdash B\implies A$,
@@ -698,11 +737,11 @@ I'm not certain how useful this second tactic would be.
 % https://hol-theorem-prover.org/trindemossen-2-helpdocs/help/Docfiles/HTML/Tactic.EQ_TAC.html
 \end{node}
 
-\nwenddocs{}\nwbegincode{63}\sublabel{NW1F32vJ-2kzjE-B}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-B}}}\moddef{Specification for tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-VKxLl-1}}\nwprevnextdefs{NW1F32vJ-2kzjE-A}{NW1F32vJ-2kzjE-C}\nwenddeflinemarkup
+\nwenddocs{}\nwbegincode{67}\sublabel{NW1F32vJ-2kzjE-C}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-C}}}\moddef{Specification for tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-VKxLl-1}}\nwprevnextdefs{NW1F32vJ-2kzjE-B}{NW1F32vJ-2kzjE-D}\nwenddeflinemarkup
 val iff : t;
-\nwused{\\{NW1F32vJ-VKxLl-1}}\nwendcode{}\nwbegindocs{64}\nwdocspar
+\nwused{\\{NW1F32vJ-VKxLl-1}}\nwendcode{}\nwbegindocs{68}\nwdocspar
 
-\nwenddocs{}\nwbegincode{65}\sublabel{NW1F32vJ-3Cb3oS-B}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-B}}}\moddef{Implementation of tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-2XH0oT-1}}\nwprevnextdefs{NW1F32vJ-3Cb3oS-A}{NW1F32vJ-3Cb3oS-C}\nwenddeflinemarkup
+\nwenddocs{}\nwbegincode{69}\sublabel{NW1F32vJ-3Cb3oS-C}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-C}}}\moddef{Implementation of tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-2XH0oT-1}}\nwprevnextdefs{NW1F32vJ-3Cb3oS-B}{NW1F32vJ-3Cb3oS-D}\nwenddeflinemarkup
 fun iff \{goals = (asl, A_iff_B)::gls, justify = jfn\} =
   let
     val (A,B) = Formula.dest_iff A_iff_B;
@@ -714,8 +753,8 @@ fun iff \{goals = (asl, A_iff_B)::gls, justify = jfn\} =
     \{ goals = (asl, A_imp_B)::(asl, B_imp_A)::gls
     , justify = jfn' \}
   end;
-\nwindexdefn{\nwixident{Thm.iff}}{Thm.iff}{NW1F32vJ-3Cb3oS-B}\eatline
-\nwused{\\{NW1F32vJ-2XH0oT-1}}\nwidentdefs{\\{{\nwixident{Thm.iff}}{Thm.iff}}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}iff}}{Formula.dest:uniff}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}}\nwindexuse{\nwixident{Formula.dest{\_}iff}}{Formula.dest:uniff}{NW1F32vJ-3Cb3oS-B}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1F32vJ-3Cb3oS-B}\nwindexuse{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}{NW1F32vJ-3Cb3oS-B}\nwendcode{}\nwbegindocs{66}\nwdocspar
+\nwindexdefn{\nwixident{Thm.iff}}{Thm.iff}{NW1F32vJ-3Cb3oS-C}\eatline
+\nwused{\\{NW1F32vJ-2XH0oT-1}}\nwidentdefs{\\{{\nwixident{Thm.iff}}{Thm.iff}}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}iff}}{Formula.dest:uniff}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}}\nwindexuse{\nwixident{Formula.dest{\_}iff}}{Formula.dest:uniff}{NW1F32vJ-3Cb3oS-C}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1F32vJ-3Cb3oS-C}\nwindexuse{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}{NW1F32vJ-3Cb3oS-C}\nwendcode{}\nwbegindocs{70}\nwdocspar
 \begin{node}
 The last tactics which need discussing concern themselves with quantifiers.
 We will first focus on universal quantifiers.
@@ -739,12 +778,12 @@ Note that ``spec'' fails when $t$ and $x$ are of different sorts.
 \end{node}
 % https://hol-light.github.io/references/HTML/SPEC_TAC.html
 
-\nwenddocs{}\nwbegincode{67}\sublabel{NW1F32vJ-2kzjE-C}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-C}}}\moddef{Specification for tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-VKxLl-1}}\nwprevnextdefs{NW1F32vJ-2kzjE-B}{NW1F32vJ-2kzjE-D}\nwenddeflinemarkup
+\nwenddocs{}\nwbegincode{71}\sublabel{NW1F32vJ-2kzjE-D}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-D}}}\moddef{Specification for tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-VKxLl-1}}\nwprevnextdefs{NW1F32vJ-2kzjE-C}{NW1F32vJ-2kzjE-E}\nwenddeflinemarkup
 val gen : t;
 val spec : (Term.t * Term.t) -> t;
-\nwused{\\{NW1F32vJ-VKxLl-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1F32vJ-2kzjE-C}\nwendcode{}\nwbegindocs{68}\nwdocspar
+\nwused{\\{NW1F32vJ-VKxLl-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1F32vJ-2kzjE-D}\nwendcode{}\nwbegindocs{72}\nwdocspar
 
-\nwenddocs{}\nwbegincode{69}\sublabel{NW1F32vJ-3Cb3oS-C}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-C}}}\moddef{Implementation of tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-2XH0oT-1}}\nwprevnextdefs{NW1F32vJ-3Cb3oS-B}{NW1F32vJ-3Cb3oS-D}\nwenddeflinemarkup
+\nwenddocs{}\nwbegincode{73}\sublabel{NW1F32vJ-3Cb3oS-D}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-D}}}\moddef{Implementation of tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-2XH0oT-1}}\nwprevnextdefs{NW1F32vJ-3Cb3oS-C}{NW1F32vJ-3Cb3oS-E}\nwenddeflinemarkup
 fun gen \{goals = (asl, forall_A)::gls, justify = jfn\} =
   let
     val (x as (Term.Var(x0,s0)),A) = Formula.dest_forall forall_A;
@@ -765,8 +804,8 @@ fun spec (t, x) \{goals = (asl, A)::gls, justify = jfn\} =
     \{ goals = (asl, A')::gls
     , justify = jfn' \}
   end;
-\nwindexdefn{\nwixident{Tactic.gen}}{Tactic.gen}{NW1F32vJ-3Cb3oS-C}\nwindexdefn{\nwixident{Tactic.spec}}{Tactic.spec}{NW1F32vJ-3Cb3oS-C}\eatline
-\nwused{\\{NW1F32vJ-2XH0oT-1}}\nwidentdefs{\\{{\nwixident{Tactic.gen}}{Tactic.gen}}\\{{\nwixident{Tactic.spec}}{Tactic.spec}}}\nwidentuses{\\{{\nwixident{Formula.fv}}{Formula.fv}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.subst}}{Formula.subst}}\\{{\nwixident{Term.fresh{\_}var}}{Term.fresh:unvar}}\\{{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}}\\{{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}}}\nwindexuse{\nwixident{Formula.fv}}{Formula.fv}{NW1F32vJ-3Cb3oS-C}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1F32vJ-3Cb3oS-C}\nwindexuse{\nwixident{Formula.subst}}{Formula.subst}{NW1F32vJ-3Cb3oS-C}\nwindexuse{\nwixident{Term.fresh{\_}var}}{Term.fresh:unvar}{NW1F32vJ-3Cb3oS-C}\nwindexuse{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}{NW1F32vJ-3Cb3oS-C}\nwindexuse{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}{NW1F32vJ-3Cb3oS-C}\nwendcode{}\nwbegindocs{70}\nwdocspar
+\nwindexdefn{\nwixident{Tactic.gen}}{Tactic.gen}{NW1F32vJ-3Cb3oS-D}\nwindexdefn{\nwixident{Tactic.spec}}{Tactic.spec}{NW1F32vJ-3Cb3oS-D}\eatline
+\nwused{\\{NW1F32vJ-2XH0oT-1}}\nwidentdefs{\\{{\nwixident{Tactic.gen}}{Tactic.gen}}\\{{\nwixident{Tactic.spec}}{Tactic.spec}}}\nwidentuses{\\{{\nwixident{Formula.fv}}{Formula.fv}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.subst}}{Formula.subst}}\\{{\nwixident{Term.fresh{\_}var}}{Term.fresh:unvar}}\\{{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}}\\{{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}}}\nwindexuse{\nwixident{Formula.fv}}{Formula.fv}{NW1F32vJ-3Cb3oS-D}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW1F32vJ-3Cb3oS-D}\nwindexuse{\nwixident{Formula.subst}}{Formula.subst}{NW1F32vJ-3Cb3oS-D}\nwindexuse{\nwixident{Term.fresh{\_}var}}{Term.fresh:unvar}{NW1F32vJ-3Cb3oS-D}\nwindexuse{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}{NW1F32vJ-3Cb3oS-D}\nwindexuse{\nwixident{Thm.forall{\_}intro}}{Thm.forall:unintro}{NW1F32vJ-3Cb3oS-D}\nwendcode{}\nwbegindocs{74}\nwdocspar
 \begin{node}
 Existential quantifier tactics. The tactic corresponding to the
 \emph{derived} $\exists$-elimination rule:
@@ -785,12 +824,12 @@ The tactic corresponding to $\exists$-introduction:
 % https://hol-light.github.io/references/HTML/CHOOSE_TAC.html
 % https://hol-light.github.io/references/HTML/EXISTS_TAC.html
 
-\nwenddocs{}\nwbegincode{71}\sublabel{NW1F32vJ-2kzjE-D}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-D}}}\moddef{Specification for tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-VKxLl-1}}\nwprevnextdefs{NW1F32vJ-2kzjE-C}{NW1F32vJ-2kzjE-E}\nwenddeflinemarkup
+\nwenddocs{}\nwbegincode{75}\sublabel{NW1F32vJ-2kzjE-E}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-E}}}\moddef{Specification for tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-VKxLl-1}}\nwprevnextdefs{NW1F32vJ-2kzjE-D}{NW1F32vJ-2kzjE-F}\nwenddeflinemarkup
 val choose : Thm.t -> t;
 val exists : Term.t -> t;
-\nwused{\\{NW1F32vJ-VKxLl-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1F32vJ-2kzjE-D}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW1F32vJ-2kzjE-D}\nwendcode{}\nwbegindocs{72}\nwdocspar
+\nwused{\\{NW1F32vJ-VKxLl-1}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1F32vJ-2kzjE-E}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW1F32vJ-2kzjE-E}\nwendcode{}\nwbegindocs{76}\nwdocspar
 
-\nwenddocs{}\nwbegincode{73}\sublabel{NW1F32vJ-3Cb3oS-D}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-D}}}\moddef{Implementation of tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-2XH0oT-1}}\nwprevnextdefs{NW1F32vJ-3Cb3oS-C}{NW1F32vJ-3Cb3oS-E}\nwenddeflinemarkup
+\nwenddocs{}\nwbegincode{77}\sublabel{NW1F32vJ-3Cb3oS-E}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-E}}}\moddef{Implementation of tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-2XH0oT-1}}\nwprevnextdefs{NW1F32vJ-3Cb3oS-D}{NW1F32vJ-3Cb3oS-F}\nwenddeflinemarkup
 (* choose : Thm.t -> Tactic.t *)
 fun choose th \{goals = (asl, B)::gls, justify = jfn\} =
   if not(\nwlinkedidentc{assumptions_contain_hypotheses}{NW1F32vJ-1bk6hJ-1} th asl)
@@ -815,7 +854,7 @@ fun exists tm \{goals = (asl, ex_A)::gls, justify = jfn\} =
     \{ goals = (asl, Formula.subst tm x A)::gls
     , justify = jfn' \}
   end;
-\nwused{\\{NW1F32vJ-2XH0oT-1}}\nwidentuses{\\{{\nwixident{assumptions{\_}contain{\_}hypotheses}}{assumptions:uncontain:unhypotheses}}\\{{\nwixident{Derived.exists{\_}elim}}{Derived.exists:unelim}}\\{{\nwixident{Formula.fv}}{Formula.fv}}\\{{\nwixident{Formula.subst}}{Formula.subst}}\\{{\nwixident{Term.fresh{\_}var}}{Term.fresh:unvar}}\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.concl}}{Thm.concl}}\\{{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{assumptions{\_}contain{\_}hypotheses}}{assumptions:uncontain:unhypotheses}{NW1F32vJ-3Cb3oS-D}\nwindexuse{\nwixident{Derived.exists{\_}elim}}{Derived.exists:unelim}{NW1F32vJ-3Cb3oS-D}\nwindexuse{\nwixident{Formula.fv}}{Formula.fv}{NW1F32vJ-3Cb3oS-D}\nwindexuse{\nwixident{Formula.subst}}{Formula.subst}{NW1F32vJ-3Cb3oS-D}\nwindexuse{\nwixident{Term.fresh{\_}var}}{Term.fresh:unvar}{NW1F32vJ-3Cb3oS-D}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1F32vJ-3Cb3oS-D}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1F32vJ-3Cb3oS-D}\nwindexuse{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}{NW1F32vJ-3Cb3oS-D}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW1F32vJ-3Cb3oS-D}\nwendcode{}\nwbegindocs{74}\nwdocspar
+\nwused{\\{NW1F32vJ-2XH0oT-1}}\nwidentuses{\\{{\nwixident{assumptions{\_}contain{\_}hypotheses}}{assumptions:uncontain:unhypotheses}}\\{{\nwixident{Derived.exists{\_}elim}}{Derived.exists:unelim}}\\{{\nwixident{Formula.fv}}{Formula.fv}}\\{{\nwixident{Formula.subst}}{Formula.subst}}\\{{\nwixident{Term.fresh{\_}var}}{Term.fresh:unvar}}\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.concl}}{Thm.concl}}\\{{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{assumptions{\_}contain{\_}hypotheses}}{assumptions:uncontain:unhypotheses}{NW1F32vJ-3Cb3oS-E}\nwindexuse{\nwixident{Derived.exists{\_}elim}}{Derived.exists:unelim}{NW1F32vJ-3Cb3oS-E}\nwindexuse{\nwixident{Formula.fv}}{Formula.fv}{NW1F32vJ-3Cb3oS-E}\nwindexuse{\nwixident{Formula.subst}}{Formula.subst}{NW1F32vJ-3Cb3oS-E}\nwindexuse{\nwixident{Term.fresh{\_}var}}{Term.fresh:unvar}{NW1F32vJ-3Cb3oS-E}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1F32vJ-3Cb3oS-E}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1F32vJ-3Cb3oS-E}\nwindexuse{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}{NW1F32vJ-3Cb3oS-E}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW1F32vJ-3Cb3oS-E}\nwendcode{}\nwbegindocs{78}\nwdocspar
 
 \begin{xca}
 Prove these tactics are ``complete'', in the sense that any proof we
@@ -829,11 +868,11 @@ autogenerated labels will be of the form \texttt{H0}, \texttt{H1},
 \texttt{H2}, \dots, provided there are no ``collisions'' with the labels.
 \end{node}
 
-\nwenddocs{}\nwbegincode{75}\sublabel{NW1F32vJ-2kzjE-E}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-E}}}\moddef{Specification for tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-VKxLl-1}}\nwprevnextdefs{NW1F32vJ-2kzjE-D}{\relax}\nwenddeflinemarkup
+\nwenddocs{}\nwbegincode{79}\sublabel{NW1F32vJ-2kzjE-F}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-F}}}\moddef{Specification for tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-2kzjE-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-VKxLl-1}}\nwprevnextdefs{NW1F32vJ-2kzjE-E}{\relax}\nwenddeflinemarkup
 val autolabel : t;
-\nwused{\\{NW1F32vJ-VKxLl-1}}\nwendcode{}\nwbegindocs{76}\nwdocspar
+\nwused{\\{NW1F32vJ-VKxLl-1}}\nwendcode{}\nwbegindocs{80}\nwdocspar
 
-\nwenddocs{}\nwbegincode{77}\sublabel{NW1F32vJ-3Cb3oS-E}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-E}}}\moddef{Implementation of tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-2XH0oT-1}}\nwprevnextdefs{NW1F32vJ-3Cb3oS-D}{\relax}\nwenddeflinemarkup
+\nwenddocs{}\nwbegincode{81}\sublabel{NW1F32vJ-3Cb3oS-F}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-F}}}\moddef{Implementation of tactics~{\nwtagstyle{}\subpageref{NW1F32vJ-3Cb3oS-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-2XH0oT-1}}\nwprevnextdefs{NW1F32vJ-3Cb3oS-E}{\relax}\nwenddeflinemarkup
 (* autolabel : t
 
 Assign labels to un-named assumptions. *)
@@ -858,8 +897,8 @@ fun autolabel \{goals = (asl, A)::gls, justify = jfn\} =
     \{ goals = (asl', A)::gls
     , justify = jfn \}
   end;
-\nwindexdefn{\nwixident{Tactic.autolabel}}{Tactic.autolabel}{NW1F32vJ-3Cb3oS-E}\eatline
-\nwused{\\{NW1F32vJ-2XH0oT-1}}\nwidentdefs{\\{{\nwixident{Tactic.autolabel}}{Tactic.autolabel}}}\nwendcode{}\nwbegindocs{78}\nwdocspar
+\nwindexdefn{\nwixident{Tactic.autolabel}}{Tactic.autolabel}{NW1F32vJ-3Cb3oS-F}\eatline
+\nwused{\\{NW1F32vJ-2XH0oT-1}}\nwidentdefs{\\{{\nwixident{Tactic.autolabel}}{Tactic.autolabel}}}\nwendcode{}\nwbegindocs{82}\nwdocspar
 \begin{problem}
 How exactly do we ``use'' assumptions in a tactics proof?
 \end{problem}
@@ -937,7 +976,7 @@ it \emph{once}. This will produce slightly more overhead if we use the
 tactics-based proofs.
 \end{node}
 
-\nwenddocs{}\nwbegincode{79}\sublabel{NW1F32vJ-2pBKAU-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-2pBKAU-1}}}\moddef{Unit tests for \code{}Tactic.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1F32vJ-2pBKAU-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-4ElorS-1}}\nwprevnextdefs{\relax}{NW1F32vJ-2pBKAU-2}\nwenddeflinemarkup
+\nwenddocs{}\nwbegincode{83}\sublabel{NW1F32vJ-2pBKAU-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-2pBKAU-1}}}\moddef{Unit tests for \code{}Tactic.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1F32vJ-2pBKAU-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-4ElorS-1}}\nwprevnextdefs{\relax}{NW1F32vJ-2pBKAU-2}\nwenddeflinemarkup
   Test.mk "and_comm test" (fn () =>
     let
       val A = Formula.mk_pred("A", []);
@@ -948,9 +987,9 @@ tactics-based proofs.
       val g1 = \nwlinkedidentc{Tactic.disch}{NW1F32vJ-3Cb3oS-3} "" g0;
       val g2 = \nwlinkedidentc{Tactic.and_intro}{NW1F32vJ-3Cb3oS-1} g1;
       val g3 = \nwlinkedidentc{Tactic.and_elim_r}{NW1F32vJ-3Cb3oS-2} A g2;
-      val g4 = \nwlinkedidentc{Tactic.assume}{NW1F32vJ-3Cb3oS-9} g3;
+      val g4 = \nwlinkedidentc{Tactic.assume}{NW1F32vJ-3Cb3oS-A} g3;
       val g5 = \nwlinkedidentc{Tactic.and_elim_l}{NW1F32vJ-3Cb3oS-2} B g4;
-      val g6 = \nwlinkedidentc{Tactic.assume}{NW1F32vJ-3Cb3oS-9} g5;
+      val g6 = \nwlinkedidentc{Tactic.assume}{NW1F32vJ-3Cb3oS-A} g5;
       val thm = Goal.extract_thm g6;
       val actual = Thm.concl thm;
     in
@@ -971,9 +1010,9 @@ tactics-based proofs.
                              [ \nwlinkedidentc{Tactic.disch}{NW1F32vJ-3Cb3oS-3} ""
                              , \nwlinkedidentc{Tactic.and_intro}{NW1F32vJ-3Cb3oS-1}
                              , \nwlinkedidentc{Tactic.and_elim_r}{NW1F32vJ-3Cb3oS-2} A
-                             , \nwlinkedidentc{Tactic.assume}{NW1F32vJ-3Cb3oS-9}
+                             , \nwlinkedidentc{Tactic.assume}{NW1F32vJ-3Cb3oS-A}
                              , \nwlinkedidentc{Tactic.and_elim_l}{NW1F32vJ-3Cb3oS-2} B
-                             , \nwlinkedidentc{Tactic.assume}{NW1F32vJ-3Cb3oS-9}];
+                             , \nwlinkedidentc{Tactic.assume}{NW1F32vJ-3Cb3oS-A}];
       val actual = Thm.concl thm;
     in
       Assert.that (Formula.eq expected actual)
@@ -983,13 +1022,13 @@ tactics-based proofs.
                            Formula.serialize actual,
                            "\\n"])
     end)
-\nwalsodefined{\\{NW1F32vJ-2pBKAU-2}}\nwused{\\{NW1F32vJ-4ElorS-1}}\nwidentuses{\\{{\nwixident{Assert.that}}{Assert.that}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Tactic.and{\_}elim{\_}l}}{Tactic.and:unelim:unl}}\\{{\nwixident{Tactic.and{\_}elim{\_}r}}{Tactic.and:unelim:unr}}\\{{\nwixident{Tactic.and{\_}intro}}{Tactic.and:unintro}}\\{{\nwixident{Tactic.assume}}{Tactic.assume}}\\{{\nwixident{Tactic.disch}}{Tactic.disch}}\\{{\nwixident{Tactic.prove}}{Tactic.prove}}\\{{\nwixident{Test.mk}}{Test.mk}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Assert.that}}{Assert.that}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Tactic.and{\_}elim{\_}l}}{Tactic.and:unelim:unl}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Tactic.and{\_}elim{\_}r}}{Tactic.and:unelim:unr}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Tactic.and{\_}intro}}{Tactic.and:unintro}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Tactic.assume}}{Tactic.assume}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Tactic.disch}}{Tactic.disch}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Tactic.prove}}{Tactic.prove}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Test.mk}}{Test.mk}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1F32vJ-2pBKAU-1}\nwendcode{}\nwbegindocs{80}\nwdocspar
+\nwalsodefined{\\{NW1F32vJ-2pBKAU-2}\\{NW1F32vJ-2pBKAU-3}}\nwused{\\{NW1F32vJ-4ElorS-1}}\nwidentuses{\\{{\nwixident{Assert.that}}{Assert.that}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Tactic.and{\_}elim{\_}l}}{Tactic.and:unelim:unl}}\\{{\nwixident{Tactic.and{\_}elim{\_}r}}{Tactic.and:unelim:unr}}\\{{\nwixident{Tactic.and{\_}intro}}{Tactic.and:unintro}}\\{{\nwixident{Tactic.assume}}{Tactic.assume}}\\{{\nwixident{Tactic.disch}}{Tactic.disch}}\\{{\nwixident{Tactic.prove}}{Tactic.prove}}\\{{\nwixident{Test.mk}}{Test.mk}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Assert.that}}{Assert.that}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Tactic.and{\_}elim{\_}l}}{Tactic.and:unelim:unl}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Tactic.and{\_}elim{\_}r}}{Tactic.and:unelim:unr}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Tactic.and{\_}intro}}{Tactic.and:unintro}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Tactic.assume}}{Tactic.assume}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Tactic.disch}}{Tactic.disch}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Tactic.prove}}{Tactic.prove}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Test.mk}}{Test.mk}{NW1F32vJ-2pBKAU-1}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1F32vJ-2pBKAU-1}\nwendcode{}\nwbegindocs{84}\nwdocspar
 
 \begin{node}
 We should test disjunction-related tactics as well.
 \end{node}
 
-\nwenddocs{}\nwbegincode{81}\sublabel{NW1F32vJ-2pBKAU-2}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-2pBKAU-2}}}\moddef{Unit tests for \code{}Tactic.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1F32vJ-2pBKAU-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-4ElorS-1}}\nwprevnextdefs{NW1F32vJ-2pBKAU-1}{\relax}\nwenddeflinemarkup
+\nwenddocs{}\nwbegincode{85}\sublabel{NW1F32vJ-2pBKAU-2}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-2pBKAU-2}}}\moddef{Unit tests for \code{}Tactic.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1F32vJ-2pBKAU-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-4ElorS-1}}\nwprevnextdefs{NW1F32vJ-2pBKAU-1}{NW1F32vJ-2pBKAU-3}\nwenddeflinemarkup
 , Test.mk "or_cong_l \nwlinkedidentc{Tactic.prove}{NW1F32vJ-2zEBzF-1} test" (fn () =>
     let
       val A0 = Formula.mk_pred("A", []);
@@ -1001,14 +1040,14 @@ We should test disjunction-related tactics as well.
       val thm = \nwlinkedidentc{Tactic.prove}{NW1F32vJ-2zEBzF-1} expected
                              [ \nwlinkedidentc{Tactic.disch}{NW1F32vJ-3Cb3oS-3} ""
                              , \nwlinkedidentc{Tactic.disch}{NW1F32vJ-3Cb3oS-3} ""
-                             , \nwlinkedidentc{Tactic.disj_cases}{NW1F32vJ-3Cb3oS-7} (Thm.assume (Formula.mk_or(A0,B)) [])
+                             , \nwlinkedidentc{Tactic.disj_cases}{NW1F32vJ-3Cb3oS-8} (Thm.assume (Formula.mk_or(A0,B)) [])
                              , \nwlinkedidentc{Tactic.disch}{NW1F32vJ-3Cb3oS-3} ""
-                             , \nwlinkedidentc{Tactic.or_l}{NW1F32vJ-3Cb3oS-8}
+                             , \nwlinkedidentc{Tactic.or_l}{NW1F32vJ-3Cb3oS-9}
                              , \nwlinkedidentc{Tactic.undisch}{NW1F32vJ-3Cb3oS-4} A0
-                             , \nwlinkedidentc{Tactic.assume}{NW1F32vJ-3Cb3oS-9}
+                             , \nwlinkedidentc{Tactic.assume}{NW1F32vJ-3Cb3oS-A}
                              , \nwlinkedidentc{Tactic.disch}{NW1F32vJ-3Cb3oS-3} ""
-                             , \nwlinkedidentc{Tactic.or_r}{NW1F32vJ-3Cb3oS-8}
-                             , \nwlinkedidentc{Tactic.assume}{NW1F32vJ-3Cb3oS-9} ];
+                             , \nwlinkedidentc{Tactic.or_r}{NW1F32vJ-3Cb3oS-9}
+                             , \nwlinkedidentc{Tactic.assume}{NW1F32vJ-3Cb3oS-A} ];
       val actual = Thm.concl thm;
     in
       Assert.that (Formula.eq expected actual)
@@ -1018,22 +1057,55 @@ We should test disjunction-related tactics as well.
                            Formula.serialize actual,
                            "\\n"])
     end)
-\nwused{\\{NW1F32vJ-4ElorS-1}}\nwidentuses{\\{{\nwixident{Assert.that}}{Assert.that}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Tactic.assume}}{Tactic.assume}}\\{{\nwixident{Tactic.disch}}{Tactic.disch}}\\{{\nwixident{Tactic.disj{\_}cases}}{Tactic.disj:uncases}}\\{{\nwixident{Tactic.or{\_}l}}{Tactic.or:unl}}\\{{\nwixident{Tactic.or{\_}r}}{Tactic.or:unr}}\\{{\nwixident{Tactic.prove}}{Tactic.prove}}\\{{\nwixident{Tactic.undisch}}{Tactic.undisch}}\\{{\nwixident{Test.mk}}{Test.mk}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Assert.that}}{Assert.that}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Tactic.assume}}{Tactic.assume}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Tactic.disch}}{Tactic.disch}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Tactic.disj{\_}cases}}{Tactic.disj:uncases}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Tactic.or{\_}l}}{Tactic.or:unl}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Tactic.or{\_}r}}{Tactic.or:unr}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Tactic.prove}}{Tactic.prove}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Tactic.undisch}}{Tactic.undisch}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Test.mk}}{Test.mk}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1F32vJ-2pBKAU-2}\nwendcode{}\nwbegindocs{82}\nwdocspar
+\nwused{\\{NW1F32vJ-4ElorS-1}}\nwidentuses{\\{{\nwixident{Assert.that}}{Assert.that}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Tactic.assume}}{Tactic.assume}}\\{{\nwixident{Tactic.disch}}{Tactic.disch}}\\{{\nwixident{Tactic.disj{\_}cases}}{Tactic.disj:uncases}}\\{{\nwixident{Tactic.or{\_}l}}{Tactic.or:unl}}\\{{\nwixident{Tactic.or{\_}r}}{Tactic.or:unr}}\\{{\nwixident{Tactic.prove}}{Tactic.prove}}\\{{\nwixident{Tactic.undisch}}{Tactic.undisch}}\\{{\nwixident{Test.mk}}{Test.mk}}\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Assert.that}}{Assert.that}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Tactic.assume}}{Tactic.assume}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Tactic.disch}}{Tactic.disch}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Tactic.disj{\_}cases}}{Tactic.disj:uncases}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Tactic.or{\_}l}}{Tactic.or:unl}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Tactic.or{\_}r}}{Tactic.or:unr}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Tactic.prove}}{Tactic.prove}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Tactic.undisch}}{Tactic.undisch}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Test.mk}}{Test.mk}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Thm.assume}}{Thm.assume}{NW1F32vJ-2pBKAU-2}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1F32vJ-2pBKAU-2}\nwendcode{}\nwbegindocs{86}\nwdocspar
+
+\begin{node}
+Another really useful test case was the contrapositive. This exposed a
+surprising difficulty when working with negation connectives. It also
+caught a bug in our implementation of {\Tt{}\nwlinkedidentq{Tactic.disch}{NW1F32vJ-3Cb3oS-3}\nwendquote} applied to
+$\Gamma\gdash\neg A$.
+\end{node}
+
+\nwenddocs{}\nwbegincode{87}\sublabel{NW1F32vJ-2pBKAU-3}\nwmargintag{{\nwtagstyle{}\subpageref{NW1F32vJ-2pBKAU-3}}}\moddef{Unit tests for \code{}Tactic.sml\edoc{}~{\nwtagstyle{}\subpageref{NW1F32vJ-2pBKAU-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1F32vJ-4ElorS-1}}\nwprevnextdefs{NW1F32vJ-2pBKAU-2}{\relax}\nwenddeflinemarkup
+, Test.mk "contrapositive_not Tactics.prove" (fn () =>
+    let
+      val A = Formula.mk_pred("A", []);
+      val B = Formula.mk_pred("B", []);
+      val expected = Formula.mk_imp(Formula.mk_imp(A,Formula.mk_not(B)),
+                                    Formula.mk_imp(B,Formula.mk_not(A)));
+      val thm = \nwlinkedidentc{Tactic.prove}{NW1F32vJ-2zEBzF-1} expected
+                             [ \nwlinkedidentc{Tactic.disch}{NW1F32vJ-3Cb3oS-3} ""
+                             , \nwlinkedidentc{Tactic.disch}{NW1F32vJ-3Cb3oS-3} ""
+                             , \nwlinkedidentc{Tactic.disch}{NW1F32vJ-3Cb3oS-3} ""
+                             , \nwlinkedidentc{Tactic.undisch}{NW1F32vJ-3Cb3oS-4} B
+                             , \nwlinkedidentc{Tactic.not_elim}{NW1F32vJ-3Cb3oS-7}
+                             , \nwlinkedidentc{Tactic.undisch}{NW1F32vJ-3Cb3oS-4} A
+                             , \nwlinkedidentc{Tactic.assume}{NW1F32vJ-3Cb3oS-A} ];
+      val actual = Thm.concl thm;
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["EXPECTED: ",
+                           Formula.serialize expected,
+                           "\\nACTUAL: ",
+                           Formula.serialize actual,
+                           "\\n"])
+    end)
+\nwused{\\{NW1F32vJ-4ElorS-1}}\nwidentuses{\\{{\nwixident{Assert.that}}{Assert.that}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Tactic.assume}}{Tactic.assume}}\\{{\nwixident{Tactic.disch}}{Tactic.disch}}\\{{\nwixident{Tactic.not{\_}elim}}{Tactic.not:unelim}}\\{{\nwixident{Tactic.prove}}{Tactic.prove}}\\{{\nwixident{Tactic.undisch}}{Tactic.undisch}}\\{{\nwixident{Test.mk}}{Test.mk}}\\{{\nwixident{Thm.concl}}{Thm.concl}}}\nwindexuse{\nwixident{Assert.that}}{Assert.that}{NW1F32vJ-2pBKAU-3}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW1F32vJ-2pBKAU-3}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW1F32vJ-2pBKAU-3}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW1F32vJ-2pBKAU-3}\nwindexuse{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}{NW1F32vJ-2pBKAU-3}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW1F32vJ-2pBKAU-3}\nwindexuse{\nwixident{Tactic.assume}}{Tactic.assume}{NW1F32vJ-2pBKAU-3}\nwindexuse{\nwixident{Tactic.disch}}{Tactic.disch}{NW1F32vJ-2pBKAU-3}\nwindexuse{\nwixident{Tactic.not{\_}elim}}{Tactic.not:unelim}{NW1F32vJ-2pBKAU-3}\nwindexuse{\nwixident{Tactic.prove}}{Tactic.prove}{NW1F32vJ-2pBKAU-3}\nwindexuse{\nwixident{Tactic.undisch}}{Tactic.undisch}{NW1F32vJ-2pBKAU-3}\nwindexuse{\nwixident{Test.mk}}{Test.mk}{NW1F32vJ-2pBKAU-3}\nwindexuse{\nwixident{Thm.concl}}{Thm.concl}{NW1F32vJ-2pBKAU-3}\nwendcode{}\nwbegindocs{88}\nwdocspar
 \nwenddocs{}
 
 \nwixlogsorted{c}{{Check theorem hypotheses form subset of assumptions list}{NW1F32vJ-1bk6hJ-1}{\nwixu{NW1F32vJ-2XH0oT-1}\nwixd{NW1F32vJ-1bk6hJ-1}}}%
 \nwixlogsorted{c}{{Goal.sig}{NW1F32vJ-KAFG0-1}{\nwixd{NW1F32vJ-KAFG0-1}}}%
 \nwixlogsorted{c}{{Goal.sml}{NW1F32vJ-2MKBgq-1}{\nwixd{NW1F32vJ-2MKBgq-1}}}%
-\nwixlogsorted{c}{{Implementation of tactics}{NW1F32vJ-3Cb3oS-1}{\nwixu{NW1F32vJ-2XH0oT-1}\nwixd{NW1F32vJ-3Cb3oS-1}\nwixd{NW1F32vJ-3Cb3oS-2}\nwixd{NW1F32vJ-3Cb3oS-3}\nwixd{NW1F32vJ-3Cb3oS-4}\nwixd{NW1F32vJ-3Cb3oS-5}\nwixd{NW1F32vJ-3Cb3oS-6}\nwixd{NW1F32vJ-3Cb3oS-7}\nwixd{NW1F32vJ-3Cb3oS-8}\nwixd{NW1F32vJ-3Cb3oS-9}\nwixd{NW1F32vJ-3Cb3oS-A}\nwixd{NW1F32vJ-3Cb3oS-B}\nwixd{NW1F32vJ-3Cb3oS-C}\nwixd{NW1F32vJ-3Cb3oS-D}\nwixd{NW1F32vJ-3Cb3oS-E}}}%
+\nwixlogsorted{c}{{Implementation of tactics}{NW1F32vJ-3Cb3oS-1}{\nwixu{NW1F32vJ-2XH0oT-1}\nwixd{NW1F32vJ-3Cb3oS-1}\nwixd{NW1F32vJ-3Cb3oS-2}\nwixd{NW1F32vJ-3Cb3oS-3}\nwixd{NW1F32vJ-3Cb3oS-4}\nwixd{NW1F32vJ-3Cb3oS-5}\nwixd{NW1F32vJ-3Cb3oS-6}\nwixd{NW1F32vJ-3Cb3oS-7}\nwixd{NW1F32vJ-3Cb3oS-8}\nwixd{NW1F32vJ-3Cb3oS-9}\nwixd{NW1F32vJ-3Cb3oS-A}\nwixd{NW1F32vJ-3Cb3oS-B}\nwixd{NW1F32vJ-3Cb3oS-C}\nwixd{NW1F32vJ-3Cb3oS-D}\nwixd{NW1F32vJ-3Cb3oS-E}\nwixd{NW1F32vJ-3Cb3oS-F}}}%
 \nwixlogsorted{c}{{Proving a theorem from tactics}{NW1F32vJ-2zEBzF-1}{\nwixu{NW1F32vJ-2XH0oT-1}\nwixd{NW1F32vJ-2zEBzF-1}}}%
 \nwixlogsorted{c}{{Register unit tests}{NW1F32vJ-2ohDA9-1}{\nwixd{NW1F32vJ-2ohDA9-1}}}%
-\nwixlogsorted{c}{{Specification for tactics}{NW1F32vJ-2kzjE-1}{\nwixu{NW1F32vJ-VKxLl-1}\nwixd{NW1F32vJ-2kzjE-1}\nwixd{NW1F32vJ-2kzjE-2}\nwixd{NW1F32vJ-2kzjE-3}\nwixd{NW1F32vJ-2kzjE-4}\nwixd{NW1F32vJ-2kzjE-5}\nwixd{NW1F32vJ-2kzjE-6}\nwixd{NW1F32vJ-2kzjE-7}\nwixd{NW1F32vJ-2kzjE-8}\nwixd{NW1F32vJ-2kzjE-9}\nwixd{NW1F32vJ-2kzjE-A}\nwixd{NW1F32vJ-2kzjE-B}\nwixd{NW1F32vJ-2kzjE-C}\nwixd{NW1F32vJ-2kzjE-D}\nwixd{NW1F32vJ-2kzjE-E}}}%
+\nwixlogsorted{c}{{Specification for tactics}{NW1F32vJ-2kzjE-1}{\nwixu{NW1F32vJ-VKxLl-1}\nwixd{NW1F32vJ-2kzjE-1}\nwixd{NW1F32vJ-2kzjE-2}\nwixd{NW1F32vJ-2kzjE-3}\nwixd{NW1F32vJ-2kzjE-4}\nwixd{NW1F32vJ-2kzjE-5}\nwixd{NW1F32vJ-2kzjE-6}\nwixd{NW1F32vJ-2kzjE-7}\nwixd{NW1F32vJ-2kzjE-8}\nwixd{NW1F32vJ-2kzjE-9}\nwixd{NW1F32vJ-2kzjE-A}\nwixd{NW1F32vJ-2kzjE-B}\nwixd{NW1F32vJ-2kzjE-C}\nwixd{NW1F32vJ-2kzjE-D}\nwixd{NW1F32vJ-2kzjE-E}\nwixd{NW1F32vJ-2kzjE-F}}}%
 \nwixlogsorted{c}{{Tactic for negation}{NW1F32vJ-1G1Cmu-1}{\nwixu{NW1F32vJ-3Cb3oS-3}\nwixd{NW1F32vJ-1G1Cmu-1}}}%
 \nwixlogsorted{c}{{Tactic to discharge an implication}{NW1F32vJ-IHUmU-1}{\nwixu{NW1F32vJ-3Cb3oS-3}\nwixd{NW1F32vJ-IHUmU-1}}}%
 \nwixlogsorted{c}{{Tactic.sig}{NW1F32vJ-VKxLl-1}{\nwixd{NW1F32vJ-VKxLl-1}}}%
 \nwixlogsorted{c}{{Tactic.sml}{NW1F32vJ-2XH0oT-1}{\nwixd{NW1F32vJ-2XH0oT-1}}}%
 \nwixlogsorted{c}{{tests/TacticSuite.sml}{NW1F32vJ-4ElorS-1}{\nwixd{NW1F32vJ-4ElorS-1}}}%
-\nwixlogsorted{c}{{Unit tests for \code{}Tactic.sml\edoc{}}{NW1F32vJ-2pBKAU-1}{\nwixu{NW1F32vJ-4ElorS-1}\nwixd{NW1F32vJ-2pBKAU-1}\nwixd{NW1F32vJ-2pBKAU-2}}}%
+\nwixlogsorted{c}{{Unit tests for \code{}Tactic.sml\edoc{}}{NW1F32vJ-2pBKAU-1}{\nwixu{NW1F32vJ-4ElorS-1}\nwixd{NW1F32vJ-2pBKAU-1}\nwixd{NW1F32vJ-2pBKAU-2}\nwixd{NW1F32vJ-2pBKAU-3}}}%
 \nwixlogsorted{c}{{Unit tests to run}{NW1F32vJ-3lyaJm-1}{\nwixd{NW1F32vJ-3lyaJm-1}}}%
 \nwixlogsorted{i}{{\nwixident{Assert.that}}{Assert.that}}%
 \nwixlogsorted{i}{{\nwixident{assumptions{\_}contain{\_}hypotheses}}{assumptions:uncontain:unhypotheses}}%
@@ -1052,6 +1124,7 @@ We should test disjunction-related tactics as well.
 \nwixlogsorted{i}{{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}}%
 \nwixlogsorted{i}{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}%
 \nwixlogsorted{i}{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}%
+\nwixlogsorted{i}{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}%
 \nwixlogsorted{i}{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}%
 \nwixlogsorted{i}{{\nwixident{Formula.mk{\_}pred}}{Formula.mk:unpred}}%
 \nwixlogsorted{i}{{\nwixident{Formula.serialize}}{Formula.serialize}}%
@@ -1068,6 +1141,8 @@ We should test disjunction-related tactics as well.
 \nwixlogsorted{i}{{\nwixident{Tactic.gen}}{Tactic.gen}}%
 \nwixlogsorted{i}{{\nwixident{Tactic.modus{\_}ponens}}{Tactic.modus:unponens}}%
 \nwixlogsorted{i}{{\nwixident{Tactic.mp}}{Tactic.mp}}%
+\nwixlogsorted{i}{{\nwixident{Tactic.not{\_}elim}}{Tactic.not:unelim}}%
+\nwixlogsorted{i}{{\nwixident{Tactic.not{\_}intro}}{Tactic.not:unintro}}%
 \nwixlogsorted{i}{{\nwixident{Tactic.or{\_}l}}{Tactic.or:unl}}%
 \nwixlogsorted{i}{{\nwixident{Tactic.or{\_}r}}{Tactic.or:unr}}%
 \nwixlogsorted{i}{{\nwixident{Tactic.prove}}{Tactic.prove}}%
@@ -1090,6 +1165,7 @@ We should test disjunction-related tactics as well.
 \nwixlogsorted{i}{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}%
 \nwixlogsorted{i}{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}%
 \nwixlogsorted{i}{{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}}%
+\nwixlogsorted{i}{{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}}%
 \nwixlogsorted{i}{{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}}%
 \nwixlogsorted{i}{{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}}%
 \nwixlogsorted{i}{{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}}%

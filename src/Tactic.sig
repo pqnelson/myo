@@ -11,6 +11,8 @@ signature Tactic = sig
   val undisch_lab : string -> t;
   val modus_ponens : Formula.t -> t;
   val mp : Thm.t -> t;
+  val not_intro : t;
+  val not_elim : t;
   val disj_cases : Thm.t -> t;
   val or_l : t;
   val or_r : t;

@@ -85,7 +85,9 @@ fun not_intro (Gamma |- phi_imp_false) =
 
 fun not_elim (Gamma |- not_phi) =
   if not(Formula.is_not not_phi)
-  then raise Fail "not_elim: theorem is not a negation"
+  then raise Fail("not_elim: theorem ("^
+                  (Formula.serialize not_phi)^
+                  ") is not a negation")
   else let
     val (phi) = Formula.dest_not not_phi;
   in

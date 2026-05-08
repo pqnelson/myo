@@ -246,14 +246,16 @@ fun not_intro (Gamma |- phi_imp_false) =
 
 fun not_elim (Gamma |- not_phi) =
   if not(Formula.is_not not_phi)
-  then raise Fail "not_elim: theorem is not a negation"
+  then raise Fail("not_elim: theorem ("^
+                  (Formula.serialize not_phi)^
+                  ") is not a negation")
   else let
     val (phi) = Formula.dest_not not_phi;
   in
     Gamma |- Formula.mk_imp(phi, Formula.mk_falsum())
   end;
 \nwindexdefn{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}{NW4ICsJQ-2zKkPU-5}\nwindexdefn{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}{NW4ICsJQ-2zKkPU-5}\eatline
-\nwused{\\{NW4ICsJQ-YIPBT-1}}\nwidentdefs{\\{{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}}\\{{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}}\\{{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}}\\{{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}}\\{{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}}\\{{\nwixident{Formula.is{\_}not}}{Formula.is:unnot}}\\{{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}}\nwindexuse{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}{NW4ICsJQ-2zKkPU-5}\nwindexuse{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}{NW4ICsJQ-2zKkPU-5}\nwindexuse{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}{NW4ICsJQ-2zKkPU-5}\nwindexuse{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}{NW4ICsJQ-2zKkPU-5}\nwindexuse{\nwixident{Formula.is{\_}not}}{Formula.is:unnot}{NW4ICsJQ-2zKkPU-5}\nwindexuse{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}{NW4ICsJQ-2zKkPU-5}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW4ICsJQ-2zKkPU-5}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW4ICsJQ-2zKkPU-5}\nwendcode{}\nwbegindocs{22}\nwdocspar
+\nwused{\\{NW4ICsJQ-YIPBT-1}}\nwidentdefs{\\{{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}}\\{{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}}\\{{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}}\\{{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}}\\{{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}}\\{{\nwixident{Formula.is{\_}not}}{Formula.is:unnot}}\\{{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}}\nwindexuse{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}{NW4ICsJQ-2zKkPU-5}\nwindexuse{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}{NW4ICsJQ-2zKkPU-5}\nwindexuse{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}{NW4ICsJQ-2zKkPU-5}\nwindexuse{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}{NW4ICsJQ-2zKkPU-5}\nwindexuse{\nwixident{Formula.is{\_}not}}{Formula.is:unnot}{NW4ICsJQ-2zKkPU-5}\nwindexuse{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}{NW4ICsJQ-2zKkPU-5}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW4ICsJQ-2zKkPU-5}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW4ICsJQ-2zKkPU-5}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW4ICsJQ-2zKkPU-5}\nwendcode{}\nwbegindocs{22}\nwdocspar
 \begin{node}
 The Intuitionistic rule for eliminating contradictions
 \begin{equation}

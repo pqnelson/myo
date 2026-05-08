@@ -373,7 +373,7 @@ fun disch (label : string) { goals = (asl, A_imp_B)::gls
 <<Tactic for negation>>=
 let
   val A = Formula.dest_not A_imp_B;
-  fun jfn' (th::thms) = jfn ((Thm.disch A (Thm.not_elim th))::thms);
+  fun jfn' (th::thms) = jfn ((Thm.not_intro (Thm.disch A th))::thms);
 in
   { goals = (((label, A)::asl, Formula.mk_falsum())::gls)
   , justify = jfn' }
@@ -503,6 +503,45 @@ fun mp thm {goals = (asl, B)::gls, justify = jfn} =
       , justify = jfn' }
     end;
 @ %def Tactic.mp
+
+\begin{node}
+We also should write tactics for negation elimination and introduction.
+\begin{equation}
+\vcenter{\infer=[\neg\mbox{-intro}]{\Gamma\gdash\phi\implies\bot}{\Gamma\gdash\neg\phi}}
+\end{equation}
+\begin{equation}
+\vcenter{\infer=[\neg\mbox{-elim}]{\Gamma\gdash\neg\phi}{\Gamma\gdash\phi\implies\bot}}
+\end{equation}
+\end{node}
+
+<<Specification for tactics>>=
+val not_intro : t;
+val not_elim : t;
+@ 
+
+<<Implementation of tactics>>=
+(* not_intro : Tactic.t *)
+fun not_intro {goals = (asl, not_A)::gls, justify = jfn} =
+  let
+    val A = Formula.dest_not not_A;
+    fun jfn' (thm::thms) = jfn((Thm.not_intro thm)::thms);
+  in
+    { goals = (asl, Formula.mk_imp(A, Formula.mk_falsum ()))::gls
+    , justify = jfn' }
+  end;
+(* not_elim : Tactic.t *)
+fun not_elim {goals = (asl, A_imp_F)::gls, justify = jfn} =
+  let
+    val (A,F) = Formula.dest_imp A_imp_F;
+    val _ = if Formula.is_falsum F
+            then ()
+            else raise Fail("Tactic.not_elim: goal does not imply falsum");
+    fun jfn' (thm::thms) = jfn((Thm.not_elim thm)::thms);
+  in
+    { goals = (asl, Formula.mk_not(A))::gls
+    , justify = jfn' }
+  end;
+@ %def Tactic.not_intro Tactic.not_elim
 
 \begin{node}
 Disjunction elimination is a bit tricky as an inference rule,
@@ -1008,6 +1047,39 @@ We should test disjunction-related tactics as well.
                              , Tactic.assume
                              , Tactic.disch ""
                              , Tactic.or_r
+                             , Tactic.assume ];
+      val actual = Thm.concl thm;
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["EXPECTED: ",
+                           Formula.serialize expected,
+                           "\nACTUAL: ",
+                           Formula.serialize actual,
+                           "\n"])
+    end)
+@
+
+\begin{node}
+Another really useful test case was the contrapositive. This exposed a
+surprising difficulty when working with negation connectives. It also
+caught a bug in our implementation of [[Tactic.disch]] applied to
+$\Gamma\gdash\neg A$.
+\end{node}
+
+<<Unit tests for [[Tactic.sml]]>>=
+, Test.mk "contrapositive_not Tactics.prove" (fn () =>
+    let
+      val A = Formula.mk_pred("A", []);
+      val B = Formula.mk_pred("B", []);
+      val expected = Formula.mk_imp(Formula.mk_imp(A,Formula.mk_not(B)),
+                                    Formula.mk_imp(B,Formula.mk_not(A)));
+      val thm = Tactic.prove expected
+                             [ Tactic.disch ""
+                             , Tactic.disch ""
+                             , Tactic.disch ""
+                             , Tactic.undisch B
+                             , Tactic.not_elim
+                             , Tactic.undisch A
                              , Tactic.assume ];
       val actual = Thm.concl thm;
     in
