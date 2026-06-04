@@ -24,7 +24,7 @@ which could be streamlined with natural deduction.
 \nwenddocs{}\nwbegincode{1}\sublabel{NW4ICsJQ-2cY0B1-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-2cY0B1-1}}}\moddef{Thm.sig~{\nwtagstyle{}\subpageref{NW4ICsJQ-2cY0B1-1}}}\endmoddef\nwstartdeflinemarkup\nwenddeflinemarkup
 signature Thm = sig
   exception Fail of string;
-  type t;
+  eqtype t;
   val hyps : t -> Formula.t list;
   val concl : t -> Formula.t;
   val mk_axiom : Formula.t -> t; (* danger! *)
@@ -120,7 +120,9 @@ fun undisch (Gamma |- A) =
 
 fun modus_ponens (Gamma1 |- imp) (Gamma2 |- phi) =
   if not(Formula.is_imp imp)
-  then raise Fail "modus_ponens: major premise expected implication"
+  then raise Fail("modus_ponens: major premise ("^
+                  (Formula.serialize imp)^
+                  ") expected implication")
   else let
     val (A, B) = Formula.dest_imp imp
   in
@@ -129,7 +131,7 @@ fun modus_ponens (Gamma1 |- imp) (Gamma2 |- phi) =
     else (Gamma1 \nwlinkedidentc{@@}{NW4ICsJQ-2zKkPU-1} Gamma2) |- B
   end;
 \nwindexdefn{\nwixident{Thm.assume}}{Thm.assume}{NW4ICsJQ-2zKkPU-2}\nwindexdefn{\nwixident{Thm.disch}}{Thm.disch}{NW4ICsJQ-2zKkPU-2}\nwindexdefn{\nwixident{Thm.undisch}}{Thm.undisch}{NW4ICsJQ-2zKkPU-2}\nwindexdefn{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW4ICsJQ-2zKkPU-2}\eatline
-\nwused{\\{NW4ICsJQ-YIPBT-1}}\nwidentdefs{\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.undisch}}{Thm.undisch}}}\nwidentuses{\\{{\nwixident{@@}}{@@}}\\{{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{remove}}{remove}}}\nwindexuse{\nwixident{@@}}{@@}{NW4ICsJQ-2zKkPU-2}\nwindexuse{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}{NW4ICsJQ-2zKkPU-2}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW4ICsJQ-2zKkPU-2}\nwindexuse{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}{NW4ICsJQ-2zKkPU-2}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW4ICsJQ-2zKkPU-2}\nwindexuse{\nwixident{remove}}{remove}{NW4ICsJQ-2zKkPU-2}\nwendcode{}\nwbegindocs{10}\nwdocspar
+\nwused{\\{NW4ICsJQ-YIPBT-1}}\nwidentdefs{\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.undisch}}{Thm.undisch}}}\nwidentuses{\\{{\nwixident{@@}}{@@}}\\{{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{remove}}{remove}}}\nwindexuse{\nwixident{@@}}{@@}{NW4ICsJQ-2zKkPU-2}\nwindexuse{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}{NW4ICsJQ-2zKkPU-2}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW4ICsJQ-2zKkPU-2}\nwindexuse{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}{NW4ICsJQ-2zKkPU-2}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW4ICsJQ-2zKkPU-2}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW4ICsJQ-2zKkPU-2}\nwindexuse{\nwixident{remove}}{remove}{NW4ICsJQ-2zKkPU-2}\nwendcode{}\nwbegindocs{10}\nwdocspar
 \begin{node}
 The rules for conjunction
 \begin{equation}
@@ -919,7 +921,7 @@ fun Class_ind P =
                   ind_case (FS0.intersection)];
     val conc = Formula.mk_forall(A, P A);
   in
-    mk_axiom (Formula.mk_imp(premises, conc))
+    mk_axiom(Formula.mk_imp(premises, conc))
   end;
 \nwindexdefn{\nwixident{Thm.Class{\_}ind}}{Thm.Class:unind}{NW4ICsJQ-2aDdLu-A}\eatline
 \nwused{\\{NW4ICsJQ-YIPBT-1}}\nwidentdefs{\\{{\nwixident{Thm.Class{\_}ind}}{Thm.Class:unind}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{FS0.induct}}{FS0.induct}}\\{{\nwixident{FS0.intersection}}{FS0.intersection}}\\{{\nwixident{FS0.preimage}}{FS0.preimage}}\\{{\nwixident{FS0.singleton}}{FS0.singleton}}\\{{\nwixident{FS0.union}}{FS0.union}}\\{{\nwixident{FS0.zero}}{FS0.zero}}\\{{\nwixident{Sort.CLASS}}{Sort.CLASS}}\\{{\nwixident{Sort.FUN}}{Sort.FUN}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW4ICsJQ-2aDdLu-A}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW4ICsJQ-2aDdLu-A}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW4ICsJQ-2aDdLu-A}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW4ICsJQ-2aDdLu-A}\nwindexuse{\nwixident{FS0.induct}}{FS0.induct}{NW4ICsJQ-2aDdLu-A}\nwindexuse{\nwixident{FS0.intersection}}{FS0.intersection}{NW4ICsJQ-2aDdLu-A}\nwindexuse{\nwixident{FS0.preimage}}{FS0.preimage}{NW4ICsJQ-2aDdLu-A}\nwindexuse{\nwixident{FS0.singleton}}{FS0.singleton}{NW4ICsJQ-2aDdLu-A}\nwindexuse{\nwixident{FS0.union}}{FS0.union}{NW4ICsJQ-2aDdLu-A}\nwindexuse{\nwixident{FS0.zero}}{FS0.zero}{NW4ICsJQ-2aDdLu-A}\nwindexuse{\nwixident{Sort.CLASS}}{Sort.CLASS}{NW4ICsJQ-2aDdLu-A}\nwindexuse{\nwixident{Sort.FUN}}{Sort.FUN}{NW4ICsJQ-2aDdLu-A}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW4ICsJQ-2aDdLu-A}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW4ICsJQ-2aDdLu-A}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW4ICsJQ-2aDdLu-A}\nwendcode{}\nwbegindocs{86}\nwdocspar
@@ -1000,10 +1002,10 @@ fun axiom_class_comp (P : Formula.t) ([] : Term.t list) =
         then raise Fail "axiom_class_comp: given list of variables contains a function"
         else if List.exists (not o Term.is_ind) vars
         then raise Fail "axiom_class_comp: given list of variables not all individual-sorted"
-        else [] |- (List.foldr Formula.mk_forall
-                               (Formula.mk_iff (FS0.In xs S,
-                                                P))
-                               vars)
+        else mk_axiom(List.foldr Formula.mk_forall
+                                 (Formula.mk_iff (FS0.In xs S,
+                                                  P))
+                                 vars)
       end;
 \nwindexdefn{\nwixident{Thm.axiom{\_}class{\_}comp}}{Thm.axiom:unclass:uncomp}{NW4ICsJQ-2aDdLu-B}\eatline
 \nwused{\\{NW4ICsJQ-YIPBT-1}}\nwidentdefs{\\{{\nwixident{Thm.axiom{\_}class{\_}comp}}{Thm.axiom:unclass:uncomp}}}\nwidentuses{\\{{\nwixident{Formula.fv}}{Formula.fv}}\\{{\nwixident{Formula.is{\_}e{\_}plus}}{Formula.is:une:unplus}}\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{FS0.In}}{FS0.In}}\\{{\nwixident{FS0.pair}}{FS0.pair}}\\{{\nwixident{Sort.CLASS}}{Sort.CLASS}}\\{{\nwixident{Term.eq}}{Term.eq}}\\{{\nwixident{Term.is{\_}ind}}{Term.is:unind}}\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Formula.fv}}{Formula.fv}{NW4ICsJQ-2aDdLu-B}\nwindexuse{\nwixident{Formula.is{\_}e{\_}plus}}{Formula.is:une:unplus}{NW4ICsJQ-2aDdLu-B}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW4ICsJQ-2aDdLu-B}\nwindexuse{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}{NW4ICsJQ-2aDdLu-B}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW4ICsJQ-2aDdLu-B}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW4ICsJQ-2aDdLu-B}\nwindexuse{\nwixident{FS0.In}}{FS0.In}{NW4ICsJQ-2aDdLu-B}\nwindexuse{\nwixident{FS0.pair}}{FS0.pair}{NW4ICsJQ-2aDdLu-B}\nwindexuse{\nwixident{Sort.CLASS}}{Sort.CLASS}{NW4ICsJQ-2aDdLu-B}\nwindexuse{\nwixident{Term.eq}}{Term.eq}{NW4ICsJQ-2aDdLu-B}\nwindexuse{\nwixident{Term.is{\_}ind}}{Term.is:unind}{NW4ICsJQ-2aDdLu-B}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW4ICsJQ-2aDdLu-B}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW4ICsJQ-2aDdLu-B}\nwendcode{}\nwbegindocs{92}\nwdocspar
@@ -1027,9 +1029,9 @@ fun axiom_fun_eq lhs rhs =
            val x = Term.fresh_var "x" Sort.IND vars;
            val iff = Formula.mk_iff;
            val forall = Formula.mk_forall;
-       in [] |- iff(forall(x, FS0.equal (FS0.app lhs x)
-                                        (FS0.app rhs x)),
-                    FS0.equal lhs rhs)
+       in mk_axiom(iff(forall(x, FS0.equal (FS0.app lhs x)
+                                           (FS0.app rhs x)),
+                       FS0.equal lhs rhs))
        end;
 \nwindexdefn{\nwixident{Thm.axiom{\_}fun{\_}eq}}{Thm.axiom:unfun:uneq}{NW4ICsJQ-2aDdLu-C}\eatline
 \nwused{\\{NW4ICsJQ-YIPBT-1}}\nwidentdefs{\\{{\nwixident{Thm.axiom{\_}fun{\_}eq}}{Thm.axiom:unfun:uneq}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}}\\{{\nwixident{FS0.app}}{FS0.app}}\\{{\nwixident{FS0.equal}}{FS0.equal}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Term.fresh{\_}var}}{Term.fresh:unvar}}\\{{\nwixident{Term.fv}}{Term.fv}}\\{{\nwixident{Term.is{\_}fun}}{Term.is:unfun}}\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW4ICsJQ-2aDdLu-C}\nwindexuse{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}{NW4ICsJQ-2aDdLu-C}\nwindexuse{\nwixident{FS0.app}}{FS0.app}{NW4ICsJQ-2aDdLu-C}\nwindexuse{\nwixident{FS0.equal}}{FS0.equal}{NW4ICsJQ-2aDdLu-C}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW4ICsJQ-2aDdLu-C}\nwindexuse{\nwixident{Term.fresh{\_}var}}{Term.fresh:unvar}{NW4ICsJQ-2aDdLu-C}\nwindexuse{\nwixident{Term.fv}}{Term.fv}{NW4ICsJQ-2aDdLu-C}\nwindexuse{\nwixident{Term.is{\_}fun}}{Term.is:unfun}{NW4ICsJQ-2aDdLu-C}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW4ICsJQ-2aDdLu-C}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW4ICsJQ-2aDdLu-C}\nwendcode{}\nwbegindocs{96}\begin{node}
@@ -1050,9 +1052,9 @@ fun axiom_class_eq lhs rhs =
            val x = Term.fresh_var "x" Sort.IND vars;
            val iff = Formula.mk_iff;
            val forall = Formula.mk_forall;
-       in [] |- iff(forall(x, Formula.mk_iff (FS0.In x lhs,
-                                              FS0.In x rhs)),
-                    (FS0.equal lhs rhs))
+       in mk_axiom(iff(forall(x, Formula.mk_iff (FS0.In x lhs,
+                                                 FS0.In x rhs)),
+                       (FS0.equal lhs rhs)))
        end;
 \nwindexdefn{\nwixident{Thm.axiom{\_}class{\_}eq}}{Thm.axiom:unclass:uneq}{NW4ICsJQ-2aDdLu-D}\eatline
 \nwused{\\{NW4ICsJQ-YIPBT-1}}\nwidentdefs{\\{{\nwixident{Thm.axiom{\_}class{\_}eq}}{Thm.axiom:unclass:uneq}}}\nwidentuses{\\{{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}}\\{{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}}\\{{\nwixident{FS0.equal}}{FS0.equal}}\\{{\nwixident{FS0.In}}{FS0.In}}\\{{\nwixident{Sort.IND}}{Sort.IND}}\\{{\nwixident{Term.fresh{\_}var}}{Term.fresh:unvar}}\\{{\nwixident{Term.fv}}{Term.fv}}\\{{\nwixident{Term.is{\_}class}}{Term.is:unclass}}\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Formula.mk{\_}forall}}{Formula.mk:unforall}{NW4ICsJQ-2aDdLu-D}\nwindexuse{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}{NW4ICsJQ-2aDdLu-D}\nwindexuse{\nwixident{FS0.equal}}{FS0.equal}{NW4ICsJQ-2aDdLu-D}\nwindexuse{\nwixident{FS0.In}}{FS0.In}{NW4ICsJQ-2aDdLu-D}\nwindexuse{\nwixident{Sort.IND}}{Sort.IND}{NW4ICsJQ-2aDdLu-D}\nwindexuse{\nwixident{Term.fresh{\_}var}}{Term.fresh:unvar}{NW4ICsJQ-2aDdLu-D}\nwindexuse{\nwixident{Term.fv}}{Term.fv}{NW4ICsJQ-2aDdLu-D}\nwindexuse{\nwixident{Term.is{\_}class}}{Term.is:unclass}{NW4ICsJQ-2aDdLu-D}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW4ICsJQ-2aDdLu-D}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW4ICsJQ-2aDdLu-D}\nwendcode{}\nwbegindocs{100}\nwdocspar

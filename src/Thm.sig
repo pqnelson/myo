@@ -1,6 +1,6 @@
 signature Thm = sig
   exception Fail of string;
-  type t;
+  eqtype t;
   val hyps : t -> Formula.t list;
   val concl : t -> Formula.t;
   val mk_axiom : Formula.t -> t; (* danger! *)

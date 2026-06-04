@@ -29,7 +29,9 @@ fun undisch (Gamma |- A) =
 
 fun modus_ponens (Gamma1 |- imp) (Gamma2 |- phi) =
   if not(Formula.is_imp imp)
-  then raise Fail "modus_ponens: major premise expected implication"
+  then raise Fail("modus_ponens: major premise ("^
+                  (Formula.serialize imp)^
+                  ") expected implication")
   else let
     val (A, B) = Formula.dest_imp imp
   in
@@ -431,7 +433,7 @@ fun Class_ind P =
                   ind_case (FS0.intersection)];
     val conc = Formula.mk_forall(A, P A);
   in
-    mk_axiom (Formula.mk_imp(premises, conc))
+    mk_axiom(Formula.mk_imp(premises, conc))
   end;
 (* axiom_class_comp : Formula.t -> Term.t list -> Thm.t *)
 fun axiom_class_comp (P : Formula.t) ([] : Term.t list) =
@@ -458,10 +460,10 @@ fun axiom_class_comp (P : Formula.t) ([] : Term.t list) =
         then raise Fail "axiom_class_comp: given list of variables contains a function"
         else if List.exists (not o Term.is_ind) vars
         then raise Fail "axiom_class_comp: given list of variables not all individual-sorted"
-        else [] |- (List.foldr Formula.mk_forall
-                               (Formula.mk_iff (FS0.In xs S,
-                                                P))
-                               vars)
+        else mk_axiom(List.foldr Formula.mk_forall
+                                 (Formula.mk_iff (FS0.In xs S,
+                                                  P))
+                                 vars)
       end;
 (* axiom_fun_eq : Term.t -> Term.t -> Thm.t *)
 fun axiom_fun_eq lhs rhs =
@@ -473,9 +475,9 @@ fun axiom_fun_eq lhs rhs =
            val x = Term.fresh_var "x" Sort.IND vars;
            val iff = Formula.mk_iff;
            val forall = Formula.mk_forall;
-       in [] |- iff(forall(x, FS0.equal (FS0.app lhs x)
-                                        (FS0.app rhs x)),
-                    FS0.equal lhs rhs)
+       in mk_axiom(iff(forall(x, FS0.equal (FS0.app lhs x)
+                                           (FS0.app rhs x)),
+                       FS0.equal lhs rhs))
        end;
 (* axiom_class_eq : Term.t -> Term.t -> Thm.t *)
 fun axiom_class_eq lhs rhs =
@@ -487,8 +489,8 @@ fun axiom_class_eq lhs rhs =
            val x = Term.fresh_var "x" Sort.IND vars;
            val iff = Formula.mk_iff;
            val forall = Formula.mk_forall;
-       in [] |- iff(forall(x, Formula.mk_iff (FS0.In x lhs,
-                                              FS0.In x rhs)),
-                    (FS0.equal lhs rhs))
+       in mk_axiom(iff(forall(x, Formula.mk_iff (FS0.In x lhs,
+                                                 FS0.In x rhs)),
+                       (FS0.equal lhs rhs)))
        end;
 end;
