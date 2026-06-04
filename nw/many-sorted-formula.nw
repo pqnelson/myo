@@ -30,7 +30,7 @@ is precisely the [[Formula.Dest]] exception's role.
 <<Formula.sig>>=
 signature Formula = sig
   exception Dest of string;
-  type t;
+  eqtype t;
   val is_atom : t -> bool;
   <<Specification for formulas>>
 end;

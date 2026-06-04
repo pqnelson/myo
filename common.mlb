@@ -15,12 +15,12 @@ in
     src/Derived.sml
     src/Goal.sig
     src/Goal.sml
+    src/Printer.sig
+    src/TBPrinter.sml
     src/Tactic.sig
     src/Tactic.sml
     src/Unif.sig
     src/Unif.sml
     src/Classical.sig
     src/Classical.sml
-    src/Printer.sig
-    src/TBPrinter.sml
 end

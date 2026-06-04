@@ -1,6 +1,6 @@
 signature Formula = sig
   exception Dest of string;
-  type t;
+  eqtype t;
   val is_atom : t -> bool;
   val mk_verum : unit -> t;
   val mk_falsum : unit -> t;
