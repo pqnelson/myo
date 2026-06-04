@@ -18,6 +18,17 @@
 
 \noweboptions{longxref,english,breakcode,externalindex,smallcode}
 
+% URLs without the leading "http://" or "https://'
+% https://tex.stackexchange.com/a/139934/14751
+\newcommand\rurl[1]{\href{http://#1}{\nolinkurl{#1}}}
+\newcommand\surl[1]{\href{https://#1}{\nolinkurl{#1}}}
+
+\def\hair{\kern.05em\relax}
+\DeclareMathOperator\update{\textit{insert\/}} % tree insertion
+\DeclareMathOperator\delete{\textit{delete\/}} % tree delete
+\DeclareMathOperator\inorder{\textit{inorder\/}} % tree traversal
+\newcommand\Tree[1]{#1\>\mbox{tree}} % tree type operator
+\newcommand\List[1]{#1\>\mbox{list}} % list type operator
 \makeatletter
 \let\og@doi\doi
 \def\doi#1{\texttt{\og@doi{#1}}}

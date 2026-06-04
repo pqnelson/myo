@@ -29,7 +29,7 @@ signature Printer = sig
   val thm : Thm.t -> string;
   val goals : Goal.t -> string;
 end;
-\nwnotused{Printer.sig}\nwidentuses{\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW24q7Pv-3x49D5-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW24q7Pv-3x49D5-1}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW24q7Pv-3x49D5-1}\nwendcode{}\nwbegindocs{2}\nwdocspar
+\nwnotused{Printer.sig}\nwidentuses{\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Goal.t}}{Goal.t}}\\{{\nwixident{Term.t}}{Term.t}}\\{{\nwixident{Thm.t}}{Thm.t}}}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW24q7Pv-3x49D5-1}\nwindexuse{\nwixident{Goal.t}}{Goal.t}{NW24q7Pv-3x49D5-1}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW24q7Pv-3x49D5-1}\nwindexuse{\nwixident{Thm.t}}{Thm.t}{NW24q7Pv-3x49D5-1}\nwendcode{}\nwbegindocs{2}\nwdocspar
 
 \begin{node}
 We will have a {\Tt{}TBPrinter\nwendquote} (``\underline{t}ext\underline{b}ook
@@ -211,7 +211,7 @@ in
 fun goals g = subgoals (Goal.subgoals g)
 end;
 \nwindexdefn{\nwixident{TBPrinter.goals}}{TBPrinter.goals}{NW24q7Pv-3yfJXJ-1}\eatline
-\nwused{\\{NW24q7Pv-3JbCWS-1}}\nwidentdefs{\\{{\nwixident{TBPrinter.goals}}{TBPrinter.goals}}}\nwendcode{}
+\nwused{\\{NW24q7Pv-3JbCWS-1}}\nwidentdefs{\\{{\nwixident{TBPrinter.goals}}{TBPrinter.goals}}}\nwidentuses{\\{{\nwixident{Goal.subgoals}}{Goal.subgoals}}}\nwindexuse{\nwixident{Goal.subgoals}}{Goal.subgoals}{NW24q7Pv-3yfJXJ-1}\nwendcode{}
 
 \nwixlogsorted{c}{{Gathering bound variables for pretty printing}{NW24q7Pv-2b9skq-1}{\nwixu{NW24q7Pv-14xJt9-1}\nwixd{NW24q7Pv-2b9skq-1}}}%
 \nwixlogsorted{c}{{Printer.sig}{NW24q7Pv-3x49D5-1}{\nwixd{NW24q7Pv-3x49D5-1}}}%
@@ -236,6 +236,8 @@ end;
 \nwixlogsorted{i}{{\nwixident{Formula.precedence}}{Formula.precedence}}%
 \nwixlogsorted{i}{{\nwixident{Formula.serialize}}{Formula.serialize}}%
 \nwixlogsorted{i}{{\nwixident{Formula.t}}{Formula.t}}%
+\nwixlogsorted{i}{{\nwixident{Goal.subgoals}}{Goal.subgoals}}%
+\nwixlogsorted{i}{{\nwixident{Goal.t}}{Goal.t}}%
 \nwixlogsorted{i}{{\nwixident{TBPrinter.formula}}{TBPrinter.formula}}%
 \nwixlogsorted{i}{{\nwixident{TBPrinter.goals}}{TBPrinter.goals}}%
 \nwixlogsorted{i}{{\nwixident{TBPrinter.term}}{TBPrinter.term}}%

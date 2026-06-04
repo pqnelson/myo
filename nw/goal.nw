@@ -9,7 +9,7 @@
 %% Last update 2026-04-09T15:40:57-0700
 %% 
 
-\section{Tactics and goals}
+\section{Goals}
 
 \begin{node}
 The idea behind LCF-style provers is that we can use
@@ -67,11 +67,11 @@ will henceforth use this convention.
 \begin{definition}
 A \define{Tactic} is a partial function of the form
 \begin{equation}
-T\colon\mbox{Subgoal}\pto\mbox{Subgoal list}\times\mbox{Validation}
+T\colon\mbox{Subgoal}\pto\List{\mbox{Subgoal}}\times\mbox{Validation}
 \end{equation}
 where ``Validation'' refers to a partial function of the form
 \begin{equation}
-V\colon\mbox{\texttt{Thm.t} list}\to\mbox{\texttt{Thm.t}}.
+V\colon\List{\texttt{Thm.t}}\to\mbox{\texttt{Thm.t}}.
 \end{equation}
 The validation function \emph{is} important, but usually left implicit
 when documenting tactics.
@@ -110,13 +110,9 @@ signature Goal = sig
            , justify : Thm.t list -> Thm.t };
 
   val subgoals : t -> ((string * Formula.t) list * Formula.t) list;
-
   val justify : t -> Thm.t list -> Thm.t;
-  
   val to_string : t -> string;
-
   val setup : Formula.t -> t;
-
   val extract_thm : t -> Thm.t;
 end;
 @
@@ -133,6 +129,70 @@ fun subgoals ({goals, ...} : t) = goals;
 
 fun justify ({justify = jfn, ...} : t) = jfn;
 
+<<Transform a goal into a string>>
+
+<<Setup a goal for a given formula>>
+
+<<Extract a theorem from a defeated goal stack>>
+end;
+@ %def Goal.t Goal.subgoals Goal.justify Goal.Unsolved Goal.Mismatch
+
+\begin{node}
+To ensure the tactics are valid, we should confirm the resulting
+theorem is what we initially sought. Otherwise, we should throw an
+error indicating something went wrong. We cleverly make this postcondition as
+part of the validation function, specifically \emph{the last thing}
+the validation function performs.
+\end{node}
+
+<<Setup a goal for a given formula>>=
+(* setup : Formula.t -> Goal.t *)
+fun setup fm =
+  let
+    fun check [thm] =
+      if Formula.eq fm (Thm.concl thm)
+      then thm
+      else raise Mismatch "Goal.setup: wrong theorem"
+  in
+    { goals = [([], fm)]
+    , justify = check }
+  end;
+@ %def Goal.setup
+
+\begin{node}
+When we have exhausted the goal stack, what has happened is we have
+effectively built a validation function but not a theorem. We still
+need to \emph{extract} the theorem by applying the validation function
+to the empty list of theorems.
+
+Should there be unresolved subgoals on the stack, an exception is
+raised to alert the user.
+\end{node}
+
+<<Extract a theorem from a defeated goal stack>>=
+(* extract_thm : Goal.t -> Thm.t *)
+fun extract_thm ({goals, justify} : t) = 
+  if List.null goals
+  then justify []
+  else raise Unsolved "Goal.extract_thm: unsolved goals";
+@ %def Goal.extract_thm
+
+\begin{node}
+``Printing'' a goal stack to a string requires a bit of work.
+There are three cases to consider:
+\begin{enumerate}
+\item The goal stack is empty, in which case we should return
+  something banal like ``No more goals''
+\item There is a single subgoal in the goal stack: in which case, we
+  should \emph{just} return something like ``$\Gamma\gdash\varphi$''
+\item There are two or more subgoals in the goal stack: in which case,
+  we should enumerate each subgoal with ``Subgoal \#$n$'' to clarify
+  what the subgoals are, and use the same code for the ``single
+  subgoal'' case to serialize each subgoal.
+\end{enumerate}
+\end{node}
+
+<<Transform a goal into a string>>=
 local
   fun single (asl, fm) =
     (String.concatWith
@@ -160,26 +220,9 @@ fun to_string ({goals, justify}) =
  | [g] => (single g)
  | (gls) => (iter 1 "" gls))
 end;
+@ %def Goal.to_string
 
-(* setup : Formula.t -> Goal.t *)
-fun setup fm =
-  let
-    fun check [thm] =
-      if Formula.eq fm (Thm.concl thm)
-      then thm
-      else raise Mismatch "Goal.setup: wrong theorem"
-  in
-    { goals = [([], fm)]
-    , justify = check }
-  end;
-
-(* extract_thm : Goal.t -> Thm.t *)
-fun extract_thm ({goals, justify} : t) = 
-  if List.null goals
-  then justify []
-  else raise Unsolved "Goal.extract_thm: unsolved goals";
-end;
-@ 
+\section{Tactics}
 
 \begin{node}
 A tactic is literally an inference rule ``upside down''. For example,
@@ -198,6 +241,7 @@ those hypotheses, and try to prove $B$ under those hypotheses.
 
 <<Tactic.sig>>=
 signature Tactic = sig
+  exception Fail of string;
   type t = Goal.t -> Goal.t;
 
   val prove : Formula.t -> t list -> Thm.t;
@@ -208,6 +252,7 @@ end;
 
 <<Tactic.sml>>=
 structure Tactic : Tactic = struct
+exception Fail of string;
 type t = Goal.t -> Goal.t;
 
 <<Proving a theorem from tactics>>
@@ -217,7 +262,7 @@ type t = Goal.t -> Goal.t;
 <<Implementation of tactics>>
 
 end;
-@
+@ %def Tactic.t Tactic.Fail
 
 <<tests/TacticSuite.sml>>=
 structure TacticSuite : TestSuite = struct
@@ -649,9 +694,12 @@ val assume : t;
 @ 
 
 <<Implementation of tactics>>=
-fun assume {goals = (asl, A)::gls, justify = jfn} =
+fun assume (g as {goals = (asl, A)::gls, justify = jfn}) =
   if not(List.exists (fn (_,B) => Formula.eq A B) asl)
-  then raise Fail "Tactic.assume: goal is not among assumptions"
+  then
+    (print("Tactic.assume: goals = "^
+           (TBPrinter.goals g)^"\n");
+     raise Fail "Tactic.assume: goal is not among assumptions")
   else
     let
       val hyps = map (fn (_,fm) => fm) asl;
@@ -753,7 +801,7 @@ fun iff {goals = (asl, A_iff_B)::gls, justify = jfn} =
     { goals = (asl, A_imp_B)::(asl, B_imp_A)::gls
     , justify = jfn' }
   end;
-@ %def Thm.iff
+@ %def Tactic.iff
 
 \begin{node}
 The last tactics which need discussing concern themselves with quantifiers.
@@ -831,15 +879,28 @@ val exists : Term.t -> t;
 
 <<Implementation of tactics>>=
 (* choose : Thm.t -> Tactic.t *)
-fun choose th {goals = (asl, B)::gls, justify = jfn} =
+fun choose th (g as {goals = (asl, B)::gls, justify = jfn}) =
   if not(assumptions_contain_hypotheses th asl)
-  then raise Fail "choose: assumptions do not contain all hypotheses of theorem"
+  then raise Fail "Tactic.choose: assumptions do not contain all hypotheses of theorem"
   else
     let
+      val _ = print("Tactic.choose: th = "^
+                    (TBPrinter.thm th)^"\n");
+      val _ = print("Tactic.choose: goals = "^
+                    (TBPrinter.goals g)^"\n");
       val (x as (Term.Var(x0,s)),A) = Formula.dest_exists(Thm.concl th);
-      val fvs = List.concat (map (fn (_,fm) => Formula.fv fm) asl);
+      val fvs = List.concat (map (fn (_,fm) =>
+                                     (Formula.fv fm))
+                                 asl);
+      val _ = print("Tactic.choose: asl = {"^
+                    (String.concatWith ", " (map Term.serialize fvs))^
+                    "}\n");
       val x' = Term.fresh_var x0 s fvs;
-      fun jfn' (thm::thms) = jfn((Derived.exists_elim x' th thm)::thms);
+      fun jfn' (thm::thms) =
+        (print("Derived.exists_elim th = "^
+               (TBPrinter.thm th)^"\n"^
+               "                   thm = "^(TBPrinter.thm thm)^"\n");
+         jfn((Derived.exists_elim x' th thm)::thms));
     in
       { goals = (("",Formula.subst x x' A)::asl, B)::gls
       , justify = jfn' }
@@ -854,7 +915,7 @@ fun exists tm {goals = (asl, ex_A)::gls, justify = jfn} =
     { goals = (asl, Formula.subst tm x A)::gls
     , justify = jfn' }
   end;
-@
+@ %def Tactic.choose Tactic.exists
 
 \begin{xca}
 Prove these tactics are ``complete'', in the sense that any proof we
@@ -1091,3 +1152,88 @@ $\Gamma\gdash\neg A$.
                            "\n"])
     end)
 @ 
+
+\begin{node}
+Weak $\neg$-elimination provides an example of $\neg$-elimination
+and [[contr]] tactics.
+\end{node}
+
+<<Unit tests for [[Tactic.sml]]>>=
+, Test.mk "weak_not_elim Tactics.prove" (fn () =>
+    let
+      val A = Formula.mk_pred("A", []);
+      val B = Formula.mk_pred("B", []);
+      val F = Formula.mk_falsum ();
+      val expected = Formula.mk_imp(A,
+                                    Formula.mk_imp(Formula.mk_not(A),B));
+      val thm1 = Thm.contr B (Thm.assume (Formula.mk_falsum()) []);
+      val thm = Tactic.prove expected
+                             [ Tactic.disch ""
+                             , Tactic.disch ""
+                             , Tactic.modus_ponens F
+                             , Tactic.disch ""
+                             , Tactic.contr (Thm.assume F [])
+                             , Tactic.undisch A
+                             , Tactic.not_elim
+                             , Tactic.assume ];
+      val actual = Thm.concl thm;
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["EXPECTED: ",
+                           Formula.serialize expected,
+                           "\nACTUAL: ",
+                           Formula.serialize actual,
+                           "\n"])
+    end)
+@
+
+\begin{node}
+We should check the quantifier tactics for some simple cases;
+specifically the unviersal quantifier tactics for the simple theorem
+$\vdash(\forall x\ldotp A[x])\lor C\implies\forall x\ldotp(A[x]\lor C)$.
+\end{node}
+
+<<Unit tests for [[Tactic.sml]]>>=
+, Test.mk "forall_tactics_test" (fn () =>
+    let
+      fun A x = Formula.mk_pred("A", [x]);
+      val C = Formula.mk_pred("C", []);
+      val x = Term.Var("x", Sort.IND);
+      val expected = Formula.mk_imp(Formula.mk_or(Formula.mk_forall(x, A x),
+                                                  C),
+                                    Formula.mk_forall(x, Formula.mk_or(A x,
+                                                                       C)));
+      val thm1 = Thm.assume (Formula.mk_or(Formula.mk_forall(x, A x), C)) [];
+      val thm = Tactic.prove expected
+                             [ Tactic.disch ""
+                             , Tactic.gen
+                             , Tactic.disj_cases thm1
+                             , Tactic.disch ""
+                             , Tactic.or_l
+                             , Tactic.spec (x,x)
+                             , Tactic.assume
+                             , Tactic.disch ""
+                             , Tactic.or_r
+                             , Tactic.assume ];
+      val actual = Thm.concl thm;
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["EXPECTED: ",
+                           Formula.serialize expected,
+                           "\nACTUAL: ",
+                           Formula.serialize actual,
+                           "\n"])
+    end)
+@
+
+\begin{node}[TODO]
+We still need to unit test the following tactics:
+\begin{enumerate}
+\item [[Tactic.undisch_lab]]
+\item [[Tactic.mp]]
+\item [[Tactic.not_intro]]
+\item [[Tactic.choose]]
+\item [[Tactic.exists]]
+\item [[Tactic.autolabel]]
+\end{enumerate}
+\end{node}

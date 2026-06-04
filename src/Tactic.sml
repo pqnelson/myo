@@ -1,4 +1,5 @@
 structure Tactic : Tactic = struct
+exception Fail of string;
 type t = Goal.t -> Goal.t;
 
 local
@@ -172,9 +173,12 @@ fun or_r {goals = (asl, A_or_B)::gls, justify = jfn} =
     { goals = (asl, B)::gls
     , justify = jfn' }
   end;
-fun assume {goals = (asl, A)::gls, justify = jfn} =
+fun assume (g as {goals = (asl, A)::gls, justify = jfn}) =
   if not(List.exists (fn (_,B) => Formula.eq A B) asl)
-  then raise Fail "Tactic.assume: goal is not among assumptions"
+  then
+    (print("Tactic.assume: goals = "^
+           (TBPrinter.goals g)^"\n");
+     raise Fail "Tactic.assume: goal is not among assumptions")
   else
     let
       val hyps = map (fn (_,fm) => fm) asl;
@@ -229,15 +233,28 @@ fun spec (t, x) {goals = (asl, A)::gls, justify = jfn} =
     , justify = jfn' }
   end;
 (* choose : Thm.t -> Tactic.t *)
-fun choose th {goals = (asl, B)::gls, justify = jfn} =
+fun choose th (g as {goals = (asl, B)::gls, justify = jfn}) =
   if not(assumptions_contain_hypotheses th asl)
-  then raise Fail "choose: assumptions do not contain all hypotheses of theorem"
+  then raise Fail "Tactic.choose: assumptions do not contain all hypotheses of theorem"
   else
     let
+      val _ = print("Tactic.choose: th = "^
+                    (TBPrinter.thm th)^"\n");
+      val _ = print("Tactic.choose: goals = "^
+                    (TBPrinter.goals g)^"\n");
       val (x as (Term.Var(x0,s)),A) = Formula.dest_exists(Thm.concl th);
-      val fvs = List.concat (map (fn (_,fm) => Formula.fv fm) asl);
+      val fvs = List.concat (map (fn (_,fm) =>
+                                     (Formula.fv fm))
+                                 asl);
+      val _ = print("Tactic.choose: asl = {"^
+                    (String.concatWith ", " (map Term.serialize fvs))^
+                    "}\n");
       val x' = Term.fresh_var x0 s fvs;
-      fun jfn' (thm::thms) = jfn((Derived.exists_elim x' th thm)::thms);
+      fun jfn' (thm::thms) =
+        (print("Derived.exists_elim th = "^
+               (TBPrinter.thm th)^"\n"^
+               "                   thm = "^(TBPrinter.thm thm)^"\n");
+         jfn((Derived.exists_elim x' th thm)::thms));
     in
       { goals = (("",Formula.subst x x' A)::asl, B)::gls
       , justify = jfn' }

@@ -6,12 +6,8 @@ signature Goal = sig
            , justify : Thm.t list -> Thm.t };
 
   val subgoals : t -> ((string * Formula.t) list * Formula.t) list;
-
   val justify : t -> Thm.t list -> Thm.t;
-  
   val to_string : t -> string;
-
   val setup : Formula.t -> t;
-
   val extract_thm : t -> Thm.t;
 end;

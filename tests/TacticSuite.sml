@@ -96,5 +96,61 @@ val suite = Test.suite "TacticSuite" [
                            Formula.serialize actual,
                            "\n"])
     end)
+, Test.mk "weak_not_elim Tactics.prove" (fn () =>
+    let
+      val A = Formula.mk_pred("A", []);
+      val B = Formula.mk_pred("B", []);
+      val F = Formula.mk_falsum ();
+      val expected = Formula.mk_imp(A,
+                                    Formula.mk_imp(Formula.mk_not(A),B));
+      val thm1 = Thm.contr B (Thm.assume (Formula.mk_falsum()) []);
+      val thm = Tactic.prove expected
+                             [ Tactic.disch ""
+                             , Tactic.disch ""
+                             , Tactic.modus_ponens F
+                             , Tactic.disch ""
+                             , Tactic.contr (Thm.assume F [])
+                             , Tactic.undisch A
+                             , Tactic.not_elim
+                             , Tactic.assume ];
+      val actual = Thm.concl thm;
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["EXPECTED: ",
+                           Formula.serialize expected,
+                           "\nACTUAL: ",
+                           Formula.serialize actual,
+                           "\n"])
+    end)
+, Test.mk "forall_tactics_test" (fn () =>
+    let
+      fun A x = Formula.mk_pred("A", [x]);
+      val C = Formula.mk_pred("C", []);
+      val x = Term.Var("x", Sort.IND);
+      val expected = Formula.mk_imp(Formula.mk_or(Formula.mk_forall(x, A x),
+                                                  C),
+                                    Formula.mk_forall(x, Formula.mk_or(A x,
+                                                                       C)));
+      val thm1 = Thm.assume (Formula.mk_or(Formula.mk_forall(x, A x), C)) [];
+      val thm = Tactic.prove expected
+                             [ Tactic.disch ""
+                             , Tactic.gen
+                             , Tactic.disj_cases thm1
+                             , Tactic.disch ""
+                             , Tactic.or_l
+                             , Tactic.spec (x,x)
+                             , Tactic.assume
+                             , Tactic.disch ""
+                             , Tactic.or_r
+                             , Tactic.assume ];
+      val actual = Thm.concl thm;
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["EXPECTED: ",
+                           Formula.serialize expected,
+                           "\nACTUAL: ",
+                           Formula.serialize actual,
+                           "\n"])
+    end)
 ]
 end;

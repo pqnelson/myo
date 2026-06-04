@@ -1,4 +1,5 @@
 signature Tactic = sig
+  exception Fail of string;
   type t = Goal.t -> Goal.t;
 
   val prove : Formula.t -> t list -> Thm.t;
