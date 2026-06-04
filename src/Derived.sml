@@ -4,7 +4,7 @@ fun weaken Gamma th1 =
     val th2 = Thm.assume (Thm.concl th1) Gamma;
     val th3 = Thm.disch (Thm.concl th1) th2;
   in
-    Thm.modus_ponens th2 th1
+    Thm.modus_ponens th3 th1
   end;
 
 fun hypo_syll thm1 thm2 =
@@ -794,22 +794,44 @@ fun ex_imp x C A =
   in
     Thm.exists_elim x th6
   end;
+(* exists_cong : Term.t -> Term.t -> (Term.t -> Formula.t) -> Thm.t  *)
+fun exists_cong x y A =
+  if not(Term.is_var x)
+  then raise Fail "Derived.exists_cong: first argument is not a variable"
+  else if not(Term.is_var y)
+  then raise Fail "Derived.exists_cong: second argument is not a variable"
+  else if not(Term.have_same_sort x y)
+  then raise Fail "Derived.exists_cong: variables of different sorts"
+  else let
+    val th1 = Thm.assume (A x) [];
+    val th2 = Thm.exists_intro y x (A y) th1;
+    val th3 = Thm.disch (A x) th2;
+  in
+    Thm.exists_elim x th3
+  end;
 (* exists_elim : Term.t -> Thm.t -> Thm.t -> Thm.t *)
 fun exists_elim (v : Term.t) (th1 : Thm.t) (th2 : Thm.t) : Thm.t =
   let
     val (x,A) = Formula.dest_exists(Thm.concl th1);
     val Av = Formula.subst x v A;
-    val th3 = weaken [Av] th2;
-    val th4 = Thm.disch Av th3;
-    val th5 = Thm.exists_elim v th4;
-    (* aside on renaming bound variables *)
-    val lm1 = Thm.assume (Formula.mk_exists(x,A)) [Av];
-    val lm2 = Thm.disch Av lm1;
-    val lm3 = Thm.disch (Formula.mk_exists(x,A)) lm1;
-    val th6 = Thm.modus_ponens lm3 th1;
-    val th7 = hypo_syll th6 th5;
+    val _ = if List.exists (Term.eq v)
+                           (Formula.fv (Thm.concl th1))
+            then raise Thm.Fail "Derived.exists_elim: v is free in th1"
+            else ();
+    val _ = if List.exists (Term.eq v)
+                           (Formula.fv (Thm.concl th2))
+            then raise Thm.Fail "Derived.exists_elim: v is free in conclusion of th2"
+            else ();
+    val _ = if List.exists (Term.eq v)
+                           (List.concat (map Formula.fv (Thm.hyps th2)))
+            then raise Thm.Fail "Derived.exists_elim: v is free in hypothesis of th2"
+            else ();;
+    val th3 = Thm.disch Av th2;
+    val th4 = Thm.exists_elim v th3;
+    val th5 = exists_cong x v (fn z => Formula.subst x z A);
+    val th6 = hypo_syll th5 th4;
   in
-    Thm.modus_ponens th7 th1
+    Thm.modus_ponens th6 th1
   end;
 (* forall_cong : Term.t -> Term.t -> (Term.t -> Formula.t -> Thm.t *)
 fun forall_cong x y (A : Term.t -> Formula.t) =
@@ -823,17 +845,5 @@ fun forall_cong x y (A : Term.t -> Formula.t) =
       val th3 = Thm.forall_intro y th2;
     in
       Thm.disch Ax th3
-    end;
-(* exists_cong : Term.t -> Term.t -> (Term.t -> Formula.t -> Thm.t *)
-fun exists_cong x y (A : Term.t -> Formula.t) =
-  if not(Term.have_same_sort x y)
-  then raise Fail "forall_cong: variables have different sorts"
-  else
-    let
-      val th1 = Thm.assume (A x) [];
-      val th2 = Thm.exists_intro y x (A y) th1;
-      val th3 = Thm.disch (A x) th2;
-    in
-      Thm.exists_elim x th3
     end;
 end;

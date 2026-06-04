@@ -172,22 +172,6 @@ val suite = Test.suite "DerivedSuite" [
                            (Formula.serialize actual),
                            "\n"])
     end)
-, Test.mk "forall_cong_test" (fn () =>
-    let
-      fun A x = Formula.mk_pred("A",[x]);
-      val x = Term.Var("x",Sort.IND);
-      val y = Term.Var("y",Sort.IND);
-      val expected = Formula.mk_imp(Formula.mk_forall(x, A x),
-                                    Formula.mk_forall(y, A y));
-      val actual = Thm.concl(Derived.forall_cong x y A);
-    in
-      Assert.that (Formula.eq expected actual)
-                  (concat ["Expecting: ",
-                           (Formula.serialize expected),
-                           "\nActual: ",
-                           (Formula.serialize actual),
-                           "\n"])
-    end)
 , Test.mk "exists_cong_test" (fn () =>
     let
       fun A x = Formula.mk_pred("A",[x]);
@@ -196,6 +180,50 @@ val suite = Test.suite "DerivedSuite" [
       val expected = Formula.mk_imp(Formula.mk_exists(x, A x),
                                     Formula.mk_exists(y, A y));
       val actual = Thm.concl(Derived.exists_cong x y A);
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["Expecting: ",
+                           (Formula.serialize expected),
+                           "\nActual: ",
+                           (Formula.serialize actual),
+                           "\n"])
+    end)
+, Test.mk "exists_elim_test" (fn () =>
+    let
+      fun A x = Formula.mk_pred("A",[x]);
+      val B = Formula.mk_pred("B",[]);
+      val x = Term.Var("x",Sort.IND);
+      val fm1 = Formula.mk_exists(x, A x);
+      val th1 = Thm.assume fm1 [];
+      val th2 = Thm.assume B [];
+      val expected = Thm.assume B [fm1];
+      val actual = Derived.exists_elim x th1 th2;
+      fun eq lhs rhs =
+        List.all (fn (a,b) => Formula.eq a b)
+                 (((Thm.concl lhs),(Thm.concl
+                                      rhs))::(ListPair.zip
+                                                (Thm.hyps lhs,
+                                                 Thm.hyps rhs)));
+      fun serialize th = "["^(String.concatWith ", "
+                                                (map Formula.serialize
+                                                     (Thm.hyps th)))^
+                         "] |- "^(Formula.serialize (Thm.concl th));
+    in
+      Assert.that (eq expected actual)
+                  (concat ["Expecting: ",
+                           (serialize expected),
+                           "\nActual: ",
+                           (serialize actual),
+                           "\n"])
+    end)
+, Test.mk "forall_cong_test" (fn () =>
+    let
+      fun A x = Formula.mk_pred("A",[x]);
+      val x = Term.Var("x",Sort.IND);
+      val y = Term.Var("y",Sort.IND);
+      val expected = Formula.mk_imp(Formula.mk_forall(x, A x),
+                                    Formula.mk_forall(y, A y));
+      val actual = Thm.concl(Derived.forall_cong x y A);
     in
       Assert.that (Formula.eq expected actual)
                   (concat ["Expecting: ",

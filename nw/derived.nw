@@ -195,7 +195,7 @@ fun weaken Gamma th1 =
     val th2 = Thm.assume (Thm.concl th1) Gamma;
     val th3 = Thm.disch (Thm.concl th1) th2;
   in
-    Thm.modus_ponens th2 th1
+    Thm.modus_ponens th3 th1
   end;
 @ %def Derived.weaken
 
@@ -2349,6 +2349,56 @@ fun ex_imp x C A =
 $\vdash(\exists x\ldotp C)\iff C$ and $\vdash(\forall x\ldotp C)\iff C$
 \end{node}
 
+\begin{node}
+$\vdash(\exists x\ldotp A[x])\implies(\exists y\ldotp A[y])$
+\end{node}
+
+\begin{proof}
+\begin{enumerate}
+\item $A[z]\vdash A[z]$ by assuming
+\item $A[z]\vdash\exists y\ldotp A[y]$ by $\exists$-introduction(1)
+\item $\vdash A[z]\implies\exists y\ldotp A[y]$ by discharging(2)
+\item $\vdash(\exists x\ldotp A[x])\implies(\exists y\ldotp A[y])$ by $\exists$-elimination(3)\qedhere
+\end{enumerate}
+\end{proof}
+
+<<Derived results for Intuitionistic predicate logic>>=
+(* exists_cong : Term.t -> Term.t -> (Term.t -> Formula.t) -> Thm.t  *)
+fun exists_cong x y A =
+  if not(Term.is_var x)
+  then raise Fail "Derived.exists_cong: first argument is not a variable"
+  else if not(Term.is_var y)
+  then raise Fail "Derived.exists_cong: second argument is not a variable"
+  else if not(Term.have_same_sort x y)
+  then raise Fail "Derived.exists_cong: variables of different sorts"
+  else let
+    val th1 = Thm.assume (A x) [];
+    val th2 = Thm.exists_intro y x (A y) th1;
+    val th3 = Thm.disch (A x) th2;
+  in
+    Thm.exists_elim x th3
+  end;
+@ %def Derived.exists_cong
+
+<<Unit tests for [[Derived.sml]]>>=
+, Test.mk "exists_cong_test" (fn () =>
+    let
+      fun A x = Formula.mk_pred("A",[x]);
+      val x = Term.Var("x",Sort.IND);
+      val y = Term.Var("y",Sort.IND);
+      val expected = Formula.mk_imp(Formula.mk_exists(x, A x),
+                                    Formula.mk_exists(y, A y));
+      val actual = Thm.concl(Derived.exists_cong x y A);
+    in
+      Assert.that (Formula.eq expected actual)
+                  (concat ["Expecting: ",
+                           (Formula.serialize expected),
+                           "\nActual: ",
+                           (Formula.serialize actual),
+                           "\n"])
+    end)
+@
+
 \begin{node}\label{node:derived:existential-elimination}
 Lastly, we will need to use a modified version of existential
 elimination~(\S\ref{node:kernel:existential-elimination}) for
@@ -2366,16 +2416,15 @@ $A$, or $B$.
 \begin{enumerate}
 \item\textsc{Given:} $\Gamma_{1}\vdash\exists x\ldotp A$%1
 \item\textsc{Given:} $\Gamma_{2}\vdash B$%2
-\item $\{A[v/x]\}\cup\Gamma_{2}\vdash B$ by weakening(2)%3
-\item $\Gamma_{2}\setminus\{A[v/x]\}\vdash A[v]\implies B$ by discharging($A[v]$,3)%4
+\item $\Gamma_{2}\setminus\{A[v/x]\}\vdash A[v]\implies B$ by discharging($A[v]$,2)%3
 \item $\Gamma_{2}\setminus\{A[v/x]\}\vdash \exists v\ldotp A[v]\implies B$
-  by existential elimination(4)%5
+  by existential elimination(3)%4
 \item $\vdash\exists x\ldotp A[x]\implies\exists v\ldotp A[v]$
-  by renaming bound variable%6
+  by renaming bound variable%5
 \item $\Gamma_{2}\setminus\{A[v/x]\}\vdash \exists x\ldotp A[x]\implies B$
-  by hypothetical syllogism(6, 5)%7
+  by hypothetical syllogism(5, 4)%6
 \item $\Gamma_{1}\cup(\Gamma_{2}\setminus\{A[v/x]\})\vdash B$
-  by syllogism(7, 1)\qedhere%8
+  by modus ponens(6, 1)\qedhere%7
 \end{enumerate}
 \end{proof}
 
@@ -2385,19 +2434,68 @@ fun exists_elim (v : Term.t) (th1 : Thm.t) (th2 : Thm.t) : Thm.t =
   let
     val (x,A) = Formula.dest_exists(Thm.concl th1);
     val Av = Formula.subst x v A;
-    val th3 = weaken [Av] th2;
-    val th4 = Thm.disch Av th3;
-    val th5 = Thm.exists_elim v th4;
-    (* aside on renaming bound variables *)
-    val lm1 = Thm.assume (Formula.mk_exists(x,A)) [Av];
-    val lm2 = Thm.disch Av lm1;
-    val lm3 = Thm.disch (Formula.mk_exists(x,A)) lm1;
-    val th6 = Thm.modus_ponens lm3 th1;
-    val th7 = hypo_syll th6 th5;
+    <<Ensure [[v]] is ``free enough'' for [[Tactic.exists_elim]]>>;
+    val th3 = Thm.disch Av th2;
+    val th4 = Thm.exists_elim v th3;
+    val th5 = exists_cong x v (fn z => Formula.subst x z A);
+    val th6 = hypo_syll th5 th4;
   in
-    Thm.modus_ponens th7 th1
+    Thm.modus_ponens th6 th1
   end;
 @ %def Derived.exists_elim
+
+\begin{node}
+We want to raise an error ``as soon as possible'' if the assumptions
+of existential-elimination are violated (to inform the user in a
+reasonable place). We also want to provide ``informative enough''
+error messages.
+\end{node}
+
+<<Ensure [[v]] is ``free enough'' for [[Tactic.exists_elim]]>>=
+val _ = if List.exists (Term.eq v)
+                       (Formula.fv (Thm.concl th1))
+        then raise Thm.Fail "Derived.exists_elim: v is free in th1"
+        else ();
+val _ = if List.exists (Term.eq v)
+                       (Formula.fv (Thm.concl th2))
+        then raise Thm.Fail "Derived.exists_elim: v is free in conclusion of th2"
+        else ();
+val _ = if List.exists (Term.eq v)
+                       (List.concat (map Formula.fv (Thm.hyps th2)))
+        then raise Thm.Fail "Derived.exists_elim: v is free in hypothesis of th2"
+        else ();
+@ 
+
+<<Unit tests for [[Derived.sml]]>>=
+, Test.mk "exists_elim_test" (fn () =>
+    let
+      fun A x = Formula.mk_pred("A",[x]);
+      val B = Formula.mk_pred("B",[]);
+      val x = Term.Var("x",Sort.IND);
+      val fm1 = Formula.mk_exists(x, A x);
+      val th1 = Thm.assume fm1 [];
+      val th2 = Thm.assume B [];
+      val expected = Thm.assume B [fm1];
+      val actual = Derived.exists_elim x th1 th2;
+      fun eq lhs rhs =
+        List.all (fn (a,b) => Formula.eq a b)
+                 (((Thm.concl lhs),(Thm.concl
+                                      rhs))::(ListPair.zip
+                                                (Thm.hyps lhs,
+                                                 Thm.hyps rhs)));
+      fun serialize th = "["^(String.concatWith ", "
+                                                (map Formula.serialize
+                                                     (Thm.hyps th)))^
+                         "] |- "^(Formula.serialize (Thm.concl th));
+    in
+      Assert.that (eq expected actual)
+                  (concat ["Expecting: ",
+                           (serialize expected),
+                           "\nActual: ",
+                           (serialize actual),
+                           "\n"])
+    end)
+@
 
 \begin{node}
 We have the following \emph{congruence of universal quantifier}
@@ -2430,38 +2528,6 @@ fun forall_cong x y (A : Term.t -> Formula.t) =
     end;
 @ %def Derived.forall_cong
 
-\begin{node}
-Similarly, we have congruence for existential quantifiers,
-\begin{equation*}
-\vdash(\exists x\ldotp A[x])\implies(\exists y\ldotp A[y]).
-\end{equation*}
-\end{node}
-
-\begin{proof}
-\begin{enumerate}
-\item $A[x]\vdash A[x]$ by assuming%1
-\item $A[x]\vdash\exists y\ldotp A[y]$ by $\exists$-intro($y$, 1)%2
-\item $\vdash A[x]\implies(\exists y\ldotp A[y])$ by discharging(2)%3
-\item $\vdash(\exists x\ldotp A[x])\implies(\exists y\ldotp A[y])$
-  by $\exists$-elim(4)\qedhere
-\end{enumerate}
-\end{proof}
-
-<<Derived results for Intuitionistic predicate logic>>=
-(* exists_cong : Term.t -> Term.t -> (Term.t -> Formula.t -> Thm.t *)
-fun exists_cong x y (A : Term.t -> Formula.t) =
-  if not(Term.have_same_sort x y)
-  then raise Fail "forall_cong: variables have different sorts"
-  else
-    let
-      val th1 = Thm.assume (A x) [];
-      val th2 = Thm.exists_intro y x (A y) th1;
-      val th3 = Thm.disch (A x) th2;
-    in
-      Thm.exists_elim x th3
-    end;
-@ %def Derived.exists_cong
-
 <<Unit tests for [[Derived.sml]]>>=
 , Test.mk "forall_cong_test" (fn () =>
     let
@@ -2479,20 +2545,4 @@ fun exists_cong x y (A : Term.t -> Formula.t) =
                            (Formula.serialize actual),
                            "\n"])
     end)
-, Test.mk "exists_cong_test" (fn () =>
-    let
-      fun A x = Formula.mk_pred("A",[x]);
-      val x = Term.Var("x",Sort.IND);
-      val y = Term.Var("y",Sort.IND);
-      val expected = Formula.mk_imp(Formula.mk_exists(x, A x),
-                                    Formula.mk_exists(y, A y));
-      val actual = Thm.concl(Derived.exists_cong x y A);
-    in
-      Assert.that (Formula.eq expected actual)
-                  (concat ["Expecting: ",
-                           (Formula.serialize expected),
-                           "\nActual: ",
-                           (Formula.serialize actual),
-                           "\n"])
-    end)
-@ 
+@
