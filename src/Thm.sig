@@ -53,6 +53,7 @@ signature Thm = sig
   val axiom_class_comp : Formula.t -> Term.t list -> t;
   val axiom_fun_eq : Term.t -> Term.t -> t;
   val axiom_class_eq : Term.t -> Term.t -> t;
+  val axiom_dec : (Term.t -> Formula.t) -> t;
   (* Database of axioms
   structure State : sig
               type t;

@@ -493,4 +493,20 @@ fun axiom_class_eq lhs rhs =
                                                  FS0.In x rhs)),
                        (FS0.equal lhs rhs)))
        end;
+(* axiom_dec : (Term.t -> Formula.t) -> Thm.t *)
+fun axiom_dec P =
+  let
+    val x0 = Term.Var("x0", Sort.IND);
+    val vars = (Formula.fv (P x0)) @ (Formula.bv (P x0));
+    val x = Term.fresh_var "x" Sort.IND vars;
+    val f = Term.fresh_var "f" Sort.FUN vars;
+    val premise = Formula.mk_iff(FS0.equal (FS0.app f x)
+                                           FS0.zero,
+                                P x);
+  in
+    mk_axiom(Formula.mk_imp(Formula.mk_exists(f, Formula.mk_forall(x, premise)),
+                            Formula.mk_forall(x,
+                                              Formula.mk_or((P x),
+                                                            Formula.mk_not(P x)))))
+  end;
 end;
