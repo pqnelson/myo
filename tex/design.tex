@@ -1,0 +1,123 @@
+%%
+%% design.tex
+%% 
+%% Made by Alex Nelson <pqnelson@gmail.com>
+%% Login   <alex@lisp>
+%% 
+%% Started on  2026-06-02T09:21:47-0700
+%% Last update 2026-06-02T09:21:47-0700
+%% 
+
+\section{Design of the proof assistant}
+
+\begin{node}
+The design of a proof assistant requires a few design
+choices. LCF-style proof assistants share a similar design, which
+simplifies our discussion: what is the design of Myo anyways?
+\end{node}
+
+\begin{aside}[What is ``software design'' anyways?]
+Discussions of ``software design'' tend to be littered with strong
+opinions, even with what qualifies as ``design''. We should
+distinguish between the activity of ``software design'' as a component
+of programming, from the ``design'' of a particular piece of
+software. We will not even attempt to answer the question, ``What is
+software design in the context of programming?'' Instead we focus on
+the question, ``What is the design of an LCF-style proof assistant?''
+
+We will broadly discuss the \textbf{architecture} without worrying too
+much about the minutiae. The reader can think of this section as
+discussing the milestones expected for any proof assistant.
+\end{aside}
+
+\begin{node}[Syntax trees]
+The first thing we need to do is to represent terms and formulas using
+data structures.
+
+We do this by implementing a \texttt{Term} module with a
+\texttt{Term.t} type, which is just an algebraic data type.
+
+Similarly, we have a \texttt{Formula} module with a \texttt{Formula.t}
+abstract data type. The code for constructing, destructing, and
+determining the type of formula is contained in this module.
+
+This step is standard for all proof assistants, interpreters,
+compilers, and so on: we need to get a computer representation of the
+input, some sort of abstract syntax tree. There is a lot I can say
+about this (literally, I can ramble on for pages), but suffices to say
+it is the first step on any proof assistant.
+\end{node}
+
+\begin{node}[Prelogic]
+At this step, we have the data structures implemented for the syntax
+trees of terms and formulas. We can follow Slind~\cite{slind1990implementation}
+discussion of implementing \HOL\ and implement the ``prelogic'' for
+our first-order logic. \HOL\ needs to worry about $\alpha$-congruence,
+term substitution, and type substitution.
+
+Fortunately, first-order logic only needs to address substituting a
+term for a variable in either a formula or a term.
+\end{node}
+
+\begin{node}[Kernel]
+Once we have data structures for terms and formulas, the next thing we
+will want to do is implement the ``kernel''. For LCF-style proof
+assistants based on (propositional, first-order, or higher-order)
+logic, this means implementing a data type for theorems which is an
+opaque type (or, for object-oriented languages, have private
+constructors). The only ways to construct theorems would be using
+axioms (functions taking terms or formulas and produce theorems) and
+inference rules (functions which take one or more theorems and produce
+a new theorem).
+
+At this point, the only possible threats to soundness will be in the
+code for the syntax trees or the kernel. This is why LCF-style proof
+assistants want as small a kernel as possible.
+\end{node}
+
+\begin{node}[Derived inference rules and theorems]
+Although we have obtained something which qualifies as a ``proof assistant'',
+there is still much left to be desired.
+What we want is a \emph{usable} proof assistant.
+
+The first thing we need is a library of theorems and derived inference
+rules. This may be the least exciting part of the proof assistant,
+because we just enumerate things in the style of Homer's catalog of ships.
+\end{node}
+
+\begin{node}[Tactics and procedural-style proofs]
+We will eventually want declarative-style proofs like you'd find in
+Mizar. The first step towards that end is to implement
+procedural-style proofs using tactics and goals. ``Goals'' are the
+proof obligations yet to be proven, ``tactics'' give us a way to
+construct backwards-style proofs from the theorem statement to axioms
+or assumptions. The disadvantage to procedural-style proofs is the
+unreadability, and since proofs are read far more often than written,
+this is a major disadvantage.
+
+Declarative-style proofs are designed with readability in mind. We
+will try to implement something approximating Mizar's proof steps, but
+for Intuitionistic logic.
+\end{node}
+
+\begin{node}[Next steps]
+What happens next? There is no shortage of possible avenues to
+explore. The low hanging fruit will be to provide some sort of proof
+procedure like tableaux or resolution, so ``obvious'' inferences can
+be handled ``automatically''.
+
+After that, definitions will be critically important. In first-order
+logic, defining a new predicate $P[x_{1},\dots,x_{n}]$ amounts to
+introducing the axiom $\vdash\forall\vec{x}\ldotp P[\vec{x}]\iff\Phi[\vec{x}]$
+where $\Phi[\vec{x}]$ is some formula whose free variables form a
+subset of $\{x_{1},\dots,x_{n}\}$. For terms, we either have
+definitions of the form ``The term $t(\vec{x})$ means $P[\vec{x},t(\vec{x})]$ holds''
+or we have an abbreviation. In the former case, we need to prove
+the theorem $\vdash\forall\vec{x}\ldotp\exists!f\ldotp P[\vec{x},f(\vec{x})]$.
+We also need a dictionary to store these definitions.
+
+Term rewriting and simplification are desirable components for any
+LCF-style proof assistant. It quickly becomes tedious manually proving
+what term rewriting can do for us. Paulson~\cite{paulson1983higher} introduced
+``conversions'' for this purpose.
+\end{node}

@@ -64,15 +64,20 @@
 \newtheorem{node}{}[section]
 \numberwithin{equation}{node}
 
+\newtheorem{aside}[node]{Aside}
+\newtheorem{caution}[node]{Caution}
 \newtheorem{definition}[node]{Definition}
 \newtheorem{example}[node]{Example}
+\newtheorem{notation}[node]{Notation}
 
 \newtheorem{xca}[node]{Exercise} % AMS style guide recommended...
 
 \theoremstyle{plain}
+\newtheorem{fact}[node]{Fact}
 \newtheorem{problem}[node]{Problem}
 \newtheorem{theorem}[node]{Theorem}
 \newtheorem{invariant}[node]{Invariant}
+\newtheorem{scheme}[node]{Scheme}
 
 % egreg! https://tex.stackexchange.com/a/568208/14751
 \newcommand{\checkbox}[1]{%
@@ -106,6 +111,8 @@ metalogical framework. This is largely inspired by Isabelle.
 
 %\chapter{Introduction}
 \input{tex/introduction}
+
+\input{tex/design}
 
 %\chapter{Syntax}
 \input{tex/many-sorted-term}
