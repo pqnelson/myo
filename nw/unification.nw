@@ -181,7 +181,7 @@ end;
 end;
 @ %def Env.t Env.undefined Env.apply Env.insert Env.defined
 
-\begin{node}
+\begin{node}[Occurs check]
 We also have the really interesting part of solving the unification
 problem: testing if $x=t$ is a trivial equation or not. This would
 happen for literally trivial equations $x=x$ which shed no light on anything,
@@ -190,26 +190,6 @@ but also for $x=y$ when we already have $y=t'$.
 However, there is the possibility that we might produce a cycle. This
 is handled by raising an error.
 
-Specifically: checking there are no cycles when we try to associate
-variable $x$ with term $t$ depends on what $t$ is. When
-\begin{enumerate}
-\item $t$ is a variable $t=y$: This boils down to two subcases.
-  \begin{enumerate}
-  \item $x=y$ 
-  \item $x\neq y$, but $y$ is bound to something in the
-    environment $y=t_{y}$. Then we just check recursively that associating $x$ to
-    $t_{y}$ will be cycle-free.
-  \end{enumerate}
-\item $t$ is a function $f(\vec{t})$: There is no variable $y\in
-  FV(t)$ such that $y\to^{*}x$ (i.e., there is no sequence of zero or more
-  steps leading from $y$ to $x$)
-\end{enumerate}
-We can check the first condition elsewhere (namely, in the [[unify]]
-function). The second condition will be tested in [[is_cyclic]],
-which will return \textbf{false} if the condition is satisfied.
-\end{node}
-
-\begin{node}
 If we extend [[env]] with a new entry $x\sim t$, then we should
 consider the following situations:
 \begin{enumerate}
@@ -232,11 +212,17 @@ consider the following situations:
   \end{enumerate}
 \item If $t$ is a function $f(t_{1},\dots,t_{n})$, then we want to test 
   that none of the possible extensions $x\sim t_{1}$, \dots, $x\sim t_{n}$
-  would lead to a cyclic environment. If there is a possible extension
-  $x\sim t_{k}$, then return \textbf{true}. Otherwise,
-  return \textbf{false} to indicate \emph{we can extend the
+  would lead to a cyclic environment.
+
+  If there is a possible extension $x\sim t_{k}$, then raise a
+  \textbf{Fail} exception.
+
+  Otherwise, return \textbf{false} to indicate \emph{we can extend the
   environment while maintaining the cycle-free invariant}.
 \end{enumerate}
+This algorithm is the famously cryptic ``occurs check'' for
+unification. It is commonly buggy, see Norvig~\cite{norvig1991correcting}
+for a review.
 \end{node}
 
 <<Test if a new equations is trivial for unification>>=
