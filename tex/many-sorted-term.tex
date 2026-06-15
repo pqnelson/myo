@@ -260,7 +260,20 @@ fun occurs_in (subtm : t) (tm : t) : bool =
 \nwused{\\{NW1rTmOJ-4LsRWC-1}}\nwidentdefs{\\{{\nwixident{Term.occurs{\_}in}}{Term.occurs:unin}}}\nwidentuses{\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW1rTmOJ-Re21r-1}\nwendcode{}\nwbegindocs{18}\nwdocspar
 \begin{node}
 We will want to find a fresh variable which does not appear in a list
-of variables.
+of variables $\Gamma$. The basic idea is:
+\begin{enumerate}\setcounter{enumi}{-1}
+\item Given: a string $x$ and a list of variables $\Gamma$. Set
+  $n\gets 0$.
+\item If $x\notin\Gamma$, then just use $x$ and terminate the
+  algorithm. Otherwise go to the next step.
+\item Append a suffix $n$ to the string $x$ to obtain $x_{n}$ and
+  treat it like a  possible variable.
+\item Check if $x_{n}\notin\Gamma$---in which case, return $x_{n}$ as a
+  variable and terminate the algorithm. Otherwise increment $n\gets n+1$
+  and go to the previous step.
+\end{enumerate}
+Since the list of variables is a finite list, we must eventually
+exhaust all possibilities.
 \end{node}
 
 \nwenddocs{}\nwbegincode{19}\sublabel{NW1rTmOJ-4Ykq9M-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW1rTmOJ-4Ykq9M-1}}}\moddef{Determine a fresh variable given some free variables~{\nwtagstyle{}\subpageref{NW1rTmOJ-4Ykq9M-1}}}\endmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW1rTmOJ-4LsRWC-1}}\nwenddeflinemarkup

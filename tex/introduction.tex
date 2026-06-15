@@ -7,6 +7,10 @@
 %% Started on  2026-03-25T09:38:49-0700
 %% Last update 2026-03-25T09:38:49-0700
 %% 
+\setlength{\epigraphwidth}{0.45\textwidth}
+\epigraph{Of making many books there is no end,
+and much study wearies the body.}{Ecclesiastes 12\hair:\hair12}
+\setlength{\epigraphwidth}{0.4\textwidth}
 
 \section{Introduction}
 
@@ -152,4 +156,17 @@ We then implement the LCF-style tactics for proving theorems.
 The appendices contains code used throughout the program, but are a
 bit of a ``distraction'' from the reader interested exclusively in
 proof assistants.
+\end{node}
+
+\begin{node}[Caution]
+This manuscript is most emphatically \textbf{\emph{not a ``user manual''!}}
+This is a literate program, documenting the design and implementation
+of a proof assistant. It is more like \textit{\TeX: The Program} than
+\textit{The \TeX{}book}. Adjust your expectations accordingly.
+
+We used Norman Ramsey's \texttt{noweb}, \LaTeX, and various
+\LaTeX\ packages (mostly \AmS-created, but also the epigraph and
+hyperref packages). It is tempting to implement our own literate
+programming toolkit, but a bird in the hand is worth two in the bush.
+We tested the code against Poly/ML, MLton, and Moscow~ML. 
 \end{node}

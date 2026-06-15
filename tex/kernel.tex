@@ -42,7 +42,16 @@ end
 \nwnotused{Thm.sig}\nwidentuses{\\{{\nwixident{Formula.t}}{Formula.t}}}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW4ICsJQ-2cY0B1-1}\nwendcode{}\nwbegindocs{2}\nwdocspar
 
 \begin{node}
-We start off with an infixed operator approximating the turnstile.
+The basic judgement for our kernel is the theorem, which takes the
+form $\Gamma\vdash\phi$. We should read this as ``Under the
+[finite list of] assumptions $\Gamma$, we can prove $\phi$''.
+
+We start off with an infixed operator approximating the turnstile. But
+this is an opaque type: the user cannot construct theorems
+willy-nilly, but only by using the inference rules we provide. How
+does the user know what has been proven? We provide destructuring
+functions {\Tt{}concl\nwendquote} to access $\phi$ and {\Tt{}hyps\nwendquote} to access $\Gamma$
+from the theorem $\Gamma\vdash\phi$.
 \end{node}
 
 \nwenddocs{}\nwbegincode{3}\sublabel{NW4ICsJQ-YIPBT-1}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-YIPBT-1}}}\moddef{Thm.sml~{\nwtagstyle{}\subpageref{NW4ICsJQ-YIPBT-1}}}\endmoddef\nwstartdeflinemarkup\nwenddeflinemarkup

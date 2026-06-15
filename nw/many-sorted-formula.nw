@@ -16,7 +16,13 @@ We need to use opaque types for formulas, because we want to use smart
 constructors to ensure quantifiers are given variable [[Term.t]] instances.
 Otherwise it'd be too easy to accidentally change the sort of a bound
 variable, which will produce bugs later on (bugs that will be
-difficult to trace).
+difficult to trace).\footnote{This might seem convoluted to the
+Mathematical reader, but this strategy is common in programming. It
+has surprising benefits. For example, if we decide to change how we
+implement the syntax tree for terms and formulas, say by using a
+simply-typed $\lambda$-calculus instead, then the \texttt{Formula}
+module will be robust against such modifications. In contrast, the
+\texttt{Term} module will require extensive re-working.}
 
 Consequently, we will want to provide \define{Destructuring} functions
 to ``break apart'' the abstract syntax tree for a formula, so we can
@@ -710,7 +716,7 @@ fun is_e_plus (Not(False)) = true
 
 \begin{node}
 We will also want to apply functions of the form $f\colon
-P[\vec{t}]\to \alpha~\mathrm{list}$ to predicates, and to just
+P[\vec{t}]\to \List{\alpha}$ to predicates, and to just
 recursively work our way down subformulas, concatenating the results together.
 \end{node}
 
