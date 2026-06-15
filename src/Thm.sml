@@ -36,7 +36,11 @@ fun modus_ponens (Gamma1 |- imp) (Gamma2 |- phi) =
     val (A, B) = Formula.dest_imp imp
   in
     if not(Formula.eq A phi)
-    then raise Fail "modus_ponens: premise does not match argument"
+    then raise Fail("modus_ponens: minor premise ("^
+                    (Formula.serialize A)^
+                    ") does not match argument ("^
+                    (Formula.serialize phi)^
+                    ")")
     else (Gamma1 @@ Gamma2) |- B
   end;
 fun and_intro (Gamma1 |- phi) (Gamma2 |- psi) =

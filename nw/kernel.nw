@@ -14,7 +14,7 @@
 \begin{node}
 Alright, I will use a natural deduction proof calculus for
 three-sorted Intuitionistic First-Order Logic. In an earlier
-experiment for single-sorted Intuitionistic First-Order Logic, I used
+experiment\footnote{\url{https://codeberg.org/pqnelson/ifol}} for single-sorted Intuitionistic First-Order Logic, I used
 a Hilbert proof calculus with a natural deduction judgement (I
 ``hardcoded'' the Deduction theorem into it). But this also required
 some tedious work to eliminate (and introduce) logical connectives,
@@ -97,20 +97,35 @@ We have the inference rules related to assumptions:
 \begin{equation}
 \vcenter{\infer[\texttt{assume}(\phi,\Gamma)]{\phi,\Gamma\vdash\phi}{}}
 \end{equation}
-Discharging is the same as ``implication introduction'' according to
+This is the only axiom schema in natural deduction: if $\phi$ is among
+the assumptions made, then we may infer $\phi$ is proven in that context.
+
+Discharging a local assumption (transforming it into a premise of a
+logical implication) is the same as ``implication introduction'' according to
 Kleene's \textit{Introduction to Mathematical Logic} (\S11, p.44):
 \begin{equation}
-\vcenter{\infer[\texttt{disch}(\phi)]{\Gamma\setminus\{\phi\}\vdash\phi\implies\psi}{\Gamma\vdash\psi,&\phi\in\Gamma}}
+\vcenter{\infer[\texttt{disch}(\phi)]{\Gamma\setminus\{\phi\}\vdash\phi\implies\psi}{\Gamma\vdash\psi}}
 \end{equation}
+Note that we do not require $\phi\in\Gamma$ in the discharge
+rule. What happens if $\phi\notin\Gamma$? How could this be justified?
+Logicians call such a situation ``weakening'', which describes adding
+an un-necessary premise $\phi$.
+
+We have the ``dual'' to discharging a local assumption, we transform a
+premise into a local assumption via ``undischarging'':
 \begin{equation}
 \vcenter{\infer[\texttt{undisch}]{\phi,\Gamma\vdash\psi}{\Gamma\vdash\phi\implies\psi}}
 \end{equation}
+Unlike discharging, an error will be raised if the user attempts to
+undischarge a theorem which does not have a conclusion of the form
+$\phi\implies\psi$. 
+
 The \textit{modus ponens} is really the same thing as ``implication elimination''
 (again, by Kleene, \textit{ibid}):
 \begin{equation}
 \vcenter{\infer[\texttt{modus\_ponens}]{\Gamma_{1}\cup\Gamma_{2}\vdash\psi}{\Gamma_{1}\vdash\phi\implies\psi,&\Gamma_{2}\vdash\phi}}
 \end{equation}
-The other inference rules for connectives are straightforward
+The other inference rules for connectives are more straightforward
 ``introduction'' and ``elimination'' rules.
 \end{node}
 
@@ -140,7 +155,11 @@ fun modus_ponens (Gamma1 |- imp) (Gamma2 |- phi) =
     val (A, B) = Formula.dest_imp imp
   in
     if not(Formula.eq A phi)
-    then raise Fail "modus_ponens: premise does not match argument"
+    then raise Fail("modus_ponens: minor premise ("^
+                    (Formula.serialize A)^
+                    ") does not match argument ("^
+                    (Formula.serialize phi)^
+                    ")")
     else (Gamma1 @@ Gamma2) |- B
   end;
 @ %def Thm.assume Thm.disch Thm.undisch Thm.modus_ponens
