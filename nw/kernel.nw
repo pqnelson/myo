@@ -177,7 +177,7 @@ fun and_elim_r (Gamma |- phi) =
   else
     let val (A,B) = Formula.dest_and phi
     in Gamma |- B end;
-@ %def Formula.and_intro Formula.and_elim_l Formula.and_elim_r
+@ %def Thm.and_intro Thm.and_elim_l Thm.and_elim_r
 
 \begin{node}
 Disjunction introduction is straightforward: we can always assume ``or
