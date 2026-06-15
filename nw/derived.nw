@@ -719,7 +719,7 @@ The forward proof:
 \item $B\lor C\vdash B\lor C$ by assuming
 \item $\vdash (B\lor C)\implies[(B\implies A\land B)\implies((C\implies A\land C)\implies(A\land B)\lor(A\land C))]$
   by [[disj_imp_disj]] $B$ $C$ $A\land B$ $A\land C$
-\item $\vdash B\lor C\vdash(B\implies A\land B)\implies((C\implies A\land C)\implies(A\land B)\lor(A\land C))$
+\item $B\lor C\vdash(B\implies A\land B)\implies((C\implies A\land C)\implies(A\land B)\lor(A\land C))$
   by modus ponens(2, 1)%3
 \item $A\vdash B\implies A\land B$%4
 \item $A, B\lor C\vdash(C\implies A\land C)\implies(A\land B)\lor(A\land C)$
