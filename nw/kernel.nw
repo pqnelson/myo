@@ -88,12 +88,16 @@ We have the inference rules related to assumptions:
 \begin{equation}
 \vcenter{\infer[\texttt{assume}(\phi,\Gamma)]{\phi,\Gamma\vdash\phi}{}}
 \end{equation}
+Discharging is the same as ``implication introduction'' according to
+Kleene's \textit{Introduction to Mathematical Logic} (\S11, p.44):
 \begin{equation}
 \vcenter{\infer[\texttt{disch}(\phi)]{\Gamma\setminus\{\phi\}\vdash\phi\implies\psi}{\Gamma\vdash\psi,&\phi\in\Gamma}}
 \end{equation}
 \begin{equation}
 \vcenter{\infer[\texttt{undisch}]{\phi,\Gamma\vdash\psi}{\Gamma\vdash\phi\implies\psi}}
 \end{equation}
+The \textit{modus ponens} is really the same thing as ``implication elimination''
+(again, by Kleene, \textit{ibid}):
 \begin{equation}
 \vcenter{\infer[\texttt{modus\_ponens}]{\Gamma_{1}\cup\Gamma_{2}\vdash\psi}{\Gamma_{1}\vdash\phi\implies\psi,&\Gamma_{2}\vdash\phi}}
 \end{equation}
@@ -133,10 +137,15 @@ fun modus_ponens (Gamma1 |- imp) (Gamma2 |- phi) =
 @ %def Thm.assume Thm.disch Thm.undisch Thm.modus_ponens
 
 \begin{node}
-The rules for conjunction
+The rules for conjunction are fairly straightforward. If you have
+proven $\phi$ and if you have proven $\psi$, then you can infer
+$\phi\land\psi$ provided you take the union of all the local
+assumptions. In other words,
 \begin{equation}
 \vcenter{\infer[\land\mbox{-intro}]{\Gamma_{1}\cup\Gamma_{2}\vdash\phi\land\psi}{\Gamma_{1}\vdash\phi,&\Gamma_{2}\vdash\psi}}
 \end{equation}
+Similarly, if we have already proven $\Gamma\vdash\phi\land\psi$, then
+we can ``break apart'' the conjunction to get each conjunct.
 \begin{equation}
 \vcenter{\infer[\land\mbox{-elim-l}]{\Gamma\vdash\phi}{\Gamma\vdash\phi\land\psi}}
 \end{equation}
@@ -171,7 +180,8 @@ fun and_elim_r (Gamma |- phi) =
 @ %def Formula.and_intro Formula.and_elim_l Formula.and_elim_r
 
 \begin{node}
-Disjunction introduction is straightforward:
+Disjunction introduction is straightforward: we can always assume ``or
+something else'' holds. More precisely,
 \begin{equation}
 \vcenter{\infer[\lor\mbox{-intro-l}(\phi)]{\Gamma\vdash\phi\lor\psi}{\Gamma\vdash\psi}}
 \end{equation}
@@ -189,6 +199,17 @@ rule is
 If any of the premises mismatch each other (e.g., we have
 $\Gamma_{2}\vdash A'\implies C$ for some $A\neq A'$), then an
 exception is raised.
+
+Note that there are other variations of $\lor$-elimination which are
+logically equivalent to this inference rule. Most texts use the same
+inference rule for $\lor$-elimination as found in Classical natural
+deduction,
+\begin{equation}
+\vcenter{\infer{\Gamma\vdash C}{\Gamma\vdash A\lor B, & \Gamma,A\vdash C & \Gamma,B\vdash C}}
+\end{equation}
+Then discharging $A$ (resp., $B$) in the premises, including $A\lor B\in\Gamma$
+and discharging $A\lor B$ from the conclusion, gives us our
+$\lor$-elimination rule.
 \end{node}
 
 <<Specification for inference rules>>=
@@ -220,7 +241,8 @@ fun or_elim (Gamma1 |- A_imp_C) (Gamma2 |- B_imp_C) =
 @ %def Thm.or_elim Thm.or_intro_l Thm.or_intro_r
 
 \begin{node}
-Negation-related rules
+Negation-related rules follow from ``unfolding'' (and ``folding'') the abbreviation $\neg A\equiv A\implies\bot$
+as inference rules.
 \begin{equation}
 \vcenter{\infer[\neg\mbox{-intro}]{\Gamma\vdash\neg\phi}{\Gamma\vdash\phi\implies\bot}}
 \end{equation}
@@ -259,7 +281,9 @@ fun not_elim (Gamma |- not_phi) =
 @ %def Thm.not_intro Thm.not_elim
 
 \begin{node}
-The Intuitionistic rule for eliminating contradictions
+The Intuitionistic rule for eliminating contradictions is just the
+principle of explosion: from a contradiction $\bot$ we can infer
+anything. 
 \begin{equation}
 \vcenter{\infer[\mbox{contr}(\phi)]{\Gamma\vdash\phi}{\Gamma\vdash\bot}}
 \end{equation}
@@ -337,10 +361,16 @@ fun iff_elim_r (Gamma |- A_iff_B) =
 @ %def Thm.iff_intro Thm.iff_elim_l Thm.iff_elim_r
 
 \begin{node}[Quantifier inference rules]
-We have the inference rule for generalization
+We have the inference rule for generalization: given any variable $x$
+which does not appear [freely] in the local assumptions $\Gamma$, we
+can infer $\forall x\ldotp\phi$ even if $x$ does not appear in $\phi$
+(but this is a rather boring situation):
 \begin{equation*}
 \vcenter{\infer[\forall\mbox{-intro}(x)]{\Gamma\vdash\forall x\ldotp\phi}{\Gamma\vdash\phi,&x\notin FV(\Gamma)}}
 \end{equation*}
+In particular, this means that we cannot infer from $P[y]\vdash P[y]$ 
+the claim $P[y]\vdash\forall y\ldotp P[y]$ unless $y\notin FV(P[y])$
+(in which case $\forall y\ldotp P[y]$ is vacuous).
 \end{node}
 
 <<Specification for inference rules>>=
@@ -364,6 +394,16 @@ for $x$ in $\phi[-]$ (i.e., no free variable will become bound in $\phi[t]$):
 \begin{equation}
 \vcenter{\infer[\forall\mbox{-elim}]{\Gamma\vdash\phi[t]}{\Gamma\vdash\forall x\ldotp\phi[x]}}
 \end{equation}
+This is just instantiating a universally quantified variable $x$ with
+a term $t$. The only possible source of problems we could encounter is
+if $t$ and $x$ have different sorts, which should raise a failure
+exception.
+
+A more subtle problem occurs when $t$ has a free variable which would
+be captured by a quantifier upon substituting $t$ for $x$ in $P[x]$. 
+For example, if $P[x]:=\forall y\ldotp x=y$ and $t=f(y)$, then
+$P[f(y)]=\forall y\ldotp f(y)=y$ would result in capturing $y$ in $t=f(y)$.
+This \emph{should} be an error, which will be raised in an exception.
 \end{node}
 
 <<Specification for inference rules>>=
@@ -383,22 +423,25 @@ fun forall_elim (t : Term.t) (Gamma |- forall_phi) =
 
 \begin{node}\label{node:kernel.nw:existential-introduction}
 Existential introduction has the same proviso as universal quantifier
-elimination:
+elimination---$t$ is free for $x$ in $\phi[-]$:
 \begin{equation}
 \vcenter{\infer[\exists\mbox{-intro}]{\Gamma\vdash\exists x\ldotp\phi[x]}{\Gamma\vdash\phi[t]}}
 \end{equation}
 Well, there is some subtlety with existential introduction. For
 example, $\phi[t]:=(\forall x\ldotp t=x)$ where $x\notin FV(t)$. Then
 $t$ is free for $x$ in $\phi[-]$, but $\exists x\ldotp\phi[x]$ should
-be flagged as problematic.
+be flagged as problematic. Why?
 
-But this situation should never occur because $\phi[x]:=\forall x\ldotp(x=x)$
+Well, this situation should never occur because $\phi[x]:=\forall x\ldotp(x=x)$
 has $\phi[t]=\forall x\ldotp(x=x)$ which is syntactically different
-from $(\forall x\ldotp t=x)$. So an error would be raised, catching
+from $(\forall x\ldotp t=x)$. So an error should be raised, catching
 this situation. We add some useful explanatory text in this situation.
 
 A more helpful thing to do would be to rename the bound variable, so
 as to avoid this collision.
+
+Also we should raise an exception whenever $t$ and $x$ have different
+sorts.
 \end{node}
 
 <<Specification for inference rules>>=
@@ -426,10 +469,14 @@ fun exists_intro (x : Term.t) (t : Term.t) (phi : Formula.t) (Gamma |- phi_t) =
 @ %def Thm.exists_intro
 
 \begin{node}\label{node:kernel:existential-elimination}
-Existential elimination takes the form
+Existential elimination takes the form borrowed from the Hilbert
+calculus for Intuitionistic logic:
 \begin{equation*}
 \vcenter{\infer[\exists\mbox{-elim}(x)]{\Gamma\vdash(\exists x\ldotp\phi)\implies\psi}{\Gamma\vdash\phi\implies\psi,&x\notin FV(\psi),&x\notin FV(\Gamma)}}
 \end{equation*}
+Natural deduction usually takes a different variant for
+$\exists$-elim, but we will show that it can be derived from our
+inference rules (\S\ref{node:derived:existential-elimination}).
 \end{node}
 
 <<Specification for inference rules>>=

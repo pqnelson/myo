@@ -88,12 +88,16 @@ We have the inference rules related to assumptions:
 \begin{equation}
 \vcenter{\infer[\texttt{assume}(\phi,\Gamma)]{\phi,\Gamma\vdash\phi}{}}
 \end{equation}
+Discharging is the same as ``implication introduction'' according to
+Kleene's \textit{Introduction to Mathematical Logic} (\S11, p.44):
 \begin{equation}
 \vcenter{\infer[\texttt{disch}(\phi)]{\Gamma\setminus\{\phi\}\vdash\phi\implies\psi}{\Gamma\vdash\psi,&\phi\in\Gamma}}
 \end{equation}
 \begin{equation}
 \vcenter{\infer[\texttt{undisch}]{\phi,\Gamma\vdash\psi}{\Gamma\vdash\phi\implies\psi}}
 \end{equation}
+The \textit{modus ponens} is really the same thing as ``implication elimination''
+(again, by Kleene, \textit{ibid}):
 \begin{equation}
 \vcenter{\infer[\texttt{modus\_ponens}]{\Gamma_{1}\cup\Gamma_{2}\vdash\psi}{\Gamma_{1}\vdash\phi\implies\psi,&\Gamma_{2}\vdash\phi}}
 \end{equation}
@@ -133,10 +137,15 @@ fun modus_ponens (Gamma1 |- imp) (Gamma2 |- phi) =
 \nwindexdefn{\nwixident{Thm.assume}}{Thm.assume}{NW4ICsJQ-2zKkPU-2}\nwindexdefn{\nwixident{Thm.disch}}{Thm.disch}{NW4ICsJQ-2zKkPU-2}\nwindexdefn{\nwixident{Thm.undisch}}{Thm.undisch}{NW4ICsJQ-2zKkPU-2}\nwindexdefn{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}{NW4ICsJQ-2zKkPU-2}\eatline
 \nwused{\\{NW4ICsJQ-YIPBT-1}}\nwidentdefs{\\{{\nwixident{Thm.assume}}{Thm.assume}}\\{{\nwixident{Thm.disch}}{Thm.disch}}\\{{\nwixident{Thm.modus{\_}ponens}}{Thm.modus:unponens}}\\{{\nwixident{Thm.undisch}}{Thm.undisch}}}\nwidentuses{\\{{\nwixident{@@}}{@@}}\\{{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{remove}}{remove}}}\nwindexuse{\nwixident{@@}}{@@}{NW4ICsJQ-2zKkPU-2}\nwindexuse{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}{NW4ICsJQ-2zKkPU-2}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW4ICsJQ-2zKkPU-2}\nwindexuse{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}{NW4ICsJQ-2zKkPU-2}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW4ICsJQ-2zKkPU-2}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW4ICsJQ-2zKkPU-2}\nwindexuse{\nwixident{remove}}{remove}{NW4ICsJQ-2zKkPU-2}\nwendcode{}\nwbegindocs{10}\nwdocspar
 \begin{node}
-The rules for conjunction
+The rules for conjunction are fairly straightforward. If you have
+proven $\phi$ and if you have proven $\psi$, then you can infer
+$\phi\land\psi$ provided you take the union of all the local
+assumptions. In other words,
 \begin{equation}
 \vcenter{\infer[\land\mbox{-intro}]{\Gamma_{1}\cup\Gamma_{2}\vdash\phi\land\psi}{\Gamma_{1}\vdash\phi,&\Gamma_{2}\vdash\psi}}
 \end{equation}
+Similarly, if we have already proven $\Gamma\vdash\phi\land\psi$, then
+we can ``break apart'' the conjunction to get each conjunct.
 \begin{equation}
 \vcenter{\infer[\land\mbox{-elim-l}]{\Gamma\vdash\phi}{\Gamma\vdash\phi\land\psi}}
 \end{equation}
@@ -171,7 +180,8 @@ fun and_elim_r (Gamma |- phi) =
 \nwindexdefn{\nwixident{Formula.and{\_}intro}}{Formula.and:unintro}{NW4ICsJQ-2zKkPU-3}\nwindexdefn{\nwixident{Formula.and{\_}elim{\_}l}}{Formula.and:unelim:unl}{NW4ICsJQ-2zKkPU-3}\nwindexdefn{\nwixident{Formula.and{\_}elim{\_}r}}{Formula.and:unelim:unr}{NW4ICsJQ-2zKkPU-3}\eatline
 \nwused{\\{NW4ICsJQ-YIPBT-1}}\nwidentdefs{\\{{\nwixident{Formula.and{\_}elim{\_}l}}{Formula.and:unelim:unl}}\\{{\nwixident{Formula.and{\_}elim{\_}r}}{Formula.and:unelim:unr}}\\{{\nwixident{Formula.and{\_}intro}}{Formula.and:unintro}}}\nwidentuses{\\{{\nwixident{@@}}{@@}}\\{{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}}\\{{\nwixident{Formula.is{\_}and}}{Formula.is:unand}}\\{{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}}}\nwindexuse{\nwixident{@@}}{@@}{NW4ICsJQ-2zKkPU-3}\nwindexuse{\nwixident{Formula.dest{\_}and}}{Formula.dest:unand}{NW4ICsJQ-2zKkPU-3}\nwindexuse{\nwixident{Formula.is{\_}and}}{Formula.is:unand}{NW4ICsJQ-2zKkPU-3}\nwindexuse{\nwixident{Formula.mk{\_}and}}{Formula.mk:unand}{NW4ICsJQ-2zKkPU-3}\nwendcode{}\nwbegindocs{14}\nwdocspar
 \begin{node}
-Disjunction introduction is straightforward:
+Disjunction introduction is straightforward: we can always assume ``or
+something else'' holds. More precisely,
 \begin{equation}
 \vcenter{\infer[\lor\mbox{-intro-l}(\phi)]{\Gamma\vdash\phi\lor\psi}{\Gamma\vdash\psi}}
 \end{equation}
@@ -189,6 +199,17 @@ rule is
 If any of the premises mismatch each other (e.g., we have
 $\Gamma_{2}\vdash A'\implies C$ for some $A\neq A'$), then an
 exception is raised.
+
+Note that there are other variations of $\lor$-elimination which are
+logically equivalent to this inference rule. Most texts use the same
+inference rule for $\lor$-elimination as found in Classical natural
+deduction,
+\begin{equation}
+\vcenter{\infer{\Gamma\vdash C}{\Gamma\vdash A\lor B, & \Gamma,A\vdash C & \Gamma,B\vdash C}}
+\end{equation}
+Then discharging $A$ (resp., $B$) in the premises, including $A\lor B\in\Gamma$
+and discharging $A\lor B$ from the conclusion, gives us our
+$\lor$-elimination rule.
 \end{node}
 
 \nwenddocs{}\nwbegincode{15}\sublabel{NW4ICsJQ-1XQlFy-3}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-3}}}\moddef{Specification for inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-2cY0B1-1}}\nwprevnextdefs{NW4ICsJQ-1XQlFy-2}{NW4ICsJQ-1XQlFy-4}\nwenddeflinemarkup
@@ -220,7 +241,8 @@ fun or_elim (Gamma1 |- A_imp_C) (Gamma2 |- B_imp_C) =
 \nwindexdefn{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}{NW4ICsJQ-2zKkPU-4}\nwindexdefn{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}{NW4ICsJQ-2zKkPU-4}\nwindexdefn{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}{NW4ICsJQ-2zKkPU-4}\eatline
 \nwused{\\{NW4ICsJQ-YIPBT-1}}\nwidentdefs{\\{{\nwixident{Thm.or{\_}elim}}{Thm.or:unelim}}\\{{\nwixident{Thm.or{\_}intro{\_}l}}{Thm.or:unintro:unl}}\\{{\nwixident{Thm.or{\_}intro{\_}r}}{Thm.or:unintro:unr}}}\nwidentuses{\\{{\nwixident{@@}}{@@}}\\{{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}}}\nwindexuse{\nwixident{@@}}{@@}{NW4ICsJQ-2zKkPU-4}\nwindexuse{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}{NW4ICsJQ-2zKkPU-4}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW4ICsJQ-2zKkPU-4}\nwindexuse{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}{NW4ICsJQ-2zKkPU-4}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW4ICsJQ-2zKkPU-4}\nwindexuse{\nwixident{Formula.mk{\_}or}}{Formula.mk:unor}{NW4ICsJQ-2zKkPU-4}\nwendcode{}\nwbegindocs{18}\nwdocspar
 \begin{node}
-Negation-related rules
+Negation-related rules follow from ``unfolding'' (and ``folding'') the abbreviation $\neg A\equiv A\implies\bot$
+as inference rules.
 \begin{equation}
 \vcenter{\infer[\neg\mbox{-intro}]{\Gamma\vdash\neg\phi}{\Gamma\vdash\phi\implies\bot}}
 \end{equation}
@@ -259,7 +281,9 @@ fun not_elim (Gamma |- not_phi) =
 \nwindexdefn{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}{NW4ICsJQ-2zKkPU-5}\nwindexdefn{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}{NW4ICsJQ-2zKkPU-5}\eatline
 \nwused{\\{NW4ICsJQ-YIPBT-1}}\nwidentdefs{\\{{\nwixident{Thm.not{\_}elim}}{Thm.not:unelim}}\\{{\nwixident{Thm.not{\_}intro}}{Thm.not:unintro}}}\nwidentuses{\\{{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}}\\{{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}}\\{{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}}\\{{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}}\\{{\nwixident{Formula.is{\_}not}}{Formula.is:unnot}}\\{{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}}\nwindexuse{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}{NW4ICsJQ-2zKkPU-5}\nwindexuse{\nwixident{Formula.dest{\_}not}}{Formula.dest:unnot}{NW4ICsJQ-2zKkPU-5}\nwindexuse{\nwixident{Formula.is{\_}falsum}}{Formula.is:unfalsum}{NW4ICsJQ-2zKkPU-5}\nwindexuse{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}{NW4ICsJQ-2zKkPU-5}\nwindexuse{\nwixident{Formula.is{\_}not}}{Formula.is:unnot}{NW4ICsJQ-2zKkPU-5}\nwindexuse{\nwixident{Formula.mk{\_}falsum}}{Formula.mk:unfalsum}{NW4ICsJQ-2zKkPU-5}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW4ICsJQ-2zKkPU-5}\nwindexuse{\nwixident{Formula.mk{\_}not}}{Formula.mk:unnot}{NW4ICsJQ-2zKkPU-5}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW4ICsJQ-2zKkPU-5}\nwendcode{}\nwbegindocs{22}\nwdocspar
 \begin{node}
-The Intuitionistic rule for eliminating contradictions
+The Intuitionistic rule for eliminating contradictions is just the
+principle of explosion: from a contradiction $\bot$ we can infer
+anything. 
 \begin{equation}
 \vcenter{\infer[\mbox{contr}(\phi)]{\Gamma\vdash\phi}{\Gamma\vdash\bot}}
 \end{equation}
@@ -337,10 +361,16 @@ fun iff_elim_r (Gamma |- A_iff_B) =
 \nwindexdefn{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}{NW4ICsJQ-2zKkPU-7}\nwindexdefn{\nwixident{Thm.iff{\_}elim{\_}l}}{Thm.iff:unelim:unl}{NW4ICsJQ-2zKkPU-7}\nwindexdefn{\nwixident{Thm.iff{\_}elim{\_}r}}{Thm.iff:unelim:unr}{NW4ICsJQ-2zKkPU-7}\eatline
 \nwused{\\{NW4ICsJQ-YIPBT-1}}\nwidentdefs{\\{{\nwixident{Thm.iff{\_}elim{\_}l}}{Thm.iff:unelim:unl}}\\{{\nwixident{Thm.iff{\_}elim{\_}r}}{Thm.iff:unelim:unr}}\\{{\nwixident{Thm.iff{\_}intro}}{Thm.iff:unintro}}}\nwidentuses{\\{{\nwixident{@@}}{@@}}\\{{\nwixident{Formula.dest{\_}iff}}{Formula.dest:uniff}}\\{{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.is{\_}iff}}{Formula.is:uniff}}\\{{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}}\\{{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}}\\{{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}}\nwindexuse{\nwixident{@@}}{@@}{NW4ICsJQ-2zKkPU-7}\nwindexuse{\nwixident{Formula.dest{\_}iff}}{Formula.dest:uniff}{NW4ICsJQ-2zKkPU-7}\nwindexuse{\nwixident{Formula.dest{\_}imp}}{Formula.dest:unimp}{NW4ICsJQ-2zKkPU-7}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW4ICsJQ-2zKkPU-7}\nwindexuse{\nwixident{Formula.is{\_}iff}}{Formula.is:uniff}{NW4ICsJQ-2zKkPU-7}\nwindexuse{\nwixident{Formula.is{\_}imp}}{Formula.is:unimp}{NW4ICsJQ-2zKkPU-7}\nwindexuse{\nwixident{Formula.mk{\_}iff}}{Formula.mk:uniff}{NW4ICsJQ-2zKkPU-7}\nwindexuse{\nwixident{Formula.mk{\_}imp}}{Formula.mk:unimp}{NW4ICsJQ-2zKkPU-7}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW4ICsJQ-2zKkPU-7}\nwendcode{}\nwbegindocs{30}\nwdocspar
 \begin{node}[Quantifier inference rules]
-We have the inference rule for generalization
+We have the inference rule for generalization: given any variable $x$
+which does not appear [freely] in the local assumptions $\Gamma$, we
+can infer $\forall x\ldotp\phi$ even if $x$ does not appear in $\phi$
+(but this is a rather boring situation):
 \begin{equation*}
 \vcenter{\infer[\forall\mbox{-intro}(x)]{\Gamma\vdash\forall x\ldotp\phi}{\Gamma\vdash\phi,&x\notin FV(\Gamma)}}
 \end{equation*}
+In particular, this means that we cannot infer from $P[y]\vdash P[y]$ 
+the claim $P[y]\vdash\forall y\ldotp P[y]$ unless $y\notin FV(P[y])$
+(in which case $\forall y\ldotp P[y]$ is vacuous).
 \end{node}
 
 \nwenddocs{}\nwbegincode{31}\sublabel{NW4ICsJQ-1XQlFy-7}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-7}}}\moddef{Specification for inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-2cY0B1-1}}\nwprevnextdefs{NW4ICsJQ-1XQlFy-6}{NW4ICsJQ-1XQlFy-8}\nwenddeflinemarkup
@@ -364,6 +394,16 @@ for $x$ in $\phi[-]$ (i.e., no free variable will become bound in $\phi[t]$):
 \begin{equation}
 \vcenter{\infer[\forall\mbox{-elim}]{\Gamma\vdash\phi[t]}{\Gamma\vdash\forall x\ldotp\phi[x]}}
 \end{equation}
+This is just instantiating a universally quantified variable $x$ with
+a term $t$. The only possible source of problems we could encounter is
+if $t$ and $x$ have different sorts, which should raise a failure
+exception.
+
+A more subtle problem occurs when $t$ has a free variable which would
+be captured by a quantifier upon substituting $t$ for $x$ in $P[x]$. 
+For example, if $P[x]:=\forall y\ldotp x=y$ and $t=f(y)$, then
+$P[f(y)]=\forall y\ldotp f(y)=y$ would result in capturing $y$ in $t=f(y)$.
+This \emph{should} be an error, which will be raised in an exception.
 \end{node}
 
 \nwenddocs{}\nwbegincode{35}\sublabel{NW4ICsJQ-1XQlFy-8}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-8}}}\moddef{Specification for inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-2cY0B1-1}}\nwprevnextdefs{NW4ICsJQ-1XQlFy-7}{NW4ICsJQ-1XQlFy-9}\nwenddeflinemarkup
@@ -383,22 +423,25 @@ fun forall_elim (t : Term.t) (Gamma |- forall_phi) =
 \nwused{\\{NW4ICsJQ-YIPBT-1}}\nwidentdefs{\\{{\nwixident{Thm.forall{\_}elim}}{Thm.forall:unelim}}}\nwidentuses{\\{{\nwixident{Formula.free{\_}for}}{Formula.free:unfor}}\\{{\nwixident{Formula.subst}}{Formula.subst}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Formula.free{\_}for}}{Formula.free:unfor}{NW4ICsJQ-2zKkPU-9}\nwindexuse{\nwixident{Formula.subst}}{Formula.subst}{NW4ICsJQ-2zKkPU-9}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW4ICsJQ-2zKkPU-9}\nwendcode{}\nwbegindocs{38}\nwdocspar
 \begin{node}\label{node:kernel.nw:existential-introduction}
 Existential introduction has the same proviso as universal quantifier
-elimination:
+elimination---$t$ is free for $x$ in $\phi[-]$:
 \begin{equation}
 \vcenter{\infer[\exists\mbox{-intro}]{\Gamma\vdash\exists x\ldotp\phi[x]}{\Gamma\vdash\phi[t]}}
 \end{equation}
 Well, there is some subtlety with existential introduction. For
 example, $\phi[t]:=(\forall x\ldotp t=x)$ where $x\notin FV(t)$. Then
 $t$ is free for $x$ in $\phi[-]$, but $\exists x\ldotp\phi[x]$ should
-be flagged as problematic.
+be flagged as problematic. Why?
 
-But this situation should never occur because $\phi[x]:=\forall x\ldotp(x=x)$
+Well, this situation should never occur because $\phi[x]:=\forall x\ldotp(x=x)$
 has $\phi[t]=\forall x\ldotp(x=x)$ which is syntactically different
-from $(\forall x\ldotp t=x)$. So an error would be raised, catching
+from $(\forall x\ldotp t=x)$. So an error should be raised, catching
 this situation. We add some useful explanatory text in this situation.
 
 A more helpful thing to do would be to rename the bound variable, so
 as to avoid this collision.
+
+Also we should raise an exception whenever $t$ and $x$ have different
+sorts.
 \end{node}
 
 \nwenddocs{}\nwbegincode{39}\sublabel{NW4ICsJQ-1XQlFy-9}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-9}}}\moddef{Specification for inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-2cY0B1-1}}\nwprevnextdefs{NW4ICsJQ-1XQlFy-8}{NW4ICsJQ-1XQlFy-A}\nwenddeflinemarkup
@@ -426,10 +469,14 @@ fun exists_intro (x : Term.t) (t : Term.t) (phi : Formula.t) (Gamma |- phi_t) =
 \nwindexdefn{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}{NW4ICsJQ-2zKkPU-A}\eatline
 \nwused{\\{NW4ICsJQ-YIPBT-1}}\nwidentdefs{\\{{\nwixident{Thm.exists{\_}intro}}{Thm.exists:unintro}}}\nwidentuses{\\{{\nwixident{Formula.bv}}{Formula.bv}}\\{{\nwixident{Formula.eq}}{Formula.eq}}\\{{\nwixident{Formula.free{\_}for}}{Formula.free:unfor}}\\{{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}}\\{{\nwixident{Formula.serialize}}{Formula.serialize}}\\{{\nwixident{Formula.subst}}{Formula.subst}}\\{{\nwixident{Formula.t}}{Formula.t}}\\{{\nwixident{Term.eq}}{Term.eq}}\\{{\nwixident{Term.have{\_}same{\_}sort}}{Term.have:unsame:unsort}}\\{{\nwixident{Term.t}}{Term.t}}}\nwindexuse{\nwixident{Formula.bv}}{Formula.bv}{NW4ICsJQ-2zKkPU-A}\nwindexuse{\nwixident{Formula.eq}}{Formula.eq}{NW4ICsJQ-2zKkPU-A}\nwindexuse{\nwixident{Formula.free{\_}for}}{Formula.free:unfor}{NW4ICsJQ-2zKkPU-A}\nwindexuse{\nwixident{Formula.mk{\_}exists}}{Formula.mk:unexists}{NW4ICsJQ-2zKkPU-A}\nwindexuse{\nwixident{Formula.serialize}}{Formula.serialize}{NW4ICsJQ-2zKkPU-A}\nwindexuse{\nwixident{Formula.subst}}{Formula.subst}{NW4ICsJQ-2zKkPU-A}\nwindexuse{\nwixident{Formula.t}}{Formula.t}{NW4ICsJQ-2zKkPU-A}\nwindexuse{\nwixident{Term.eq}}{Term.eq}{NW4ICsJQ-2zKkPU-A}\nwindexuse{\nwixident{Term.have{\_}same{\_}sort}}{Term.have:unsame:unsort}{NW4ICsJQ-2zKkPU-A}\nwindexuse{\nwixident{Term.t}}{Term.t}{NW4ICsJQ-2zKkPU-A}\nwendcode{}\nwbegindocs{42}\nwdocspar
 \begin{node}\label{node:kernel:existential-elimination}
-Existential elimination takes the form
+Existential elimination takes the form borrowed from the Hilbert
+calculus for Intuitionistic logic:
 \begin{equation*}
 \vcenter{\infer[\exists\mbox{-elim}(x)]{\Gamma\vdash(\exists x\ldotp\phi)\implies\psi}{\Gamma\vdash\phi\implies\psi,&x\notin FV(\psi),&x\notin FV(\Gamma)}}
 \end{equation*}
+Natural deduction usually takes a different variant for
+$\exists$-elim, but we will show that it can be derived from our
+inference rules (\S\ref{node:derived:existential-elimination}).
 \end{node}
 
 \nwenddocs{}\nwbegincode{43}\sublabel{NW4ICsJQ-1XQlFy-A}\nwmargintag{{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-A}}}\moddef{Specification for inference rules~{\nwtagstyle{}\subpageref{NW4ICsJQ-1XQlFy-1}}}\plusendmoddef\nwstartdeflinemarkup\nwusesondefline{\\{NW4ICsJQ-2cY0B1-1}}\nwprevnextdefs{NW4ICsJQ-1XQlFy-9}{\relax}\nwenddeflinemarkup
